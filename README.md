@@ -1,5 +1,5 @@
 # happy
-<<<<<<< HEAD
+
 null
 111
 222
