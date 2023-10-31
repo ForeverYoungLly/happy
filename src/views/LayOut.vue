@@ -6,7 +6,7 @@
           <theAside></theAside>
       </el-aside>
       <!-- 右侧主体 -->
-      <el-container>
+      <el-container style="background-color: #E9EEF3;">
           <!-- 主体头部 -->
           <el-header style="padding:0">
               <!-- 头部组件 -->

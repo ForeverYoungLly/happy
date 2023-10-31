@@ -15,12 +15,28 @@
                     <span slot="title">首页</span>
                 </el-menu-item>
                 <!-- 用户列表 -->
-                <el-menu-item index="/UserList">
+                <el-menu-item index="/">
+                    <template slot="title">
                     <i class="el-icon-user"></i>
-                    <span slot="title">用户列表</span>
+                    <span slot="title">列表</span>
+                    </template>
                 </el-menu-item>
+                <el-submenu index="/UserList">
+                    <template slot="title">
+                        <i class="el-icon-user-solid"></i>
+                        <span>用户列表</span>
+                    </template>
+                    <el-menu-item-group>
+                        <template slot="title">技术方向</template>
+                        <el-menu-item style="padding-right: 0 !important;">前端开发</el-menu-item>
+                        <el-menu-item >后端开发</el-menu-item>
+                        <el-menu-item >UI设计</el-menu-item>
+                        <el-menu-item >产品经理</el-menu-item>
+                        <el-menu-item >网络安全</el-menu-item>
+                    </el-menu-item-group>
+                </el-submenu>
                 <!-- 消息推送 -->
-                <el-submenu index="3">
+                <el-submenu index="/UserList">
                     <template slot="title">
                         <i class="el-icon-user-solid"></i>
                         <span>分组列表</span>
@@ -30,18 +46,18 @@
                         <el-menu-item style="padding-right: 0 !important;">前端开发</el-menu-item>
                         <el-menu-item >后端开发</el-menu-item>
                         <el-menu-item >UI设计</el-menu-item>
-                    </el-menu-item-group>
-                    <el-menu-item-group>
-                        <template slot="title">管理方向</template>
-                        <el-menu-item >项目管理</el-menu-item>
-                        <el-menu-item >产品设计</el-menu-item>
-                        <el-menu-item >财务及其它</el-menu-item>
+                        <el-menu-item >产品经理</el-menu-item>
+                        <el-menu-item >网络安全</el-menu-item>
                     </el-menu-item-group>
                 </el-submenu>
                 <!-- 用户端管理 -->
                 <el-menu-item index="/infopush">
                     <i class="el-icon-message"></i>
                     <span slot="title">消息推送</span>
+                </el-menu-item>
+                <el-menu-item index="/infopush">
+                    <i class="el-icon-message"></i>
+                    <span slot="title">用户端配置</span>
                 </el-menu-item>
             </el-menu>
         </el-col>

@@ -1,10 +1,14 @@
 <!-- 消息推送大表框 -->
 <template>
   <div class="container">
-    <h1 style="text-align: center;">消息推送</h1>
-    <div class="form">
+    <el-card class="box-card" body-style="{ padding: '20px' }" style="width: 90%;margin:20px auto">
+      <div slot="header" class="clearfix">
+        <span>消息推送</span>
+        <el-button style="float: right; padding: 3px 0" type="text">操作按钮</el-button>
+      </div>
+      <div class="form">
       <!-- 用户名 -->
-      <el-form ref="infoform" :model="infoform" label-width="80px">
+      <el-form ref="infoform" :model="infoform" label-width="200px">
         <el-row>
           <el-col :span="8">
             <el-form-item label="目标用户">
@@ -19,7 +23,7 @@
         <el-row>
           <el-col :span="8">
             <el-form-item label="标题">
-              <el-input v-model="infoform.infopushTitle" clearable="true" placeholder="请输入标题"></el-input>
+              <el-input v-model="infoform.infopushTitle" clearable=true placeholder="请输入标题"></el-input>
             </el-form-item>
           </el-col>
         </el-row>
@@ -50,7 +54,8 @@
           <el-button type="primary" @click="onSubmit">发送</el-button>
         </el-form-item>
       </el-form>
-    </div>
+      </div>
+    </el-card>
   </div>
 </template>
 
@@ -83,8 +88,8 @@ export default {
 
 
 <style scoped>
-.container {
+.container .box-card{
   background-color: #E9EEF3;
-  height: 100%;
+  width: 80% !important; 
   padding: 18px;
 }
