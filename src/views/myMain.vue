@@ -18,9 +18,6 @@
                     <the-footer />
                 </el-footer>
             </el-container>
-            <el-aside id="rightaside">
-                <the-rightaside />
-            </el-aside>
         </el-container>
     </div>
 </template>
@@ -30,7 +27,6 @@ import theAside from '../components/theAside.vue';
 import theMain from '../components/theMain.vue';
 import theHeader from '../components/theHeader.vue';
 import theFooter from '../components/theFooter.vue';
-import theRightaside from '../components/theRightaside.vue'
 export default {
     data() {
         return {}
@@ -40,7 +36,6 @@ export default {
         theMain,
         theHeader,
         theFooter,
-        theRightaside
     }
 }
 
@@ -87,9 +82,4 @@ body>.el-container {
 .el-container:nth-child(7) .el-aside {
     line-height: 320px;
 } */
-#rightaside{
-    right: 0% !important;
-    position: absolute !important;
-    line-height: 120px !important;
-}
 </style>
