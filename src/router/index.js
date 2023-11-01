@@ -6,6 +6,7 @@ import userlist from '@/views/UserList'
 import InfoPush from '@/views/InfoPush'
 import LayOut from '@/views/LayOut'
 import index from '@/views/Index'
+import setClient from '@/views/setClient'
 Vue.use(VueRouter)
 
 //将路由与组件进行映射
@@ -15,18 +16,18 @@ const routes = [
     path: '/',
     component:LayOut,
     redirect:'/userlist',
-    children:[
     //配置子路由
+    children:[
+      // 用户列表
       { path: '/userlist', component: userlist},
+      // 消息推送
       { path: '/infopush', component: InfoPush},
-      { path:'/index',component:index}
+      // 首页
+      { path:'/index',component:index},
+      //用户端配置
+      { path:'setClient',component:setClient}
     ]
   },
-  {
-    path:'/userlist',
-    component:userlist
-  },
-
 ]
 
 //创建router实例

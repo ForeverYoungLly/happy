@@ -3,7 +3,7 @@
         <div class="container">
             <!-- 用户列表 -->
             <el-table :data="UserList.slice((currentPage - 1) * pageSize, currentPage * pageSize)"
-                style="width: 98% ; margin: auto; box-shadow: 1px 2px 4px #ccc;" stripe @sort-change="handle">
+                style="width: 98% ; margin: auto; box-shadow: 1px 2px 4px #ccc;transition: all 0.3 ease-in!important;" stripe @sort-change="handle">
                 <el-table-column prop="username" label="姓名">
                 </el-table-column>
                 <el-table-column prop="studentid" label="学号" sortable>
@@ -29,7 +29,6 @@
                     </template>
                 </el-table-column>
             </el-table>
-
             <!-- 用户信息编辑的气泡框 -->
             <!-- :close-on-click-modal="false" 取消点击空白处关闭 -->
             <el-dialog title="用户信息" :visible.sync="editDialogVisible" width="60%" :rules="editFormRules" :close-on-click-modal="false">
@@ -142,8 +141,9 @@
 </style>
 
 <script>
+import axios from 'axios';
 const url ="http://123.207.73.185:8080/postUserMessage"
-import axios from 'axios'
+
 export default {
     data() {
         return {
@@ -193,17 +193,18 @@ export default {
         //  handleEdit() {
         // },
         //渲染用户列表
-        async getUserList(){
-            await axios({
-                url:'http://123.207.73.185:8080/userDirection',
-                params:{
-                    direction:'全部'
-                }
+         async getUserList(){
+           await axios({
+            url:'http://123.207.73.185:8080/userDirection',
+            params:{
+                direction:'全部'
+            }
             }).then( res =>{
-                console.log(res.data.data);
-                this.UserList = res.data.data
-            }).catch( error =>{
-                this.$message.error(error.data)
+                const userList = res.data.data
+                this.UserList = userList
+                console.log(userList);
+            }).catch( () =>{
+                this.$message.error("用户列表数据获取失败！")
             })
         },
         //控制排序情况
@@ -234,30 +235,34 @@ export default {
         async saveEdit(){
             const editStr = JSON.stringify(this.editForm)
             const UserlistStr = JSON.stringify(this.UserList[this.editId])
+            //发生改动
             if(editStr !== UserlistStr)
             {
+                //修改数据库数据
                 await axios({
                     url,
                     method:'POST',
                     data:this.editForm
-                }).then( res =>{
-                    console.log(res);
-                }).catch( error =>{
-                    console.log(error);
-                })
-                this.getUserList()
-                this.$message.success('修改成功！')
-                this.editDialogVisible = false
+                    }).then( res =>{
+                        console.log(res)
+                        this.getUserList()
+                        this.$message.success('修改成功！')
+                        this.editDialogVisible = false
+                    }).catch( () =>{
+                        this.$message.error("修改失败！")
+                    })
+                //修改store仓库数据
+                this.$store.commit('editUserList',this.UserList)
             }
+            //没有改动
             else {
-                console.log(111);
                 this.$message.error('表单未进行任何修改！修改失败')
                 this.editDialogVisible = false
             }
         }
 
     },
-    created(){
+     created(){
         this.getUserList()
     }
 }
@@ -265,7 +270,7 @@ export default {
 
 <style>
 .el-main {
-    background-color: #E9EEF3 !important;
+
     color: #333;
     text-align: center;
     height: 100% !important;

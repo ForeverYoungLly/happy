@@ -14,7 +14,6 @@ name:'MyIndex'
 
 <style scoped>
 .container {
-  
   background-color: #E9EEF3;
   height: 100%;
   padding: 18px;
