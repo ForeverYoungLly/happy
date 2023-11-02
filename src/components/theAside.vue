@@ -56,7 +56,7 @@
                     <span slot="title">消息推送</span>
                 </el-menu-item>
                 <el-menu-item index="/infopush">
-                    <i class="el-icon-message"></i>
+                    <i class="el-icon-setting"></i>
                     <span slot="title">用户端配置</span>
                 </el-menu-item>
             </el-menu>
