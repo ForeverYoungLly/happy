@@ -1,0 +1,21 @@
+import Vue from 'vue'
+// 按需导入
+import { Image, Button, Form, Field, NavBar, RadioGroup, Radio, Col, Row, Popup, Picker, Uploader, ShareSheet, Step, Steps, Overlay, Divider, Icon } from 'vant'
+Vue.use(Image)
+Vue.use(Button)
+Vue.use(Field)
+Vue.use(Form)
+Vue.use(NavBar)
+Vue.use(RadioGroup)
+Vue.use(Radio)
+Vue.use(Col)
+Vue.use(Row)
+Vue.use(Popup)
+Vue.use(Picker)
+Vue.use(Uploader)
+Vue.use(ShareSheet)
+Vue.use(Step)
+Vue.use(Steps)
+Vue.use(Overlay)
+Vue.use(Divider)
+Vue.use(Icon)
