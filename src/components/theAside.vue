@@ -6,7 +6,7 @@
                 <p style="font-size: 1.8rem;  color: rgb(242, 240, 240); font-weight: bold; ">AchoBeta</p>
                 <p style="font-size: 1.8rem;  color: rgb(242, 240, 240); font-weight: bold; ">招 新 系 统</p>
             </div>
-            <!-- 导航列表 -->
+            <!-- 侧边导航列表 -->
             <el-menu default-active="1" class="el-menu-vertical-demo" @open="handleOpen" @close="handleClose"
                 background-color="#545c64" text-color="#fefefe" active-text-color="#409EFF" router >
                 <!-- 首页 -->
@@ -15,13 +15,13 @@
                     <span slot="title">首页</span>
                 </el-menu-item>
                 <!-- 用户列表 -->
-                <el-menu-item index="/">
+                <el-menu-item index="/userlist" >
                     <template slot="title">
                     <i class="el-icon-user"></i>
-                    <span slot="title">列表</span>
+                    <span slot="title">用户列表</span>
                     </template>
                 </el-menu-item>
-                <el-submenu index="/UserList">
+                <el-submenu index="/UserList" @click="toUserList">
                     <template slot="title">
                         <i class="el-icon-user-solid"></i>
                         <span>用户列表</span>
@@ -36,27 +36,13 @@
                     </el-menu-item-group>
                 </el-submenu>
                 <!-- 消息推送 -->
-                <el-submenu index="/UserList">
-                    <template slot="title">
-                        <i class="el-icon-user-solid"></i>
-                        <span>分组列表</span>
-                    </template>
-                    <el-menu-item-group>
-                        <template slot="title">技术方向</template>
-                        <el-menu-item style="padding-right: 0 !important;">前端开发</el-menu-item>
-                        <el-menu-item >后端开发</el-menu-item>
-                        <el-menu-item >UI设计</el-menu-item>
-                        <el-menu-item >产品经理</el-menu-item>
-                        <el-menu-item >网络安全</el-menu-item>
-                    </el-menu-item-group>
-                </el-submenu>
-                <!-- 用户端管理 -->
                 <el-menu-item index="/infopush">
                     <i class="el-icon-message"></i>
                     <span slot="title">消息推送</span>
                 </el-menu-item>
-                <el-menu-item index="/infopush">
-                    <i class="el-icon-setting"></i>
+                <!-- 用户端管理 -->
+                <el-menu-item index="/setClient">
+                    <i class="el-icon-s-tools"></i>
                     <span slot="title">用户端配置</span>
                 </el-menu-item>
             </el-menu>
@@ -74,6 +60,9 @@ export default {
         // 关闭下拉栏
         handleClose(key, keyPath) {
             console.log(key, keyPath);
+        },
+        toUserList(){
+            console.log(11);
         }
     },
     computed: {
