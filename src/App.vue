@@ -6,9 +6,27 @@
   </div>
 </template>
 
-<style>
+<style >
+*{
+  margin:0;
+  padding: 0;
+  box-sizing: border-box;
+
+}
+a{ 
+    text-decoration: none;
+    color: rgb(254, 254, 254);
+}
+body {
+  display: flex  !important;
+  height: 100vh !important;
+
+}
+
+
 #app{
-  width: 500px;
-  height: auto;
+  display: flex;
+  flex: 1;
+  height: 100% !important;
 }
 </style>
