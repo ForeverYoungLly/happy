@@ -102,7 +102,7 @@
                         <!-- 微信id -->
                     <el-form-item label="微信号" prop="wxid" >
                         <el-col :span="23">
-                            <el-input v-model="editForm.wxid" disabled></el-input>
+                            <el-input v-model="editForm.wxid" ></el-input>
                         </el-col>
                     </el-form-item>
                         <!-- 个人简介 -->
@@ -224,17 +224,23 @@ export default {
         },
         // 打开编辑表单
         showEditDialog(scope){
-            console.log(scope);
-            const id = scope.$index
-            const str = JSON.stringify(this.UserList[id])
+            //获取打开对象的wxopenid
+            const id = scope.row.wxopenid
+            // 在用户列表中找到具有对应id的用户的数据
+            const editUserData = this.UserList.find( obj =>{ return obj.wxopenid === id })
+            const str = JSON.stringify(editUserData)
+            //数据回显到表单
             this.editForm = JSON.parse(str)
-            this.editId = id
+            //设置当前操作用户的wxopenid
+            this.targetWxopenId = id
             this.editDialogVisible = true
         },
         //保存编辑
         async saveEdit(){
+            
             const editStr = JSON.stringify(this.editForm)
-            const UserlistStr = JSON.stringify(this.UserList[this.editId])
+            const editUserData = this.UserList.find( obj =>{ return obj.wxopenid === this.targetWxopenIdid })
+            const UserlistStr = JSON.stringify(editUserData)
             //发生改动
             if(editStr !== UserlistStr)
             {

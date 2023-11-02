@@ -1,9 +1,8 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import axios from 'axios'
 
 Vue.use(Vuex)
-const url ="http://123.207.73.185:8080/postUserMessage"
+
 
 const store = new Vuex.Store( 
   {
