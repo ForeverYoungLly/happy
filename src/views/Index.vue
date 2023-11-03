@@ -81,6 +81,7 @@ export default {
     this.initEcharts()
   },
   methods: {
+    // 测试交互
     // async getUserList() {
     //   await axios({
     //     url: 'http://123.207.73.185:8080/userDirection',
