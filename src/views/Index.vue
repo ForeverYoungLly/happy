@@ -8,20 +8,23 @@
     <section class="mainbox">
       <!-- 数据可视化部分 -->
       <div class="column">
-        <!-- 待处理的数据 -->
         <div class="column1 title" ref="mychart" id="mychart">
-          <h3 style="text-align: center;">待处理</h3>
+          <el-card class="box-card">
+            <div slot="header" class="clearfix">
+              <el-button style="float: right; padding: 3px 0" type="text">查看待处理的人数</el-button>
+            </div>
+            <div class="git">
+            </div>
+
+          </el-card>
         </div>
         <div class="column1 title">
-          <h3 style="text-align: center;">待推送</h3>
         </div>
       </div>
       <div class="column">
         <div class="column2 title">
-          <h3 style="text-align: center;">各方向分布</h3>
         </div>
         <div class="column2 title">
-          <h3 style="text-align: center;">各专业分布</h3>
         </div>
       </div>
       <!-- 管理员小tips部分 -->
@@ -160,14 +163,14 @@ header {
   width: 97%;
   height: 49%;
   margin: 5px;
-  background-color: aqua;
+  background-color: #fefefe;
 }
 
 .column2 {
   width: 97%;
   height: 49%;
   margin: 5px;
-  background-color: cadetblue;
+  background-color: #fefefe;
 }
 
 .text {
