@@ -8,7 +8,7 @@ Vue.use(VueRouter)
 
 const router = new VueRouter({
   routes: [
-    { path: '/', component: resume },
+    { path: '/', component: index },
     { path: '/index', component: index },
     { path: '/result', component: result },
     { path: '/resume', component: resume }
