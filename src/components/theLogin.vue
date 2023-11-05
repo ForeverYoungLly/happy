@@ -1,4 +1,3 @@
-<!-- 登录页面 -->
 <template>
     <div class="container">
         <h1 style="text-align: center; color: aliceblue;">AchoBeta招新系统管理员登录页面</h1>
@@ -22,7 +21,7 @@
                 </el-form-item>
                 <el-form-item class="btn">
                     <el-button type="info" @click="resetloginform">重置</el-button>
-                    <el-button type="primary" @click="login('loginform')">登录</el-button>
+                    <el-button type="primary" @click="login">登录</el-button>
                 </el-form-item>
             </el-form>
         </div>
@@ -46,7 +45,7 @@ export default {
                     }],
                 password: [
                     { required: true, message: '请输入密码', trigger: 'blur' },
-                    { min: 6, max: 25, message: '长度在 6 到 25 个字符', trigger: 'blur' }
+                    { min: 3, max: 25, message: '长度在 6 到 25 个字符', trigger: 'blur' }
                 ]
             }
         }
@@ -55,23 +54,20 @@ export default {
         resetloginform() {
             this.$refs.loginform.resetFields();
         },
-        login(loginform) {
-            this.$refs[loginform].validate((valid) => {
-                if (valid) {
-                    axios.post('http://123.207.73.185:8080/loginManager', {
-                        managername: this.loginform.managername,
-                        password: this.loginform.password
-                    }).then((ret) => {
-                        console.log(ret)
-                    })
-                        .catch((err) => {
-                            console.log(err)
-                        })
-                } else {
-                    console.log('error');
-                    return false;
-                }
+        async login() {
+            await axios({
+                url:'/api/loginManager',
+                methods:'get',
+                params: {
+                    managername: this.loginform.managername,
+                    password: this.loginform.password
+                },
+            }).then((ret) => {
+                console.log(ret.data)
             })
+                .catch((err) => {
+                    console.log(err)
+                })
         }
     },
 }

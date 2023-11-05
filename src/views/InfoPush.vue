@@ -1,4 +1,3 @@
-<!-- 消息推送大表框 -->
 <template>
   <div class="container">
     <el-card class="box-card" body-style="{ padding: '20px' }" style="width: 90%;margin:20px auto">
@@ -70,6 +69,7 @@
 
 <script>
 import axios from 'axios';
+
 export default {
   data() {
     return {

@@ -7,14 +7,14 @@ import InfoPush from '@/views/InfoPush'
 import LayOut from '@/views/LayOut'
 import index from '@/views/Index'
 import setClient from '@/views/setClient'
-import login from '../components/login.vue'
+import theLogin from '../components/theLogin.vue'
 Vue.use(VueRouter)
 
 //将路由与组件进行映射
 const routes = [
   // 配置主登录路由
   { path: '/',redirect: '/login'},
-  { path: '/login',component: login},
+  { path: '/login',component: theLogin},
   //配置主路由
   {
     path: '/',
