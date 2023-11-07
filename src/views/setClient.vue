@@ -9,9 +9,9 @@ import axios from 'axios';
 
 export default {
   methods:{
-    jump(){
-      axios({
-        url:'http://42.194.194.197:8080/templateMessage',
+    async jump(){
+       await axios({
+        url:'http://42.194.194.197:80/templateMessage',
         method:'POST',
         params:{
           wxOpenId:'osNMd6yQN02kDAW7UiNsotP8J1YU',
@@ -22,6 +22,8 @@ export default {
         }
       }).then( Result =>{
         console.log(Result.data);
+      }).catch( error =>{
+        console.log(error);
       })
     }
   }

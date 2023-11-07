@@ -102,7 +102,7 @@
                         <!-- 微信id -->
                     <el-form-item label="微信号" prop="wxid" >
                         <el-col :span="23">
-                            <el-input v-model="editForm.wxid" disabled></el-input>
+                            <el-input v-model="editForm.wxid" ></el-input>
                         </el-col>
                     </el-form-item>
                         <!-- 个人简介 -->
@@ -149,6 +149,30 @@ export default {
         return {
             //存放用户列表的数组
             UserList:[
+            {
+            studentid:"2022463030703",
+            username:"代金宇1",
+            sex:"男",
+            grade:"22",
+            profession:"计算机类",
+            class:"7班",
+            phone:"13131227873",
+            wxid:"666666666666hwuledfhwq",
+            direction:"前端开发",
+            wxopenid:"2654123",
+            status:"待录取",
+            personalid:"202303",
+            ok:0,
+            information1:"我很非常开心",
+            information2:"我很快乐",
+            information3:"我很高兴",
+            award:"广东省大学生程序设计竞赛一等奖",
+            remark:"我特别高兴",
+            first:"你好",
+            second:"我好",
+            third:"大家好",
+            fourth:"真好"
+            }       
             ],
             //当前页数
             currentPage: 1,
@@ -186,7 +210,8 @@ export default {
                     { required:true,message:'请输入学号',trigger:'blur'},
                     {min:13}
                 ]
-            }
+            },
+
         }
     },
     methods: {
@@ -224,17 +249,23 @@ export default {
         },
         // 打开编辑表单
         showEditDialog(scope){
-            console.log(scope);
-            const id = scope.$index
-            const str = JSON.stringify(this.UserList[id])
+            //获取打开对象的wxopenid
+            const id = scope.row.wxopenid
+            // 在用户列表中找到具有对应id的用户的数据
+            const editUserData = this.UserList.find( obj =>{ return obj.wxopenid === id })
+            const str = JSON.stringify(editUserData)
+            //数据回显到表单
             this.editForm = JSON.parse(str)
-            this.editId = id
+            //设置当前操作用户的wxopenid
+            this.targetWxopenId = id
             this.editDialogVisible = true
         },
         //保存编辑
         async saveEdit(){
+            
             const editStr = JSON.stringify(this.editForm)
-            const UserlistStr = JSON.stringify(this.UserList[this.editId])
+            const editUserData = this.UserList.find( obj =>{ return obj.wxopenid === this.targetWxopenIdid })
+            const UserlistStr = JSON.stringify(editUserData)
             //发生改动
             if(editStr !== UserlistStr)
             {
@@ -259,7 +290,7 @@ export default {
                 this.$message.error('表单未进行任何修改！修改失败')
                 this.editDialogVisible = false
             }
-        }
+        },
 
     },
      created(){
