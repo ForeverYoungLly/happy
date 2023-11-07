@@ -149,6 +149,30 @@ export default {
         return {
             //存放用户列表的数组
             UserList:[
+            {
+            studentid:"2022463030703",
+            username:"代金宇1",
+            sex:"男",
+            grade:"22",
+            profession:"计算机类",
+            class:"7班",
+            phone:"13131227873",
+            wxid:"666666666666hwuledfhwq",
+            direction:"前端开发",
+            wxopenid:"2654123",
+            status:"待录取",
+            personalid:"202303",
+            ok:0,
+            information1:"我很非常开心",
+            information2:"我很快乐",
+            information3:"我很高兴",
+            award:"广东省大学生程序设计竞赛一等奖",
+            remark:"我特别高兴",
+            first:"你好",
+            second:"我好",
+            third:"大家好",
+            fourth:"真好"
+            }       
             ],
             //当前页数
             currentPage: 1,
@@ -186,7 +210,8 @@ export default {
                     { required:true,message:'请输入学号',trigger:'blur'},
                     {min:13}
                 ]
-            }
+            },
+
         }
     },
     methods: {
@@ -265,7 +290,7 @@ export default {
                 this.$message.error('表单未进行任何修改！修改失败')
                 this.editDialogVisible = false
             }
-        }
+        },
 
     },
      created(){
