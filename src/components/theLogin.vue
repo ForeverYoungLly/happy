@@ -31,6 +31,7 @@
 <script>
 import axios from 'axios';
 
+
 export default {
     data() {
         return {
@@ -55,19 +56,28 @@ export default {
             this.$refs.loginform.resetFields();
         },
         async login() {
-            await axios({
-                url:'/api/loginManager',
-                methods:'get',
-                params: {
-                    managername: this.loginform.managername,
-                    password: this.loginform.password
-                },
-            }).then((ret) => {
-                console.log(ret.data)
+            this.$refs.loginform.validate(ispass => {
+                if (!ispass) return;
+                else {
+                    axios({
+                        url: 'http://123.207.73.185:8080/loginManager',
+                        method: 'POST',
+                        data: {
+                            managername: this.loginform.managername,
+                            password: this.loginform.password
+                        },
+                    }).then((ret) => {
+                        console.log(ret.data);
+                        if(ret.data.code==1){
+                        return this.$message.success('登录成功');
+                    }
+                        else
+                        return this.$message.error('登陆失败');
+                    }).catch((err) => {
+                        console.log(err.data);
+                    })
+                }
             })
-                .catch((err) => {
-                    console.log(err)
-                })
         }
     },
 }
@@ -86,7 +96,7 @@ export default {
     background-color: #e2e2e2;
     border-radius: 5px;
     left: 50%;
-    top: 50%;
+    top: 40%;
     position: absolute;
     transform: translate(-50%, -50%);
 

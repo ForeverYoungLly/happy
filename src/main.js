@@ -5,15 +5,14 @@ import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';
 import router from './router';
 import '@/assets/css/base.css'
-import echarts from "echarts";
-import $ from 'jquery'  //导入jquery
+// import echarts from "echarts";
 import axios from 'axios'
+import VueAxios from 'vue-axios';
 
-// Vue.use(VueAxios,axios);
+Vue.use(VueAxios,axios);
 Vue.prototype.$axios = axios;
-Vue.prototype.$ = $   //将$(jquery)挂在到vue.prototype身上，让所有的Vue共享这个方法
-Vue.prototype.$echarts = echarts
-Vue.config.productionTip = false
+// Vue.prototype.$echarts = echarts;
+Vue.config.productionTip = false;
 Vue.use(ElementUI)
 new Vue({
   router,

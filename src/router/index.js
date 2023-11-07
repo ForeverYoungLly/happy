@@ -1,7 +1,6 @@
 //创建路由组件
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-
 import userlist from '@/views/UserList'
 import InfoPush from '@/views/InfoPush'
 import LayOut from '@/views/LayOut'

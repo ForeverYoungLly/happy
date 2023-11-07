@@ -9,7 +9,7 @@
             <el-breadcrumb-item :to="{ path: '/index' }">首页</el-breadcrumb-item>
             <el-breadcrumb-item :to="{ path:'/UserList'}">用户列表</el-breadcrumb-item>
             <el-breadcrumb-item :to="{ path:'/InfoPush'}">消息推送</el-breadcrumb-item>
-            <el-breadcrumb-item :to="{ path:''}">用户端配置</el-breadcrumb-item>
+            <el-breadcrumb-item :to="{ path:'/setClient'}">用户端配置</el-breadcrumb-item>
         </el-breadcrumb>  
     </div>
 </template>
