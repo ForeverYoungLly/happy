@@ -19,6 +19,7 @@
                     <el-input show-password prefix-icon="el-icon-lock" v-model="loginform.password"
                         id="password"></el-input>
                 </el-form-item>
+                <!-- 按钮区 -->
                 <el-form-item class="btn">
                     <el-button type="info" @click="resetloginform">重置</el-button>
                     <el-button type="primary" @click="login">登录</el-button>
@@ -30,7 +31,6 @@
 
 <script>
 import axios from 'axios';
-
 
 export default {
     data() {
@@ -68,11 +68,31 @@ export default {
                         },
                     }).then((ret) => {
                         console.log(ret.data);
-                        if(ret.data.code==1){
-                        return this.$message.success('登录成功');
-                    }
-                        else
-                        return this.$message.error('登陆失败');
+                        if (ret.data.code == 1) {
+                            const loading = this.$loading({
+                                lock: true,
+                                text: 'Loading',
+                                spinner: 'el-icon-loading',
+                                background: 'rgba(0, 0, 0, 0.7)'
+                            });
+                            setTimeout(() => {
+                                loading.close();
+                            }, 2000);
+                            this.$message.success('登录成功');
+                        }
+                        else {
+                            const loading = this.$loading({
+                                lock: true,
+                                text: 'Loading',
+                                spinner: 'el-icon-loading',
+                                background: 'rgba(0, 0, 0, 0.7)'
+                            });
+                            setTimeout(() => {
+                                loading.close();
+                            }, 2000);
+                            this.$message.error('账号或密码错误');
+                        }
+
                     }).catch((err) => {
                         console.log(err.data);
                     })
@@ -101,7 +121,7 @@ export default {
     transform: translate(-50%, -50%);
 
     .avater_box {
-        background-color: #2b4b6b;
+        background-color: #0b2136;
         width: 25%;
         height: 20%;
         border: 1px solid #eee;

@@ -13,15 +13,12 @@
             <div slot="header" class="clearfix">
               <el-button style="float: right; padding: 3px 0" type="text">查看待处理的人数</el-button>
             </div>
-            <div class="git">
-            </div>
-
           </el-card>
         </div>
         <div class="column1 title">
         </div>
       </div>
-      <div class="column">
+      <div class="column bottom">
         <div class="column2 title">
         </div>
         <div class="column2 title">
@@ -110,7 +107,11 @@ header {
 
   .column {
     flex: 1;
-    margin: 8px;
+    /* margin: 8px; */
+    bottom: 0px;
+  }
+  .bottom{
+    margin-bottom: 0px;
   }
 }
 
@@ -125,6 +126,7 @@ header {
   width: 97%;
   height: 49%;
   margin: 5px;
+  bottom: 0px;
   background-color: #fefefe;
 }
 
@@ -142,7 +144,7 @@ header {
 }
 
 .clearfix:after {
-  clear: both
+  clear: both;
 }
 
 .box-card {
