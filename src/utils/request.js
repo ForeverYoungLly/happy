@@ -9,14 +9,13 @@ const request = axios.create({
 // request 请求拦截
 // 可以在请求发送前对请求做一些处理
 // eg.统一加上token，对请求参数统一加密
-request.interceptors.request.use(config => {
-    config.headers['Content-Type'] = 'application/json;charset=utf-8';
-
-    // config.headers['token'] = user.token;  // 设置请求头
-    return config
-}, error => {
-    return Promise.reject(error)
-});
+// axios.interceptors.request.use( function(config){
+//     const token = localStorage.getItem('token')
+//     if(token)
+//         config.headers.common['jwt-code'] = token
+// },function (error) {
+//     return Promise.reject( error )
+// })
 
 // response 响应拦截
 // 可以在接口响应后统一处理结果

@@ -72,6 +72,11 @@ export default {
     }
   },
   created() {
+    if(!localStorage.getItem('token'))
+    {
+      this.$message.error('请先登录！')
+      this.$router.push('/login')
+    }
     // this.getUserList()
   },
   methods: {
@@ -82,7 +87,7 @@ export default {
 }
 </script>
 
-<style scoped>
+<style  scoped>
 .container {
   background-color: #E9EEF3;
   height: 100%;
@@ -104,8 +109,8 @@ header {
   height: 90%;
   margin: 0 auto;
   display: flex;
-
-  .column {
+  }
+.column {
     flex: 1;
     /* margin: 8px; */
     bottom: 0px;
@@ -113,7 +118,7 @@ header {
   .bottom{
     margin-bottom: 0px;
   }
-}
+
 
 .column1 {
   width: 97%;

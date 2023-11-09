@@ -6,7 +6,6 @@
 
 <script>
 import axios from 'axios';
-
 export default {
   methods:{
     async jump(){
@@ -25,6 +24,13 @@ export default {
       }).catch( error =>{
         console.log(error);
       })
+    }
+  },
+  created(){
+    if(!localStorage.getItem('token'))
+    {
+      this.$message.error('请先登录！')
+      this.$router.push('/login')
     }
   }
 }

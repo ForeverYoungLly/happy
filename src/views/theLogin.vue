@@ -4,7 +4,7 @@
         <div class="login_box">
             <!-- 头像区 -->
             <div class="avater_box">
-                <img src="./a.png">
+                <img src="@/assets/images/logo.png">
             </div>
 
             <!-- 填写信息区 -->
@@ -19,10 +19,9 @@
                     <el-input show-password prefix-icon="el-icon-lock" v-model="loginform.password"
                         id="password"></el-input>
                 </el-form-item>
-                <!-- 按钮区 -->
                 <el-form-item class="btn">
                     <el-button type="info" @click="resetloginform">重置</el-button>
-                    <el-button type="primary" @click="login">登录</el-button>
+                    <el-button type="primary" @click="login" @keyup.enter="keyDown">登录</el-button>
                 </el-form-item>
             </el-form>
         </div>
@@ -31,6 +30,7 @@
 
 <script>
 import axios from 'axios';
+
 
 export default {
     data() {
@@ -52,10 +52,18 @@ export default {
         }
     },
     methods: {
+        // 重置登录信息
         resetloginform() {
             this.$refs.loginform.resetFields();
         },
+        // 回车触发登录函数
+        keyDown(e){
+          if(e.keyCode == 13){
+            this.login();
+          }
+        },
         async login() {
+            //校验表单
             this.$refs.loginform.validate(ispass => {
                 if (!ispass) return;
                 else {
@@ -67,7 +75,7 @@ export default {
                             password: this.loginform.password
                         },
                     }).then((ret) => {
-                        console.log(ret.data);
+                        //账号密码验证通过
                         if (ret.data.code == 1) {
                             const loading = this.$loading({
                                 lock: true,
@@ -78,9 +86,16 @@ export default {
                             setTimeout(() => {
                                 loading.close();
                             }, 2000);
-                            this.$message.success('登录成功');
+                            this.$message.success('登录成功')
+                            const token = ret.data.data.jwtCode
+                            localStorage.setItem('token', token)
+                            setTimeout(() => {
+                                this.$router.push('/index')
+                            }, 1500);
                         }
-                        else {
+                        //账号密码验证失败
+                        else{
+                            this.$message.error('账号或密码错误');
                             const loading = this.$loading({
                                 lock: true,
                                 text: 'Loading',
@@ -90,9 +105,7 @@ export default {
                             setTimeout(() => {
                                 loading.close();
                             }, 2000);
-                            this.$message.error('账号或密码错误');
-                        }
-
+                        }  
                     }).catch((err) => {
                         console.log(err.data);
                     })
@@ -100,6 +113,14 @@ export default {
             })
         }
     },
+    mounted () {
+        //绑定监听回车事件触发登录函数
+        window.addEventListener('keydown',this.keyDown);
+      },
+      //销毁事件
+      destroyed(){
+        window.removeEventListener('keydown',this.keyDown,false);
+      }
 }
 </script>
 
@@ -121,7 +142,7 @@ export default {
     transform: translate(-50%, -50%);
 
     .avater_box {
-        background-color: #0b2136;
+        background-color: #2b4b6b;
         width: 25%;
         height: 20%;
         border: 1px solid #eee;
