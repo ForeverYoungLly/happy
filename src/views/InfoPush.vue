@@ -132,15 +132,22 @@ export default {
     },
     async getUserList(){
       await axios({
-      url:'http://123.207.73.185:8080/userDirection',
+      url:'http://123.207.73.185:8080/admin/userDirection',
       params:{
           direction:'全部'
-      }
+      },
+      headers:this.global.headers
       }).then( res =>{
           const userList = res.data.data
           this.options = userList
-      }).catch( () =>{
-          this.$message.error("用户列表数据获取失败！")
+      }).catch( (e) =>{
+        if(!e.response.data.code)
+        {
+            this.$message.error('请先登录！')      
+            this.$router.push('/login')
+        }   
+        else
+        this.$message.error("用户列表数据加载失败！")
       })
     this.infoform.wxopenid = this.options[0].username
     },
@@ -152,7 +159,15 @@ export default {
     }
   },
   created(){
-    this.getUserList()
+    if(!localStorage.getItem('token'))
+    {
+      this.$message.error('请先登录！')      
+      this.$router.push('/login')
+    }
+    else
+    {
+      this.getUserList()
+    }
   },
   mounted(){
     //默认选中第一个

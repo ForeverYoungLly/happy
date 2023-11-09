@@ -6,19 +6,18 @@ import InfoPush from '@/views/InfoPush'
 import LayOut from '@/views/LayOut'
 import index from '@/views/Index'
 import setClient from '@/views/setClient'
-import theLogin from '../components/theLogin.vue'
+import theLogin from '@/views/theLogin'
 Vue.use(VueRouter)
 
 //将路由与组件进行映射
 const routes = [
   // 配置主登录路由
-  { path: '/',redirect: '/login'},
-  { path: '/login',component: theLogin},
+  { path: '/',component:theLogin, redirect: '/login'},
   //配置主路由
+  { path: '/login',component: theLogin},
   {
-    path: '/',
+    path: '/Layout',
     component:LayOut,
-    redirect:'/userlist',
     //配置子路由
     children:[
       // 用户列表
@@ -29,9 +28,10 @@ const routes = [
       { path:'/index',component:index},
       //用户端配置
       { path:'/setClient',component:setClient},
-      
     ]
   },
+
+
 ]
 
 //创建router实例

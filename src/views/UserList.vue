@@ -142,38 +142,11 @@
 
 <script>
 import axios from 'axios';
-const url ="http://123.207.73.185:8080/postUserMessage"
-
 export default {
     data() {
         return {
             //存放用户列表的数组
-            UserList:[
-            {
-            studentid:"2022463030703",
-            username:"代金宇1",
-            sex:"男",
-            grade:"22",
-            profession:"计算机类",
-            class:"7班",
-            phone:"13131227873",
-            wxid:"666666666666hwuledfhwq",
-            direction:"前端开发",
-            wxopenid:"2654123",
-            status:"待录取",
-            personalid:"202303",
-            ok:0,
-            information1:"我很非常开心",
-            information2:"我很快乐",
-            information3:"我很高兴",
-            award:"广东省大学生程序设计竞赛一等奖",
-            remark:"我特别高兴",
-            first:"你好",
-            second:"我好",
-            third:"大家好",
-            fourth:"真好"
-            }       
-            ],
+            UserList:[],
             //当前页数
             currentPage: 1,
             //每页最多显示多少条数据
@@ -220,15 +193,22 @@ export default {
         //渲染用户列表
          async getUserList(){
            await axios({
-            url:'http://123.207.73.185:8080/userDirection',
+            url:'http://123.207.73.185:8080/admin/userDirection',
             params:{
                 direction:'全部'
-            }
+            },
+            headers:this.global.headers
             }).then( res =>{
                 const userList = res.data.data
                 this.UserList = userList
                 console.log(userList);
-            }).catch( () =>{
+            }).catch( (e) =>{
+                if(!e.response.data.code)
+                {
+                    this.$message.error('请先登录！')      
+                    this.$router.push('/login')
+                }   
+                else
                 this.$message.error("用户列表数据获取失败！")
             })
         },
@@ -271,15 +251,21 @@ export default {
             {
                 //修改数据库数据
                 await axios({
-                    url,
+                    url:'http://123.207.73.185:8080/admin/updateUserMessage',
                     method:'POST',
-                    data:this.editForm
+                    data:this.editForm,
+                    headers:this.global.headers
                     }).then( res =>{
                         console.log(res)
                         this.getUserList()
                         this.$message.success('修改成功！')
                         this.editDialogVisible = false
-                    }).catch( () =>{
+                    }).catch( (e) =>{
+                        if(!e.response.data.code)
+                        {
+                            this.$message.error('请先登录！')
+                            this.$router.push('/login')
+                        }  
                         this.$message.error("修改失败！")
                     })
                 //修改store仓库数据
@@ -294,6 +280,13 @@ export default {
 
     },
      created(){
+        if(!localStorage.getItem('token'))
+        {
+            this.$message.error('请先登录！')
+            this.$router.push('/login')
+
+        }
+        else
         this.getUserList()
     }
 }

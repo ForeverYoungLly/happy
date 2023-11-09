@@ -4,7 +4,7 @@
         <div class="login_box">
             <!-- 头像区 -->
             <div class="avater_box">
-                <img src="./a.png">
+                <img src="@/assets/images/logo.png">
             </div>
 
             <!-- 填写信息区 -->
@@ -56,6 +56,7 @@ export default {
             this.$refs.loginform.resetFields();
         },
         async login() {
+            //校验表单
             this.$refs.loginform.validate(ispass => {
                 if (!ispass) return;
                 else {
@@ -67,12 +68,19 @@ export default {
                             password: this.loginform.password
                         },
                     }).then((ret) => {
-                        console.log(ret.data);
-                        if(ret.data.code==1){
-                        return this.$message.success('登录成功');
-                    }
+                        //账号密码验证通过
+                        if(ret.data.code==1)
+                        {
+                        this.$message.success('登录成功')
+                        const token = ret.data.data.jwtCode
+                        localStorage.setItem('token',token)
+                            setTimeout(() => {
+                                this.$router.push('/index')
+                            }, 1500);
+                        }
+                        //账号密码验证失败
                         else
-                        return this.$message.error('登陆失败');
+                         this.$message.error('账号或密码错误');
                     }).catch((err) => {
                         console.log(err.data);
                     })
