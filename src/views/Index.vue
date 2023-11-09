@@ -75,12 +75,16 @@ export default {
     }
   },
   created() {
-    if(!localStorage.getItem('token'))
+    const token = localStorage.getItem('token')
+    if(!token)
     {
       this.$message.error('请先登录！')
       this.$router.push('/login')
     }
-    // this.getUserList()
+    else{
+      // 获取echarts信息的接口
+
+    }
   },
   methods: {
   },

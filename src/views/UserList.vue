@@ -188,29 +188,40 @@ export default {
         }
     },
     methods: {
-        //  handleEdit() {
-        // },
-        //渲染用户列表
+        //请求用户列表
          async getUserList(){
-           await axios({
-            url:'http://123.207.73.185:8080/admin/userDirection',
-            params:{
-                direction:'全部'
-            },
-            headers:this.global.headers
-            }).then( res =>{
-                const userList = res.data.data
-                this.UserList = userList
-                console.log(userList);
-            }).catch( (e) =>{
-                if(!e.response.data.code)
-                {
-                    this.$message.error('请先登录！')      
-                    this.$router.push('/login')
-                }   
-                else
-                this.$message.error("用户列表数据获取失败！")
-            })
+            const headers = {
+            'jwt-code':localStorage.getItem('token')
+            }
+            //有token
+            if(headers)
+            {
+                await axios({
+                url:'http://123.207.73.185:8080/admin/userDirection',
+                params:{
+                    direction:'全部'
+                },
+                headers
+                }).then( res =>{
+                    const userList = res.data.data
+                    this.UserList = userList
+                    console.log(userList);
+                }).catch( (e) =>{
+                    //返回401
+                    if(!e.response.data.code)
+                    {
+                        this.$message.error('请先登录！')      
+                        this.$router.push('/login')
+                    }   
+                    else
+                    this.$message.error("用户列表数据获取失败！")
+                })
+            }
+            else{
+                this.$message.error('请先登录！')      
+                this.$router.push('/login')
+            }
+
         },
         //控制排序情况
         handle(val) {
@@ -250,26 +261,36 @@ export default {
             if(editStr !== UserlistStr)
             {
                 //修改数据库数据
-                await axios({
-                    url:'http://123.207.73.185:8080/admin/updateUserMessage',
-                    method:'POST',
-                    data:this.editForm,
-                    headers:this.global.headers
-                    }).then( res =>{
-                        console.log(res)
-                        this.getUserList()
-                        this.$message.success('修改成功！')
-                        this.editDialogVisible = false
-                    }).catch( (e) =>{
-                        if(!e.response.data.code)
-                        {
-                            this.$message.error('请先登录！')
-                            this.$router.push('/login')
-                        }  
-                        this.$message.error("修改失败！")
-                    })
-                //修改store仓库数据
-                this.$store.commit('editUserList',this.UserList)
+                const headers = {
+                    'jwt-code':localStorage.getItem('token')
+                }
+                //有token
+                if(headers){
+                    await axios({
+                        url:'http://123.207.73.185:8080/admin/updateUserMessage',
+                        method:'POST',
+                        data:this.editForm,
+                        headers,
+                        }).then( res =>{
+                            console.log(res)
+                            this.getUserList()
+                            this.$message.success('修改成功！')
+                            this.editDialogVisible = false
+                        }).catch( (e) =>{
+                            //返回401
+                            if(!e.response.data.code)
+                            {
+                                this.$message.error('请先登录！')
+                                this.$router.push('/login')
+                            }  
+                            this.$message.error("修改失败！")
+                        })
+                }
+                //无token
+                else{
+                    this.$message.error('请先登录！')      
+                    this.$router.push('/login')
+                }
             }
             //没有改动
             else {
@@ -280,14 +301,16 @@ export default {
 
     },
      created(){
-        if(!localStorage.getItem('token'))
+        const token = localStorage.getItem('token')
+        if(!token)
         {
             this.$message.error('请先登录！')
             this.$router.push('/login')
-
         }
         else
-        this.getUserList()
+        {
+            this.getUserList()
+        }
     }
 }
 </script>
