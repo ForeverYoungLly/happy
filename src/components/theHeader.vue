@@ -2,7 +2,7 @@
     <div class="container">
         <div class="TabHeader">
             <div class="routeName">AchoBeta 招新系统管理端</div>
-            <div class="adminName_exit"><i class="el-icon-user-solid"></i>超级管理员 | 退出</div>
+            <div class="adminName_exit"><i class="el-icon-user-solid"></i>超级管理员 | <a  @click="exit">退出登录</a></div>
         </div>
         <!-- 面包屑导航栏 -->
         <el-breadcrumb separator="/" id="el-breadcrumb" >
@@ -23,6 +23,10 @@ export default {
     methods: {
         handleClick(tab, event) {
             console.log(tab, event);
+        },
+        exit(){
+            localStorage.clear()
+            this.$router.push('/login')
         }
     }
 };

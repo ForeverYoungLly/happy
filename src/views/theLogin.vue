@@ -1,7 +1,7 @@
 <template>
     <div class="container">
         <h1 style="text-align: center; color: aliceblue;">AchoBeta招新系统管理员登录页面</h1>
-        <div class="login_box">
+        <div class="login_box" @keydown.enter="login">
             <!-- 头像区 -->
             <div class="avater_box">
                 <img src="@/assets/images/logo.png">
@@ -21,7 +21,7 @@
                 </el-form-item>
                 <el-form-item class="btn">
                     <el-button type="info" @click="resetloginform">重置</el-button>
-                    <el-button type="primary" @click="login" @keyup.enter="keyDown">登录</el-button>
+                    <el-button type="primary" @click="login" >登录</el-button>
                 </el-form-item>
             </el-form>
         </div>
@@ -55,12 +55,6 @@ export default {
         // 重置登录信息
         resetloginform() {
             this.$refs.loginform.resetFields();
-        },
-        // 回车触发登录函数
-        keyDown(e){
-          if(e.keyCode == 13){
-            this.login();
-          }
         },
         async login() {
             //校验表单
@@ -113,14 +107,6 @@ export default {
             })
         }
     },
-    mounted () {
-        //绑定监听回车事件触发登录函数
-        window.addEventListener('keydown',this.keyDown);
-      },
-      //销毁事件
-      destroyed(){
-        window.removeEventListener('keydown',this.keyDown,false);
-      }
 }
 </script>
 

@@ -108,6 +108,7 @@ export default {
     }
   },
   methods: {
+    //发送推送信息
     async sendInfoPush(){
       if(this.targetData)
       {
@@ -119,6 +120,7 @@ export default {
             name:this.targetData.username,
             msg:this.infoform.content,
             nowStatus:this.targetData.status,
+            //点击推送信息后跳转的页面
             HTTP:'https://www.baidu.com'
           }
           }).then( () =>{
@@ -130,27 +132,47 @@ export default {
       // 清空表单内容
       Object.assign(this.$data.infoform, this.$options.data().infoform)
     },
+
     async getUserList(){
-      await axios({
-      url:'http://123.207.73.185:8080/admin/userDirection',
-      params:{
-          direction:'全部'
-      },
-      headers:this.global.headers
-      }).then( res =>{
-          const userList = res.data.data
-          this.options = userList
-      }).catch( (e) =>{
-        if(!e.response.data.code)
-        {
-            this.$message.error('请先登录！')      
-            this.$router.push('/login')
-        }   
-        else
-        this.$message.error("用户列表数据加载失败！")
-      })
-    this.infoform.wxopenid = this.options[0].username
+      const headers = {
+      'jwt-code':localStorage.getItem('token')
+      }
+      //有token
+      if(headers['jwt-code'])
+      {
+        await axios({
+          url:'http://123.207.73.185:8080/admin/userDirection',
+          params:{
+              direction:'全部'
+          },
+          headers
+        }).then( res =>{
+            //获取用户列表
+            const userList = res.data.data
+            //更新下拉框
+            this.options = userList
+        }).catch( (e) =>{
+          //token有误
+          if(!e.response.data.code)
+          {
+              this.$message.error('请先登录！')      
+              this.$router.push('/login')
+          }   
+          // 获取不到用户列表
+          else
+            this.$message.error("用户列表数据加载失败！")
+        })
+        //默认显示第一个，打开下拉框后在最上方显示
+        this.infoform.wxopenid = this.options[0].username
+      }
+      //无token
+      else
+      {
+        this.$message.error('请先登录！')      
+        this.$router.push('/login')
+      }
     },
+
     //获取目标用户的所有数据，并存入targetData中
     getId(targetwxopenid){
       this.targetData = this.options.find( obj =>{
@@ -158,20 +180,20 @@ export default {
       })
     }
   },
+  
   created(){
-    if(!localStorage.getItem('token'))
+    const token = localStorage.getItem('token')
+    if(!token)
     {
       this.$message.error('请先登录！')      
       this.$router.push('/login')
     }
     else
     {
+      //获取用户列表用于下拉框
       this.getUserList()
     }
   },
-  mounted(){
-    //默认选中第一个
-  }
 }
 </script>
 
