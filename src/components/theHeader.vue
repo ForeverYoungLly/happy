@@ -2,7 +2,7 @@
     <div class="container">
         <div class="TabHeader">
             <div class="routeName">AchoBeta 招新系统管理端</div>
-            <div class="adminName_exit"><i class="el-icon-user-solid"></i>超级管理员 | <a  @click="exit">退出登录</a></div>
+            <div class="adminName_exit"><i class="el-icon-user-solid"></i>超级管理员 | <a  @click="exit" id="exit">退出登录</a></div>
         </div>
         <!-- 面包屑导航栏 -->
         <el-breadcrumb separator="/" id="el-breadcrumb" >
@@ -48,6 +48,10 @@ export default {
     font-size: 24px;
     font-weight: bold;
     margin-left: 2px;
+}
+/* 退出登录 */
+#exit{
+    cursor: pointer;
 }
 /* 路由名称 */
 .TabHeader  .routeName{

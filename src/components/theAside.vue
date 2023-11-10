@@ -21,20 +21,6 @@
                     <span slot="title">用户列表</span>
                     </template>
                 </el-menu-item>
-                <el-submenu index="/UserList" @click="toUserList">
-                    <template slot="title">
-                        <i class="el-icon-user-solid"></i>
-                        <span>用户列表</span>
-                    </template>
-                    <el-menu-item-group>
-                        <template slot="title">技术方向</template>
-                        <el-menu-item style="padding-right: 0 !important;">前端开发</el-menu-item>
-                        <el-menu-item >后端开发</el-menu-item>
-                        <el-menu-item >UI设计</el-menu-item>
-                        <el-menu-item >产品经理</el-menu-item>
-                        <el-menu-item >网络安全</el-menu-item>
-                    </el-menu-item-group>
-                </el-submenu>
                 <!-- 消息推送 -->
                 <el-menu-item index="/infopush">
                     <i class="el-icon-message"></i>
@@ -61,9 +47,6 @@ export default {
         handleClose(key, keyPath) {
             console.log(key, keyPath);
         },
-        toUserList(){
-            console.log(11);
-        }
     },
     computed: {
         //没有子菜单
