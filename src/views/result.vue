@@ -8,34 +8,47 @@
     />
     <van-steps :active="active" direction="vertical" style="text-align: center  !important;">
       <van-step>待提交简历</van-step>
-      <van-step>提交简历成功</van-step>
-      <van-step>筛选通过</van-step>
-      <van-step>初试通过</van-step>
-      <van-step>复试通过</van-step>
+      <van-step>待筛选</van-step>
+      <van-step>筛选不通过</van-step>
+      <van-step>待安排初试</van-step>
+      <van-step>待初试</van-step>
+      <van-step>终试通过</van-step>
+      <van-step>终试通过</van-step>
+      <van-step>终试通过</van-step>
+      <van-step>终试通过</van-step>
+      <van-step>终试通过</van-step>
       <van-step>终试通过</van-step>
     </van-steps>
-    <van-overlay :show="overlayShow" @click="overlayShow = false">
+    <!-- <van-overlay :show="overlayShow" @click="overlayShow = false">
       <div class="wrapper" @click.stop>
-        <!-- 遮罩层内容 -->
+        遮罩层内容
         <div class="block">
           <van-divider class="line">期待与您相遇</van-divider>
           <h1 style="text-align: center;margin-top: 70px;">提交成功!</h1>
           <van-button style="margin:60px 110px !important;background-color: lightskyblue;border-radius: 5px;width: 100px; font-size: 18px;font-weight: bold;" @click="overlayShow = false">完成</van-button>
         </div>
       </div>
-    </van-overlay>
+    </van-overlay> -->
   </div>
 </template>
 
 <script >
+import { Dialog } from 'vant'
 export default {
+
   name: 'SubmitResult',
   data () {
     return {
+      // status
+      status: '',
       // 已通过的流程
       active: 1,
-      // 控制遮罩层的显示隐藏
-      overlayShow: true
+      // 弹出框标题
+      title: '投递成功',
+      // 弹出框内容
+      message: '期待下次与你相遇'
+      // // 控制遮罩层的显示隐藏
+      // overlayShow: true
     }
   },
   methods: {
@@ -47,6 +60,29 @@ export default {
           item.classList.add('van-step__title--active')
         }
       })
+    }
+  },
+  created () {
+    // 弹出框
+    Dialog.alert({
+      title: this.title,
+      message: this.message,
+      theme: 'round-button',
+      // 点击遮罩层后关闭弹窗
+      closeOnClickOverlay: true
+    }).then(() => {
+      // on close
+    })
+    this.status = this.$route.query.status
+    switch (this.status) {
+      case '':
+        this.active = 0
+        break
+      case '待录取':
+        this.status = 1
+        break
+      default:
+        console.log("It's something else.")
     }
   },
   mounted () {
