@@ -5,6 +5,8 @@
             <el-table :data="UserList.slice((currentPage - 1) * pageSize, currentPage * pageSize)"
                 style="width: 98% ; margin: auto; box-shadow: 1px 2px 4px #ccc;transition: all 0.3 ease-in!important;"
                 stripe @sort-change="handle">
+                <el-table-column type="selection" width="55">
+                </el-table-column>
                 <el-table-column prop="username" label="姓名">
                 </el-table-column>
                 <el-table-column prop="studentid" label="学号" sortable>
@@ -53,26 +55,36 @@
                         <!-- 内容主体区 -->
                         <el-form :model="editForm" :rules="editFormRules" ref="editFormRef">
                             <!-- 姓名、学号 -->
-                            <el-row :gutter="20">
-                                <el-col :span="11">
+                            <el-row :gutter="20" style="display: flex;">
+                                <el-col :span="6" style="bottom: 0px;">
                                     <el-form-item label="姓名" prop="username">
                                         <el-input v-model="editForm.username"></el-input>
                                     </el-form-item>
                                 </el-col>
-                                <el-col :span="11">
+                                <el-col :span="8" style="bottom: 0px;">
                                     <el-form-item label="学号" prop="studentid">
                                         <el-input v-model="editForm.studentid" show-word-limit></el-input>
                                     </el-form-item>
                                 </el-col>
+                                <div class="demo-image__placeholder" style="position: relative; right: 0px;">
+                                    <div class="block" :key="fit">
+                                        <el-image :src="src" style="width: 150px; height: 200px; " :fit="fit"
+                                            :preview-src-list="srcList">
+                                            <div slot="placeholder" class="image-slot">
+                                                加载中<span class="dot">...</span>
+                                            </div>
+                                        </el-image>
+                                    </div>
+                                </div>
                             </el-row>
                             <!-- 性别、年级 -->
-                            <el-row :gutter="20">
-                                <el-col :span="11">
+                            <el-row :gutter="12">
+                                <el-col :span="6">
                                     <el-form-item label="性别" prop="sex">
                                         <el-input v-model="editForm.sex"></el-input>
                                     </el-form-item>
                                 </el-col>
-                                <el-col :span="11">
+                                <el-col :span="8">
                                     <el-form-item label="年级" prop="grade">
                                         <el-input v-model="editForm.grade"></el-input>
                                     </el-form-item>
@@ -197,6 +209,12 @@ import axios from 'axios';
 export default {
     data() {
         return {
+            // 照片自适应容器的方式
+            fit: ['fill'],
+            // 大图预览图片的url地址
+            srcList: ['https://nuphoto.com.tw/photo/css/minicard_4.jpg'],
+            // 用户照片url地址
+            src: 'https://nuphoto.com.tw/photo/css/minicard_4.jpg',
             //存放用户列表的数组
             UserList: [],
             //当前页数
@@ -239,9 +257,9 @@ export default {
                 ],
             },
             // 用户消息历史记录
-            historyform : {
-                first:'',
-                firstresult : '',
+            historyform: {
+                first: '',
+                firstresult: '',
                 second: '',
                 secondresult: '',
                 manageRemark: ''
