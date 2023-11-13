@@ -6,7 +6,7 @@ import request from './utils/request';
 import router from './router';
 import 'element-ui/lib/theme-chalk/index.css';
 import '@/assets/css/base.css'
-// import echarts from "echarts";
+import * as echarts from "echarts";
 import axios from 'axios'
 import VueAxios from 'vue-axios';
 // 全局引入global
@@ -15,7 +15,7 @@ import global from "@/global/global.js"
 Vue.prototype.global = global
 Vue.use(VueAxios,axios);
 Vue.prototype.$axios = axios;
-// Vue.prototype.$echarts = echarts;
+Vue.prototype.$echarts = echarts;
 Vue.config.productionTip = false;
 Vue.use(ElementUI)
 new Vue({

@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <el-card class="box-card" body-style="{ padding: '20px' }" style="width: 90%;margin:20px auto">
+    <el-card class="box-card" body-style="{ padding: '20px' }" style="width: 70%;margin:20px auto">
       <!-- 头部 -->
       <div slot="header" class="clearfix">
         <span>消息推送</span>

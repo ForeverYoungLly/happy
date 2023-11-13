@@ -8,21 +8,7 @@
     <section class="mainbox">
       <!-- 数据可视化部分 -->
       <div class="column">
-        <div class="column1 title" ref="mychart" id="mychart">
-          <el-card class="box-card">
-            <div slot="header" class="clearfix">
-              <el-button style="float: right; padding: 3px 0" type="text">查看待处理的人数</el-button>
-            </div>
-          </el-card>
-        </div>
-        <div class="column1 title">
-        </div>
-      </div>
-      <div class="column bottom">
-        <div class="column2 title">
-        </div>
-        <div class="column2 title">
-        </div>
+        <div style="width: 20vw; height: 25vh; background-color: aquamarine;" id="newCharts"></div>
       </div>
       <!-- 管理员小tips部分 -->
       <div class="tips">
@@ -52,15 +38,13 @@
           <div class="text item">
             <p>8.网络安全选拔标准：了解常见的网络安全知识以及网络安全攻击方式，如：XSS、DDOS等，对于安全，渗透等方向感兴趣</p>
           </div>
-          <div class="text item">
-            <p>9.劳逸结合，好好休息，认真工作</p>
-          </div>
         </el-card>
       </div>
     </section>
   </div>
 </template>
 <script>
+import axios from 'axios';
 
 export default {
   name: 'MyIndex',
@@ -68,25 +52,77 @@ export default {
   data() {
     return {
       // 存储用户列表信息，为后面数据可视调用数据做准备
-      UserList: []
+      UserList: [],
     }
   },
   created() {
     const token = localStorage.getItem('token')
-    if(!token)
-    {
+    if (!token) {
       this.$message.error('请先登录！')
       this.$router.push('/login')
     }
-    else{
-      // 获取echarts信息的接口
-
+    else {
     }
   },
   methods: {
+    async showCharts() {
+      const headers = {
+        'jwt-code': localStorage.getItem('token')
+      }
+      if (headers) {
+        await axios({
+          url: 'http://123.207.73.185:8080/admin/showUserMessage',
+          method: 'GET',
+          // data: '',
+          headers,
+        })
+          .then(function (response) {
+            console.log(response.data.data.专业);
+          })
+          .catch(function (error) {
+            console.log(error);
+          });
+      }
+
+      // 基于准备好的dom，初始化echarts实例
+      let myChart = this.$echarts.init(document.getElementById('newCharts'));//也可以通过$refs.newCharts的方式去获取到dom实例。
+      // 监听图表容器大小并改变图表大小
+      window.addEventListener('resize', function () {
+        myChart.resize();
+      });
+      // 绘制图表
+      myChart.setOption({
+        title: {
+          text: '圆环图的例子',
+          left: 'center',
+          top: 'center'
+        },
+        series: [
+          {
+            type: 'pie',
+            data: [
+              {
+                value: 335,
+                name: 'A'
+              },
+              {
+                value: 234,
+                name: 'B'
+              },
+              {
+                value: 1548,
+                name: 'C'
+              }
+            ],
+            radius: ['40%', '70%']
+          }
+        ]
+      })
+    }
   },
   mounted() {
-    // this.initEcharts();
+    this.showCharts();
+
   },
 }
 </script>
@@ -113,30 +149,16 @@ header {
   height: 90%;
   margin: 0 auto;
   display: flex;
-  }
-.column {
-    flex: 1;
-    /* margin: 8px; */
-    bottom: 0px;
-  }
-  .bottom{
-    margin-bottom: 0px;
-  }
-
-
-.column1 {
-  width: 97%;
-  height: 49%;
-  margin: 5px;
-  background-color: #fefefe;
 }
 
-.column2 {
-  width: 97%;
-  height: 49%;
-  margin: 5px;
+.column {
+  flex: 1;
+  /* margin: 8px; */
   bottom: 0px;
-  background-color: #fefefe;
+}
+
+.bottom {
+  margin-bottom: 0px;
 }
 
 .text {
@@ -157,6 +179,6 @@ header {
 }
 
 .box-card {
-  width: 480px;
+  width: 380px;
 }
 </style>
