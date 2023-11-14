@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <el-card class="box-card" body-style="{ padding: '20px' }" style="width: 70%;margin:20px auto">
+    <el-card class="box-card" body-style="{ padding: '20px' }" style="width: 90%;margin:20px auto">
       <!-- 头部 -->
       <div slot="header" class="clearfix">
         <span>消息推送</span>
@@ -8,60 +8,66 @@
       </div>
       <div class="form">
         <!-- 表单区域 -->
-      <el-form ref="infoform" :model="infoform" :rules="pushFormRules" label-width="400px">
-        <!-- 目标用户区域 -->
-        <el-row>
-          <el-col :span="12">
-            <el-form-item label="用户">
-              <el-select v-model="infoform.wxopenid" clearable placeholder="请选择目标用户" @change="getId(infoform.wxopenid)" >
-                <el-option v-for="item in options" :key="item.wxopenid" :label="item.username" :value="item.wxopenid" >
-                </el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <!-- 标题 -->
-        <el-row>
-          <el-col :span="8">
-            <el-form-item label="标题">
-              <el-input prop="title" v-model.trim="infoform.infoPushTitle" maxlength="10"  placeholder="请输入标题" style="width: 400px;" ></el-input>
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <!-- 内容 -->
-        <el-row>
-          <el-col :span="10">
-            <el-form-item label="内容">
-              <el-input prop="content" type="textarea"  placeholder="请输入内容" v-model.trim="infoform.content" show-word-limit  resize="none"  ></el-input>
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <!-- 显示选项 -->
-        <el-row>
+        <el-form ref="infoform" :model="infoform" :rules="pushFormRules" label-width="400px">
+          <!-- 目标用户区域 -->
+          <el-row>
+            <el-col :span="12">
+              <el-form-item label="用户">
+                <el-select v-model="infoform.wxopenid" clearable placeholder="请选择目标用户" @change="getId(infoform.wxopenid)">
+                  <el-option v-for="item in options" :key="item.wxopenid" :label="item.username" :value="item.wxopenid">
+                  </el-option>
+                </el-select>
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <!-- 标题 -->
+          <el-row>
+            <el-col :span="8">
+              <el-form-item label="标题">
+                <!-- <el-input prop="title" v-model.trim="infoform.infoPushTitle" maxlength="10" placeholder="请输入标题"
+                  style="width: 400px;" class="input-with-select"></el-input> -->
+                <el-select v-model.trim="infoform.infoPushTitle" placeholder="请输入标题" maxlength="10" prop="title" style="width: 400px;" class="input-with-select">
+                  <el-option label="通过" value="1"></el-option>
+                  <el-option label="不通过" value="2"></el-option>
+                </el-select>
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <!-- 内容 -->
+          <el-row>
+            <el-col :span="10">
+              <el-form-item label="内容">
+                <el-input prop="content" type="textarea" placeholder="请输入内容" v-model.trim="infoform.content"
+                  show-word-limit resize="none"></el-input>
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <!-- 显示选项 -->
+          <el-row>
             <el-form-item label="选项">
               <el-radio-group v-model="radio">
                 <el-col :span="10">
-                <el-radio :label="1">接受</el-radio>
+                  <el-radio :label="1">接受</el-radio>
                 </el-col>
                 <el-col :span="10">
-                <el-radio :label="2">拒绝</el-radio>
+                  <el-radio :label="2">拒绝</el-radio>
                 </el-col>
                 <el-col :span="10">
-                <el-radio :label="3">异常反馈</el-radio>
+                  <el-radio :label="3">异常反馈</el-radio>
                 </el-col>
                 <el-col :span="10">
                   <el-radio :label="4"><a href="https://element.eleme.cn/#/" style="color: #333;"
-                    target="_blank">Element</a></el-radio>
+                      target="_blank">Element</a></el-radio>
                 </el-col>
 
               </el-radio-group>
             </el-form-item>
-        </el-row>
-        <!-- 发送按钮 -->
-        <el-form-item>
-          <el-button type="primary" @click="sendInfoPush">发送</el-button>
-        </el-form-item>
-      </el-form>
+          </el-row>
+          <!-- 发送按钮 -->
+          <el-form-item>
+            <el-button type="primary" @click="sendInfoPush">发送</el-button>
+          </el-form-item>
+        </el-form>
       </div>
     </el-card>
   </div>
@@ -80,84 +86,83 @@ export default {
         //推送内容
         content: '',
         //目标用户的openid
-        wxopenid:''
+        wxopenid: '',
+        // 标题选择
+        select:''
       },
       //表单检验规则对象 prop 标识需要检验的表单元素
-      pushFormRules:{
+      pushFormRules: {
         // trigger: 触发， blur：失去焦点
         title:
-        [
-          { required:true, message:'标题不能为空' , trigger: 'blur'},
-          { min:1,max:10,message:'标题要求1-10个字符', trigger: 'blur'}
-        ],
+          [
+            { required: true, message: '标题不能为空', trigger: 'blur' },
+            { min: 1, max: 10, message: '标题要求1-10个字符', trigger: 'blur' }
+          ],
         content:
-        [
-        { required:true, message:'内容不能为空' , trigger: 'blur'},
-        ]
+          [
+            { required: true, message: '内容不能为空', trigger: 'blur' },
+          ]
       },
       // 下拉框显示内容列表
       options: [],
       //目标用户的所有数据
-      targetData:[
+      targetData: [
         {
-          username:1
+          username: 1
         }
       ],
       //单选默认选中内容
-      radio:1
+      radio: 1
     }
   },
   methods: {
     //发送推送信息
-    async sendInfoPush(){
-      if(this.targetData)
-      {
+    async sendInfoPush() {
+      if (this.targetData) {
         await axios({
-          url:'http://42.194.194.197:80/templateMessage',
-          method:'POST',
-          params:{
-            wxOpenId:this.targetData.wxopenid,
-            name:this.targetData.username,
-            msg:this.infoform.content,
-            nowStatus:this.targetData.status,
+          url: 'http://42.194.194.197:80/templateMessage',
+          method: 'POST',
+          params: {
+            wxOpenId: this.targetData.wxopenid,
+            name: this.targetData.username,
+            msg: this.infoform.content,
+            nowStatus: this.targetData.status,
             //点击推送信息后跳转的页面
-            HTTP:'https://www.baidu.com'
+            HTTP: 'https://www.baidu.com'
           }
-          }).then( () =>{
-            this.$message.success('推送成功！')
-          }).catch( () =>{
-            this.$message.error('推送失败')
-          })
+        }).then(() => {
+          this.$message.success('推送成功！')
+        }).catch(() => {
+          this.$message.error('推送失败')
+        })
       }
       // 清空表单内容
       Object.assign(this.$data.infoform, this.$options.data().infoform)
     },
 
-    async getUserList(){
+    async getUserList() {
       const headers = {
-      'jwt-code':localStorage.getItem('token')
+        'jwt-code': localStorage.getItem('token')
       }
       //有token
-      if(headers['jwt-code'])
-      {
+      if (headers['jwt-code']) {
         await axios({
-          url:'http://123.207.73.185:8080/admin/userDirection',
-          params:{
-              direction:'全部'
+          url: 'http://123.207.73.185:8080/admin/userDirection',
+          params: {
+            direction: '全部'
           },
           headers
-        }).then( res =>{
-            //获取用户列表
-            const userList = res.data.data
-            //更新下拉框
-            this.options = userList
-        }).catch( (e) =>{
+        }).then(res => {
+          //获取用户列表
+          const userList = res.data.data
+          //更新下拉框
+          this.options = userList
+        }).catch((e) => {
           //token有误
-          if(!e.response.data.code)
-          {
-              this.$message.error('请先登录！')      
-              this.$router.push('/login')
-          }   
+          if (!e.response.data.code) {
+            this.$message.error('请先登录！')
+            this.$router.push('/login')
+          }
           // 获取不到用户列表
           else
             this.$message.error("用户列表数据加载失败！")
@@ -166,30 +171,32 @@ export default {
         this.infoform.wxopenid = this.options[0].username
       }
       //无token
-      else
-      {
-        this.$message.error('请先登录！')      
+      else {
+        this.$message.error('请先登录！')
         this.$router.push('/login')
       }
     },
 
     //获取目标用户的所有数据，并存入targetData中
-    getId(targetwxopenid){
-      this.targetData = this.options.find( obj =>{
+    getId(targetwxopenid) {
+      this.targetData = this.options.find(obj => {
         return obj.wxopenid === targetwxopenid
       })
-    }
+    },
+
+    // 点击实现自动绑定内容
+    // sendpassInformation() {
+    //   this.infoform.content = "关于考核期的信息，请联系相关负责人。微信号: lyr007learning"
+    // }
   },
-  
-  created(){
+
+  created() {
     const token = localStorage.getItem('token')
-    if(!token)
-    {
-      this.$message.error('请先登录！')      
+    if (!token) {
+      this.$message.error('请先登录！')
       this.$router.push('/login')
     }
-    else
-    {
+    else {
       //获取用户列表用于下拉框
       this.getUserList()
     }
@@ -202,11 +209,13 @@ export default {
 .el-select {
   width: 400px;
 }
-a:hover{
+
+a:hover {
   color: #61afef !important;
 }
+
 textarea {
-  width:400px !important;
-  height: 100px !important; 
+  width: 400px !important;
+  height: 100px !important;
 }
 </style>
