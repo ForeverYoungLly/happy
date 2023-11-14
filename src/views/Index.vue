@@ -8,7 +8,7 @@
     <section class="mainbox">
       <!-- 数据可视化部分 -->
       <div class="column">
-        <div style="width: 20vw; height: 25vh; background-color: aquamarine;" id="newCharts"></div>
+        <div style="width: 25vw; height: 30vh;" id="chartPie"></div>
       </div>
       <!-- 管理员小tips部分 -->
       <div class="tips">
@@ -53,6 +53,10 @@ export default {
     return {
       // 存储用户列表信息，为后面数据可视调用数据做准备
       UserList: [],
+      chartPie: '',
+      typeName: [],
+      typeNum: []
+
     }
   },
   created() {
@@ -64,7 +68,49 @@ export default {
 
   },
   methods: {
-    async showCharts() {
+    drawPieChart() {
+      this.chartPie = this.$echarts.init(document.getElementById("chartPie"));
+      this.chartPie.setOption({
+        //设置标题,副标题,以及标题位置居中
+        title: {
+          text: '专业分布情况',
+          x: 'center'
+        },
+        //具体点击某一项触发的样式内容
+        tooltip: {
+          trigger: 'item',
+          formatter: "{a} <br/>{b} : {c} ({d}%)"
+        },
+        //左上侧分类条形符
+        legend: {
+          orient: 'vertical',
+          left: 'left',
+          data: []
+        },
+        //饼状图类型以及数据源
+        series: [
+          {
+            name: '统计数量',
+            type: 'pie',
+            //radius: '70%',
+            //center: ['50%', '60%'],
+            data: [],
+            //设置饼状图扇形区域的样式
+            itemStyle: {
+              emphasis: {
+                shadowBlur: 10,
+                shadowOffsetX: 0,
+                shadowColor: 'rgba(0, 0, 0, 0.5)'
+              }
+            },
+          }
+        ]
+      });
+    },
+    //动态获取饼状图的数据
+    async initData() {
+
+
       const headers = {
         'jwt-code': localStorage.getItem('token')
       }
@@ -72,56 +118,59 @@ export default {
         await axios({
           url: 'http://123.207.73.185:8080/admin/showUserMessage',
           method: 'GET',
-          // data: '',
           headers,
         })
           .then(function (response) {
-            console.log(response.data.data.专业);
+            var getData = [];
+            //先进行赋值
+            for (let i = 0; i < response.data.data.专业.length; i++) {
+              var obj = new Object();
+              obj.directionname = response.data.data.专业[1][i];
+              obj.directionvalue = response.data.data.专业[0][i];
+              getData[i] = obj;
+              this.chartPie.setOption({
+                legend: {
+                  data: response.data.data.专业[1],
+                },
+                series: [{
+                  data: getData,
+                }]
+              });
+            }
+            console.log(getData);
           })
           .catch(function (error) {
             console.log(error);
           });
       }
+    },
+    drawCharts() {
+      this.drawPieChart();
+    },
 
-      // 基于准备好的dom，初始化echarts实例
-      let myChart = this.$echarts.init(document.getElementById('newCharts'));//也可以通过$refs.newCharts的方式去获取到dom实例。
-      // 监听图表容器大小并改变图表大小
-      window.addEventListener('resize', function () {
-        myChart.resize();
-      });
-      // 绘制图表
-      myChart.setOption({
-        title: {
-          text: '圆环图的例子',
-          left: 'center',
-          top: 'center'
-        },
-        series: [
-          {
-            type: 'pie',
-            data: [
-              {
-                value: 335,
-                name: 'A'
-              },
-              {
-                value: 234,
-                name: 'B'
-              },
-              {
-                value: 1548,
-                name: 'C'
-              }
-            ],
-            radius: ['40%', '70%']
-          }
-        ]
-      })
-    }
+    // async showCharts() {
+    //   const headers = {
+    //     'jwt-code': localStorage.getItem('token')
+    //   }
+    //   if (headers) {
+    //     const response = await axios({
+    //       url: 'http://123.207.73.185:8080/admin/showUserMessage',
+    //       method: 'GET',
+    //       // data: '',
+    //       headers,
+    //     })
+    //       .then(function (response) {
+    //       })
+    //       .catch(function (error) {
+    //         console.log(error);
+    //       });
+    //   }
+    // }
   },
   mounted() {
-    this.showCharts();
-
+    // this.showCharts();
+    this.initData();
+    this.drawCharts();
   },
 }
 </script>
