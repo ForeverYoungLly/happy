@@ -210,7 +210,7 @@ export default {
     data() {
         return {
             // 照片自适应容器的方式
-            fit: ['fill'],
+            fit: ['contain'],
             // 大图预览图片的url地址
             srcList: ['https://nuphoto.com.tw/photo/css/minicard_4.jpg'],
             // 用户照片url地址
