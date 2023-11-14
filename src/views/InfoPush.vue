@@ -26,9 +26,9 @@
               <el-form-item label="标题">
                 <!-- <el-input prop="title" v-model.trim="infoform.infoPushTitle" maxlength="10" placeholder="请输入标题"
                   style="width: 400px;" class="input-with-select"></el-input> -->
-                <el-select v-model.trim="infoform.infoPushTitle" placeholder="请输入标题" maxlength="10" prop="title" style="width: 400px;" class="input-with-select">
-                  <el-option label="通过" value="1"></el-option>
-                  <el-option label="不通过" value="2"></el-option>
+                <el-select v-model.trim="infoform.infoPushTitle" placeholder="请输入标题" maxlength="10" prop="title" style="width: 400px;" class="title">
+                  <el-option :label="titleContent[0]" value="日程安排提醒"></el-option>
+                  <el-option :label="titleContent[1]" value="面试结果通知"></el-option>
                 </el-select>
               </el-form-item>
             </el-col>
@@ -79,6 +79,11 @@ import axios from 'axios';
 export default {
   data() {
     return {
+      // 通过不通过和内容
+      titleContent:[
+        "日程安排提醒",
+        "面试结果通知"
+      ],
       //表单绑定的数据对象
       infoform: {
         //推送标题
@@ -201,6 +206,17 @@ export default {
       this.getUserList()
     }
   },
+  updated(){
+    console.log(this.infoform.infoPushTitle);
+    if(this.infoform.infoPushTitle === '日程安排提醒')
+    {
+      this.infoform.content = "如果有时间上的冲突，请联系相应组别的联系人（点击链接即可）。线上面试的同学，腾讯会议号请留意群通知"
+    }
+    else if (this.infoform.infoPushTitle === '面试结果通知')
+    {
+      this.infoform.content = "关于考核期的信息，请联系相关负责人。\n微信号:lyr007learning"
+    }
+  }
 }
 </script>
 
