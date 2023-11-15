@@ -116,17 +116,16 @@ export default {
 }
 
 .login_box {
-    width: 450px;
-    height: 400px;
+    width: 30vw;
+    height: 45vh;
     background-color: rgba(255, 255, 255, 0.5);
     border-radius: 25px;
     left: 50%;
     top: 60%;
     position: absolute;
-    transform: translate(-0%, -60%);
+    transform: translate(-20%, -80%);
 
     .avater_box {
-        background-color: #2b4b6b;
         width: 23%;
         height: 20%;
         border: 1px solid #eee;
@@ -140,7 +139,6 @@ export default {
             top: 10%;
             width: 100%;
             height: 100%;
-            background-color: #eee;
         }
 
     }
