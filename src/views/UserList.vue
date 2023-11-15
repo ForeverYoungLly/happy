@@ -131,14 +131,21 @@
                                 </el-col>
                             </el-row>
                             <!-- 个人简介 -->
-                            <el-form-item label="个人简介" prop="information">
+                            <el-form-item label="个人简介" prop="introduction">
                                 <el-col>
-                                    <el-input type="textarea" placeholder="请输入个人简介" :rows="5" v-model="editForm.information"
+                                    <el-input type="textarea" placeholder="请输入个人简介" :rows="5" v-model="editForm.introduction"
                                         resize='none' class="textarea"></el-input>
                                 </el-col>
                             </el-form-item>
                             <!-- 加入ab的理由 -->
                             <el-form-item label="加入ab的理由" prop="reason">
+                                <el-col>
+                                    <el-input type="textarea" placeholder="请输入个人经历及项目经验" :rows="5" v-model="editForm.reason"
+                                        resize='none' class="textarea"></el-input>
+                                </el-col>
+                            </el-form-item>
+                            <!-- 个人经历 -->
+                            <el-form-item label="个人经历及项目经验" prop="reason">
                                 <el-col>
                                     <el-input type="textarea" placeholder="请输入理由" :rows="5" v-model="editForm.reason"
                                         resize='none' class="textarea"></el-input>
@@ -203,7 +210,7 @@ export default {
     data() {
         return {
             // 照片自适应容器的方式
-            fit: ['fill'],
+            fit: ['contain'],
             // 大图预览图片的url地址
             srcList: ['https://nuphoto.com.tw/photo/css/minicard_4.jpg'],
             // 用户照片url地址
@@ -228,7 +235,9 @@ export default {
                 direction: '前端',
                 status: '已通过',
                 personalid: '369',
-                information: '个人简介',
+                introduction: '个人简介',
+                reasons:'',
+                experience:'',
                 wxid: 'r1197',
                 remark: '非常优秀',
                 award: '蓝桥杯国赛一等奖',
@@ -310,8 +319,10 @@ export default {
         showEditDialog(scope) {
             //获取打开对象的wxopenid
             const id = scope.row.wxopenid
+            console.log(id);
             // 在用户列表中找到具有对应id的用户的数据
             const editUserData = this.UserList.find(obj => { return obj.wxopenid === id })
+            console.log(editUserData.username);
             const str = JSON.stringify(editUserData)
             //数据回显到表单
             this.editForm = JSON.parse(str)
@@ -375,8 +386,6 @@ export default {
         filterTag2(value, row) {
             return row.status === value;
         },
-
-
     },
     created() {
         const token = localStorage.getItem('token')

@@ -206,8 +206,7 @@ export default {
       this.$message.error('请先登录！')
       this.$router.push('/login')
     }
-    else {
-    }
+
   },
   methods: {
   },
