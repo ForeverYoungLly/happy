@@ -2,14 +2,18 @@
   <div class="container">
     <!-- 头部大标题 -->
     <header>
-      <h1>超级管理员首页</h1>
+      <h1 class="title">首页---数据可视化面板</h1>
     </header>
     <!-- 页面主体部分 -->
     <section class="mainbox">
       <!-- 数据可视化部分 -->
       <div class="column">
-        <div style="width: 25vw; height: 30vh;" id="chartPie"></div>
+        <div class="chart" id="chart1"></div>
+        <div class="chart" id="chart2"></div>
+        <div class="chart" id="chart3"></div>
+        <div class="chart" id="chart4"></div>
       </div>
+
       <!-- 管理员小tips部分 -->
       <div class="tips">
         <el-card class="box-card">
@@ -45,6 +49,7 @@
 </template>
 <script>
 import axios from 'axios';
+import * as echarts from "echarts";
 
 export default {
   name: 'MyIndex',
@@ -53,10 +58,208 @@ export default {
     return {
       // 存储用户列表信息，为后面数据可视调用数据做准备
       UserList: [],
-      chartPie: '',
-      typeName: [],
-      typeNum: []
+    }
+  },
+  mounted() {
+    // 专业人数分布图表
+    var myChart1 = echarts.init(document.getElementById('chart3'));
 
+    // 年级人数分布图表
+    var myChart2 = echarts.init(document.getElementById('chart2'));
+
+    // 方向人数分布图表
+    var myChart3 = echarts.init(document.getElementById('chart4'));
+
+    // 状态人数分布图表
+    var myChart4 = echarts.init(document.getElementById('chart1'));
+
+    const headers = { 'jwt-code': localStorage.getItem('token') }
+    if (headers) {
+      axios({
+        url: 'http://123.207.73.185:8080/admin/showUserMessage',
+        method: 'GET',
+        headers,
+      }).then(response => {
+        console.log(response.data.data);
+        //对专业人数图表进行配置
+        var getData = [];
+        //先进行赋值
+        for (let i = 0; i < response.data.data.专业[0].length; i++) {
+          var obj = new Object();
+          obj.name = response.data.data.专业[1][i];
+          obj.value = response.data.data.专业[0][i];
+          getData[i] = obj;
+        }
+        myChart1.setOption({
+          title: {
+            text: '各专业人数分布'
+          },
+          tooltip: {
+            trigger: 'item'
+          },
+          legend: {
+            top: '8%',
+            left: 'center'
+          },
+          series: [
+            {
+              name: '专业人数',
+              type: 'pie',
+              radius: ['40%', '70%'],
+              avoidLabelOverlap: false,
+              itemStyle: {
+                borderRadius: 10,
+                borderColor: '#fff',
+                borderWidth: 2
+              },
+              label: {
+                show: false,
+                position: 'center'
+              },
+              emphasis: {
+                label: {
+                  show: true,
+                  fontSize: 20,
+                  fontWeight: 'bold'
+                }
+              },
+              labelLine: {
+                show: false
+              },
+              data: getData
+            }
+          ],
+        });
+
+        // 对年级人数图表进行配置
+        this.data2 = response.data.data.年级[1];
+        let gradename = this.data2.map(item => {
+          return item
+        })
+        myChart2.setOption({
+          title: {
+            text:'各年级人数分布'
+          },
+          xAxis: {
+            data: gradename
+          },
+          yAxis: [
+            {
+              type: 'value',
+              minInterval: 1, //设置成1保证坐标轴分割刻度显示成整数。
+              axisLabel: {
+                formatter: '{value}'
+              }
+            }
+          ],
+          series: [
+            {
+              type: 'bar',
+              data: response.data.data.年级[0]
+            }
+          ]
+        });
+        // 对方向人数图表进行配置
+        var getData2 = [];
+        for (let i = 0; i < response.data.data.方向[0].length; i++) {
+          var obj = new Object();
+          obj.name = response.data.data.方向[1][i];
+          obj.value = response.data.data.方向[0][i];
+          getData2[i] = obj;
+        }
+        myChart3.setOption({
+          title: {
+            text: '各专业人数分布'
+          },
+          tooltip: {
+            trigger: 'item'
+          },
+          legend: {
+            top: '8%',
+            left: 'center'
+          },
+          series: [
+            {
+              name: '方向人数',
+              type: 'pie',
+              radius: ['40%', '70%'],
+              avoidLabelOverlap: false,
+              itemStyle: {
+                borderRadius: 10,
+                borderColor: '#fff',
+                borderWidth: 2
+              },
+              label: {
+                show: false,
+                position: 'center'
+              },
+              emphasis: {
+                label: {
+                  show: true,
+                  fontSize: 20,
+                  fontWeight: 'bold'
+                }
+              },
+              labelLine: {
+                show: false
+              },
+              data: getData2
+            }
+          ],
+        });
+
+        // 对状态人数图表进行配置
+        var getData3 = [];
+        for (let i = 0; i < response.data.data.状态[0].length; i++) {
+          var obj = new Object();
+          obj.name = response.data.data.状态[1][i];
+          obj.value = response.data.data.状态[0][i];
+          getData3[i] = obj;
+        }
+        myChart4.setOption({
+          title: {
+            text: '各人数状态分布'
+          },
+          tooltip: {
+            trigger: 'item'
+          },
+          legend: {
+            top: '8%',
+            left: 'center'
+          },
+          series: [
+            {
+              name: '方向人数',
+              type: 'pie',
+              radius: ['40%', '70%'],
+              avoidLabelOverlap: false,
+              itemStyle: {
+                borderRadius: 10,
+                borderColor: '#fff',
+                borderWidth: 2
+              },
+              label: {
+                show: false,
+                position: 'center'
+              },
+              emphasis: {
+                label: {
+                  show: true,
+                  fontSize: 20,
+                  fontWeight: 'bold'
+                }
+              },
+              labelLine: {
+                show: false
+              },
+              data: getData3
+            }
+          ],
+        });
+
+      }, err => {
+        console.log('错误信息：', err.message)
+      })
     }
   },
   created() {
@@ -68,123 +271,19 @@ export default {
 
   },
   methods: {
-    drawPieChart() {
-      this.chartPie = this.$echarts.init(document.getElementById("chartPie"));
-      this.chartPie.setOption({
-        //设置标题,副标题,以及标题位置居中
-        title: {
-          text: '专业分布情况',
-          x: 'center'
-        },
-        //具体点击某一项触发的样式内容
-        tooltip: {
-          trigger: 'item',
-          formatter: "{a} <br/>{b} : {c} ({d}%)"
-        },
-        //左上侧分类条形符
-        legend: {
-          orient: 'vertical',
-          left: 'left',
-          data: []
-        },
-        //饼状图类型以及数据源
-        series: [
-          {
-            name: '统计数量',
-            type: 'pie',
-            //radius: '70%',
-            //center: ['50%', '60%'],
-            data: [],
-            //设置饼状图扇形区域的样式
-            itemStyle: {
-              emphasis: {
-                shadowBlur: 10,
-                shadowOffsetX: 0,
-                shadowColor: 'rgba(0, 0, 0, 0.5)'
-              }
-            },
-          }
-        ]
-      });
-    },
-    //动态获取饼状图的数据
-    async initData() {
 
-
-      const headers = {
-        'jwt-code': localStorage.getItem('token')
-      }
-      if (headers) {
-        await axios({
-          url: 'http://123.207.73.185:8080/admin/showUserMessage',
-          method: 'GET',
-          headers,
-        })
-          .then(function (response) {
-            var getData = [];
-            //先进行赋值
-            for (let i = 0; i < response.data.data.专业.length; i++) {
-              var obj = new Object();
-              obj.directionname = response.data.data.专业[1][i];
-              obj.directionvalue = response.data.data.专业[0][i];
-              getData[i] = obj;
-              this.chartPie.setOption({
-                legend: {
-                  data: response.data.data.专业[1],
-                },
-                series: [{
-                  data: getData,
-                }]
-              });
-            }
-            console.log(getData);
-          })
-          .catch(function (error) {
-            console.log(error);
-          });
-      }
-    },
-    drawCharts() {
-      this.drawPieChart();
-    },
-
-    // async showCharts() {
-    //   const headers = {
-    //     'jwt-code': localStorage.getItem('token')
-    //   }
-    //   if (headers) {
-    //     const response = await axios({
-    //       url: 'http://123.207.73.185:8080/admin/showUserMessage',
-    //       method: 'GET',
-    //       // data: '',
-    //       headers,
-    //     })
-    //       .then(function (response) {
-    //       })
-    //       .catch(function (error) {
-    //         console.log(error);
-    //       });
-    //   }
-    // }
-  },
-  mounted() {
-    // this.showCharts();
-    this.initData();
-    this.drawCharts();
   },
 }
 </script>
 
 <style  scoped>
 .container {
-  background-color: #E9EEF3;
   height: 100%;
   padding: 18px;
 }
 
 header {
   height: 7vh;
-  background-color: #E9EEF3;
   font-size: 24px;
   font-weight: bold;
   text-align: center;
@@ -200,13 +299,21 @@ header {
 }
 
 .column {
-  flex: 1;
-  /* margin: 8px; */
   bottom: 0px;
+  display: flex;
+  flex-flow: wrap;
 }
 
-.bottom {
-  margin-bottom: 0px;
+.chart {
+  width: 26vw;
+  height: 35vh;
+  margin: 0.5%;
+  padding: 1%;
+}
+
+#chart2 {
+  width: 16vw;
+  height: 35vh;
 }
 
 .text {
@@ -227,6 +334,16 @@ header {
 }
 
 .box-card {
-  width: 380px;
+  width: 24vw;
+  margin: 2%;
+  color: rgb(0, 43, 87);
+  background-color: aliceblue;
+}
+
+.title{
+  /* color: rgb(175, 215, 237); */
+  color: #111;
+  text-align: center;
+  /* text-shadow: 0 0 30px rgb(136, 206, 250), 0 0 20px rgb(136, 206, 250), 0 0 30px rgb(136, 206, 250), 0 0 20px rgb(136, 206, 250); */
 }
 </style>

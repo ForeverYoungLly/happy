@@ -38,7 +38,6 @@
 <script>
 import axios from 'axios';
 
-
 export default {
     data() {
         return {
@@ -116,17 +115,16 @@ export default {
 }
 
 .login_box {
-    width: 450px;
-    height: 400px;
+    width: 30vw;
+    height: 45vh;
     background-color: rgba(255, 255, 255, 0.5);
     border-radius: 25px;
     left: 50%;
     top: 60%;
     position: absolute;
-    transform: translate(-0%, -60%);
+    transform: translate(-20%, -80%);
 
     .avater_box {
-        background-color: #2b4b6b;
         width: 23%;
         height: 20%;
         border: 1px solid #eee;
@@ -140,7 +138,6 @@ export default {
             top: 10%;
             width: 100%;
             height: 100%;
-            background-color: #eee;
         }
 
     }
@@ -344,23 +341,25 @@ export default {
         opacity: 0;
     }
 }
-
+// 标题样式
 .title {
     text-align: center;
     color: rgb(248, 241, 210);
     text-shadow: 0 0 30px rgb(245, 222, 105), 0 0 20px rgb(244, 226, 123), 0 0 30px rgb(245, 225, 125), 0 0 20px rgb(236, 222, 148);
 }
 
+// 重置按钮
 .el-button--info {
     background-image: linear-gradient(to right, rgb(12, 22, 135)10%, rgb(62, 36, 86)70%);
     border-color: rgb(249, 249, 247);
     color: #fefefe;
 }
-
 .el-button--info:focus,
 .el-button--info:hover {
     color: rgb(217,217,255);
 }
+
+// 登录按钮
 .el-button--primary{
     border-color: antiquewhite;
     background-image: linear-gradient(to right, rgb(0,97,194) 20%,rgb(0,43,87) 60%,rgb(66, 2, 93) 100%) ;

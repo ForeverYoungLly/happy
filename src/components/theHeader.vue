@@ -2,7 +2,7 @@
     <div class="container">
         <div class="TabHeader">
             <div class="routeName">AchoBeta 招新系统管理端</div>
-            <div class="adminName_exit"><i class="el-icon-user-solid"></i>超级管理员 | <a  @click="exit" id="exit">退出登录</a></div>
+            <div class="adminName_exit"><i class="el-icon-user-solid"></i>admin | <a  @click="exit" id="exit">退出登录</a></div>
         </div>
         <!-- 面包屑导航栏 -->
         <el-breadcrumb separator="/" id="el-breadcrumb" >
@@ -43,7 +43,8 @@ export default {
     justify-content: space-between;
     height: 60px;
     color: #fff;
-    background-color: #545c64;
+    /* background-color: #545c64; */
+    background-image: linear-gradient(#05446f, #112f57);
     line-height: 60px;
     font-size: 24px;
     font-weight: bold;
