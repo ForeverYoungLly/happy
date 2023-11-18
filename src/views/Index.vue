@@ -1,9 +1,5 @@
 <template>
   <div class="container">
-    <!-- 头部大标题 -->
-    <header>
-      <h1 class="title">首页---数据可视化面板</h1>
-    </header>
     <!-- 页面主体部分 -->
     <section class="mainbox">
       <!-- 数据可视化部分 -->
@@ -13,7 +9,6 @@
         <div class="chart" id="chart3"></div>
         <div class="chart" id="chart4"></div>
       </div>
-
       <!-- 管理员小tips部分 -->
       <div class="tips">
         <el-card class="box-card">
@@ -162,7 +157,7 @@ export default {
         // 对方向人数图表进行配置
         var getData2 = [];
         for (let i = 0; i < response.data.data.方向[0].length; i++) {
-          var obj = new Object();
+          const obj = new Object();
           obj.name = response.data.data.方向[1][i];
           obj.value = response.data.data.方向[0][i];
           getData2[i] = obj;
@@ -211,7 +206,7 @@ export default {
         // 对状态人数图表进行配置
         var getData3 = [];
         for (let i = 0; i < response.data.data.状态[0].length; i++) {
-          var obj = new Object();
+          const obj = new Object();
           obj.name = response.data.data.状态[1][i];
           obj.value = response.data.data.状态[0][i];
           getData3[i] = obj;
@@ -277,9 +272,11 @@ export default {
 </script>
 
 <style  scoped>
+*{
+  box-sizing: border-box ;
+}
 .container {
-  height: 100%;
-  padding: 18px;
+  height: 80%;
 }
 
 header {
@@ -291,23 +288,30 @@ header {
 
 .mainbox {
   padding: 10px;
-  background-color: #E9EEF3;
   width: 100%;
-  height: 90%;
+  height: 100%;
   margin: 0 auto;
   display: flex;
+  box-shadow: 1px 2px 4px #eee;
+  border: 1px solid black;
 }
-
+.tips {
+  height: 100%;
+  flex: 3;
+  margin-right: 20px;
+  overflow: auto;
+}
 .column {
-  bottom: 0px;
+  flex: 7;
+  height: 100%;
   display: flex;
   flex-flow: wrap;
+  /* border: 1px solid black; */
 }
 
 .chart {
-  width: 26vw;
+  width: 20vw;
   height: 35vh;
-  margin: 0.5%;
   padding: 1%;
 }
 
@@ -334,10 +338,10 @@ header {
 }
 
 .box-card {
-  width: 24vw;
-  margin: 2%;
+  width: 100%;
   color: rgb(0, 43, 87);
   background-color: aliceblue;
+  overflow: auto !important;
 }
 
 .title{
@@ -346,4 +350,5 @@ header {
   text-align: center;
   /* text-shadow: 0 0 30px rgb(136, 206, 250), 0 0 20px rgb(136, 206, 250), 0 0 30px rgb(136, 206, 250), 0 0 20px rgb(136, 206, 250); */
 }
+
 </style>

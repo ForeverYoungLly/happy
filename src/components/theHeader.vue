@@ -35,13 +35,14 @@ export default {
 .container{
     display: flex;
     flex-direction: column;
+    height: 20%;
     /* background-color: pink; */
 }
 /* 头部导航栏，管理员名称，退出登录 */
 .TabHeader{
     display: flex;
     justify-content: space-between;
-    height: 60px;
+    /* height: 60px; */
     color: #fff;
     /* background-color: #545c64; */
     background-image: linear-gradient(#05446f, #112f57);

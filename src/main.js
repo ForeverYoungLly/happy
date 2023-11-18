@@ -9,8 +9,7 @@ import '@/assets/css/base.css'
 import * as echarts from "echarts";
 import axios from 'axios'
 import VueAxios from 'vue-axios';
-// 全局引入global
-import global from "@/global/global.js"
+
 // axios.defaults.baseURL = 'http://123.207.73.185:8080'
 Vue.prototype.global = global
 Vue.use(VueAxios,axios);
