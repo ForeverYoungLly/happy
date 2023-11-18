@@ -145,7 +145,7 @@
                                 </el-col>
                             </el-form-item>
                             <!-- 个人经历 -->
-                            <el-form-item label="个人经历及项目经验" prop="reason">
+                            <el-form-item label="个人经历及项目经验" prop="experience">
                                 <el-col>
                                     <el-input type="textarea" placeholder="请输入理由" :rows="5" v-model="editForm.reason"
                                         resize='none' class="textarea"></el-input>
