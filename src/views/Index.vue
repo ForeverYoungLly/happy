@@ -10,7 +10,7 @@
         <div class="chart" id="chart4"></div>
       </div>
       <!-- 管理员小tips部分 -->
-      <div class="tips">
+       <div class="tips">
         <el-card class="box-card">
           <div slot="header" class="clearfix"><span>对管理员的温馨提示：</span></div>
           <div class="text item">
@@ -38,7 +38,8 @@
             <p>8.网络安全选拔标准：了解常见的网络安全知识以及网络安全攻击方式，如：XSS、DDOS等，对于安全，渗透等方向感兴趣</p>
           </div>
         </el-card>
-      </div>
+      </div> 
+
     </section>
   </div>
 </template>
@@ -276,7 +277,7 @@ export default {
   box-sizing: border-box ;
 }
 .container {
-  height: 80%;
+  height: 100%;
 }
 
 header {
@@ -293,31 +294,38 @@ header {
   margin: 0 auto;
   display: flex;
   box-shadow: 1px 2px 4px #eee;
-  border: 1px solid black;
 }
+
+
 .tips {
+  max-height: 80vh;
   height: 100%;
   flex: 3;
   margin-right: 20px;
+  max-width: 20vw;
   overflow: auto;
 }
+
+
 .column {
   flex: 7;
   height: 100%;
   display: flex;
-  flex-flow: wrap;
-  /* border: 1px solid black; */
+  flex-wrap: wrap;
+  justify-content: space-around;
+  align-content: space-around;
 }
 
 .chart {
+  /* flex: 1; */
   width: 20vw;
   height: 35vh;
-  padding: 1%;
+  margin-left: 5%;
 }
 
 #chart2 {
-  width: 16vw;
-  height: 35vh;
+  /* flex: 1; */
+  height: 30vh;
 }
 
 .text {

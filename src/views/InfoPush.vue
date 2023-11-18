@@ -4,7 +4,6 @@
       <!-- 头部 -->
       <div slot="header" class="clearfix">
         <span>消息推送</span>
-        <el-button style="float: right; padding: 3px 0" type="button">操作按钮</el-button>
       </div>
       <div class="form">
         <!-- 表单区域 -->
@@ -14,7 +13,7 @@
             <el-col :span="12">
               <el-form-item label="用户">
                 <el-select v-model="infoform.wxopenid" clearable placeholder="请选择目标用户" @change="getId(infoform.wxopenid)">
-                  <el-option v-for="item in options" :key="item.wxopenid" :label="item.username" :value="item.wxopenid">
+                  <el-option v-for="(item,index) in options" :key="index" :label="item.username" :value="item.wxopenid">
                   </el-option>
                 </el-select>
               </el-form-item>
@@ -46,9 +45,19 @@
           <!-- 显示选项 -->
           <el-row>
             <el-form-item label="选项">
-              <el-radio v-model="radio" label="1">接受/拒绝/反馈</el-radio>
-              <br>
-              <el-link href="https://element.eleme.io" target="_blank">跳转指定链接</el-link>
+              <el-radio v-model="radio" label="1" @change="show = !show">接受/拒绝/反馈</el-radio>
+              <el-radio v-model="radio" label="2" @change="show = !show">跳转到指定连接</el-radio>
+                <div  v-show="!show">
+                  <el-select v-model="currentStatus" placeholder="当前状态" class="currentStatus">
+                    <el-option v-for="(item,index) in statusList" :label="item.status" :key="index"  value="currentStatus"></el-option>
+                  </el-select>
+                  <el-select v-model="nextStatus" placeholder="下一个状态" class="nextStatus">
+                    <el-option v-for="(item,index) in statusList" :label="item.status" :key="index"  value="currentStatus"></el-option>
+                  </el-select>
+                </div>
+                <div  v-show="show">
+                  <el-input v-model="link" class="link" placeholder="请输入链接"></el-input>
+                </div>
             </el-form-item>
           </el-row>
           <!-- 发送按钮 -->
@@ -60,14 +69,6 @@
         </el-form>
       </div>
 
-      <!-- 用户反馈模板气泡框 -->
-      <el-dialog title="提示" :visible.sync="dialogVisible1" width="30%" :before-close="handleClose">
-        <span>这是一段信息1</span>
-        <span slot="footer" class="dialog-footer">
-          <el-button @click.native="closeaccept">取 消</el-button>
-          <el-button type="primary" @click.native="closeaccept">确 定</el-button>
-        </span>
-      </el-dialog>
 
     </el-card>
   </div>
@@ -94,12 +95,6 @@ export default {
         wxopenid: '',
         // 标题选择
         select: '',
-        // 按钮选择
-        radio: 3,
-        // 气泡框的触发参数
-        dialogVisible1: false,
-        dialogVisible2: false,
-        dialogVisible3: false,
       },
       //表单检验规则对象 prop 标识需要检验的表单元素
       pushFormRules: {
@@ -122,7 +117,23 @@ export default {
           username: 1
         }
       ],
-      radio: "1"
+      statusList:[
+        {
+            status:'待录取'
+        },
+        {
+            status:'待复试'
+        },
+        {
+            status:'待终试'
+        },
+
+      ],
+      currentStatus:"",
+      nextStatus:"",
+      link:"",
+      radio: "1",
+      show:false,
     }
   },
 
@@ -194,6 +205,9 @@ export default {
         return obj.wxopenid === targetwxopenid
       })
     },
+    changeOption(){
+      console.log(1);
+    }
   },
 
   created() {
@@ -232,5 +246,14 @@ a:hover {
 textarea {
   width: 400px !important;
   height: 100px !important;
+}
+.currentStatus,.nextStatus {
+  width: 25vh;
+  margin-right: 5vh;
+  transition: all 0.5s ease-out;
+}
+.link {
+  width:60vh;
+  transition: all 0.5s ease-out;
 }
 </style>

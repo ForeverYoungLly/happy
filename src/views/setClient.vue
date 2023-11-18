@@ -1,17 +1,55 @@
 <template>
-  <div>用户端配置
-    <button @click="jump">跳转</button>
+  <div class="container">
+    <el-card class="box-card">
+      <div slot="header" class="clearfix">
+        <span>图片上传</span>
+        <el-button style="float: right; padding: 3px 0" type="text">上传</el-button>
+      </div>
+      <el-upload
+        action="https://jsonplaceholder.typicode.com/posts/"
+        list-type="picture-card"
+        :headers="headers"
+        :data = "params"
+        :on-preview="handlePictureCardPreview"
+        :auto-upload="false"
+        accept=".jpg, .png,.jpeg"
+        :on-remove="handleRemove"
+        >
+        <i class="el-icon-plus"></i>
+      </el-upload>
+      <el-dialog :visible.sync="dialogVisible">
+        <img width="100%" :src="dialogImageUrl" alt="">
+      </el-dialog>
+    </el-card>
   </div>
 </template>
 
 <script>
 // import axios from 'axios';
 export default {
-  methods:{
-    jump(){
-      console.log('跳了一下');
-    }
-  },
+  data() {
+      return {
+        dialogImageUrl: '',
+        dialogVisible: false,
+        headers:{
+                'jwt-code': localStorage.getItem('token'),
+                'Content-Type': 'multipart/form-data'
+            },
+        params:{
+          studentid:"2022463030728"
+        }
+      };
+    },
+    methods: {
+      handleRemove(file, fileList) {
+        console.log(file, fileList);
+      },
+      handlePictureCardPreview(file) {
+        console.log(file);
+        this.dialogImageUrl = file.url;
+        this.dialogVisible = true;
+      }
+    },
   created(){
     const token = localStorage.getItem('token')
     if(!token)
@@ -22,6 +60,71 @@ export default {
   }
 }
 </script>
-<style>
+<style scoped>
+  .avatar-uploader .el-upload {
+    border: 1px dashed #d9d9d9;
+    border-radius: 6px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+  }
+  .avatar-uploader .el-upload:hover {
+    border-color: #409EFF;
+  }
+  .avatar-uploader-icon {
+    font-size: 28px;
+    color: #8c939d;
+    width: 178px;
+    height: 178px;
+    line-height: 178px;
+    text-align: center;
+  }
+  .avatar {
+    width: 178px;
+    height: 178px;
+    display: block;
+  }
+.container {
+  display: flex;
+  justify-content: center;
+}
+  .text {
+    font-size: 14px;
+    text-align: center;
+  }
 
+  .item {
+    margin-bottom: 18px;
+  }
+
+  .clearfix {
+    text-align: center;
+    font-weight: 700;
+  }
+  .clearfix:before,
+  .clearfix:after {
+    display: table;
+    content: "";
+  }
+  .clearfix:after {
+    clear: both
+  }
+
+  .box-card {
+    margin-top: 2vh;
+    width: 40vw;
+  }
+  .el-upload__tip{
+    color: lightgrey;
+    text-align: center;
+  }
+  .avatar-uploader {
+    display: flex;
+    justify-content: center;
+  }
+  .el-upload .el-upload--text{
+    border-style: dotted !important;
+    border-width: 1px !important;
+    border-color: #409EFF !important;
+  }
 </style>

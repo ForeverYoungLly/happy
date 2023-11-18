@@ -66,12 +66,12 @@
                                         <el-input v-model="editForm.studentid" show-word-limit></el-input>
                                     </el-form-item>
                                 </el-col>
-                                <div class="demo-image__placeholder" style="position: relative; right: 0px;">
-                                    <div class="block" :key="fit">
-                                        <el-image :src="src" style="width: 150px; height: 200px; " :fit="fit"
+                                <div class="demo-image__placeholder" style="position: absolute; right: 10%;">
+                                    <div class="block" >
+                                        <el-image :src="src" style="width: 10vw; height: 22vh; " :fit ="fit"
                                             :preview-src-list="srcList">
                                             <div slot="placeholder" class="image-slot">
-                                                加载中<span class="dot">...</span>
+                                                <i class="el-icon-loading"></i>加载中....
                                             </div>
                                         </el-image>
                                     </div>
@@ -147,7 +147,7 @@
                             <!-- 个人经历 -->
                             <el-form-item label="个人经历及项目经验" prop="experience">
                                 <el-col>
-                                    <el-input type="textarea" placeholder="请输入理由" :rows="5" v-model="editForm.reason"
+                                    <el-input type="textarea" placeholder="请输入理由" :rows="5" v-model="editForm.experience"
                                         resize='none' class="textarea"></el-input>
                                 </el-col>
                             </el-form-item>
@@ -170,14 +170,25 @@
                         <el-button type="primary" @click="saveEdit">保存</el-button>
                     </el-tab-pane>
                     <el-tab-pane label="用户管理记录">
-                        附件<br>
-                        <p>用户历史信息</p>
+                        <el-row :gutter="20" style="margin-bottom: 20px; font-size: 16px;">
+                                用户信息和附件
+                        </el-row>
+                        <el-row>
+                            <el-upload
+                                class="upload-demo"
+                                ref="upload"
+                                action="#"
+                                :file-list="fileList"
+                                :auto-upload="false">
+                                <!-- <div slot="tip" class="el-upload__tip">用户简历上的附件</div> -->
+                            </el-upload>
+                        </el-row>
                         <el-form ref="historyformref" :model="historyform" label-width="80px">
                             <el-form-item label="初试安排">
                                 <el-input v-model="historyform.first" type="textarea"></el-input>
                             </el-form-item>
                             <el-form-item label="初试结论">
-                                <el-input v-model="historyform.firstresult" type="textarea"></el-input>
+                                <el-input v-model="historyform.firstresult" type="textarea" ></el-input>
                             </el-form-item>
                             <el-form-item label="复试安排">
                                 <el-input v-model="historyform.second" type="textarea"></el-input>
@@ -210,11 +221,29 @@ export default {
     data() {
         return {
             // 照片自适应容器的方式
-            fit: ['fill'],
+            fit: "fit",
             // 大图预览图片的url地址
-            srcList: ['https://nuphoto.com.tw/photo/css/minicard_4.jpg'],
+            srcList: ['http://123.207.73.185:8090/userFile/picture/2022463030728/2022463030728照片.jpg'],
             // 用户照片url地址
-            src: 'https://nuphoto.com.tw/photo/css/minicard_4.jpg',
+            src: 'http://123.207.73.185:8090/userFile/picture/2022463030728/2022463030728照片.jpg',
+            fileList: [
+                {
+                name: 'food.jpeg',
+                url: 'http://123.207.73.185:8090/userFile/2022463030728/说明书.txt'
+                }, 
+                {
+                name: 'food.jpeg',
+                url: 'http://123.207.73.185:8090/userFile/2022463030728/说明书.txt'
+                }, 
+                {
+                name: 'food.jpeg',
+                url: 'http://123.207.73.185:8090/userFile/2022463030728/说明书.txt'
+                }, 
+                {
+                name: 'food2.jpeg',
+                url: 'http://123.207.73.185:8090/userFile/2022463030728/说明书.txt'
+                }
+            ],
             //存放用户列表的数组
             UserList: [],
             //当前页数
@@ -386,6 +415,7 @@ export default {
         filterTag2(value, row) {
             return row.status === value;
         },
+
     },
     created() {
         const token = localStorage.getItem('token')
@@ -411,5 +441,17 @@ export default {
     padding: 20px 20px 0px 20px;
     flex-direction: column !important;
     justify-content: space-between !important;
+}
+.upload-demo {
+    border: 1px dotted black;
+    padding-bottom: 20px;
+    margin-bottom: 20px;
+}
+.el-upload__tip {
+    font-size: 16px;
+    font-weight: 700;
+}
+el-form-item {
+    max-width: 50%;
 }
 </style>
