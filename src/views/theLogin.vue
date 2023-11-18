@@ -38,7 +38,6 @@
 <script>
 import axios from 'axios';
 
-
 export default {
     data() {
         return {
@@ -342,23 +341,25 @@ export default {
         opacity: 0;
     }
 }
-
+// 标题样式
 .title {
     text-align: center;
     color: rgb(248, 241, 210);
     text-shadow: 0 0 30px rgb(245, 222, 105), 0 0 20px rgb(244, 226, 123), 0 0 30px rgb(245, 225, 125), 0 0 20px rgb(236, 222, 148);
 }
 
+// 重置按钮
 .el-button--info {
     background-image: linear-gradient(to right, rgb(12, 22, 135)10%, rgb(62, 36, 86)70%);
     border-color: rgb(249, 249, 247);
     color: #fefefe;
 }
-
 .el-button--info:focus,
 .el-button--info:hover {
     color: rgb(217,217,255);
 }
+
+// 登录按钮
 .el-button--primary{
     border-color: antiquewhite;
     background-image: linear-gradient(to right, rgb(0,97,194) 20%,rgb(0,43,87) 60%,rgb(66, 2, 93) 100%) ;

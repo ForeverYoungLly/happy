@@ -26,7 +26,8 @@
               <el-form-item label="标题">
                 <!-- <el-input prop="title" v-model.trim="infoform.infoPushTitle" maxlength="10" placeholder="请输入标题"
                   style="width: 400px;" class="input-with-select"></el-input> -->
-                <el-select v-model.trim="infoform.infoPushTitle" placeholder="请输入标题" maxlength="10" prop="title" style="width: 400px;" class="title">
+                <el-select v-model.trim="infoform.infoPushTitle" placeholder="请输入标题" maxlength="10" prop="title"
+                  style="width: 400px;" class="title">
                   <el-option :label="titleContent[0]" value="日程安排提醒"></el-option>
                   <el-option :label="titleContent[1]" value="面试结果通知"></el-option>
                 </el-select>
@@ -45,30 +46,29 @@
           <!-- 显示选项 -->
           <el-row>
             <el-form-item label="选项">
-              <el-radio-group v-model="radio">
-                <el-col :span="10">
-                  <el-radio :label="1">接受</el-radio>
-                </el-col>
-                <el-col :span="10">
-                  <el-radio :label="2">拒绝</el-radio>
-                </el-col>
-                <el-col :span="10">
-                  <el-radio :label="3">异常反馈</el-radio>
-                </el-col>
-                <el-col :span="10">
-                  <el-radio :label="4"><a href="https://element.eleme.cn/#/" style="color: #333;"
-                      target="_blank">Element</a></el-radio>
-                </el-col>
-
-              </el-radio-group>
+              <el-radio v-model="radio" label="1">接受/拒绝/反馈</el-radio>
+              <br>
+              <el-link href="https://element.eleme.io" target="_blank">跳转指定链接</el-link>
             </el-form-item>
           </el-row>
           <!-- 发送按钮 -->
           <el-form-item>
-            <el-button type="primary" @click="sendInfoPush">发送</el-button>
+            <el-col :span="10">
+              <el-button type="primary" @click="sendInfoPush">发送</el-button>
+            </el-col>
           </el-form-item>
         </el-form>
       </div>
+
+      <!-- 用户反馈模板气泡框 -->
+      <el-dialog title="提示" :visible.sync="dialogVisible1" width="30%" :before-close="handleClose">
+        <span>这是一段信息1</span>
+        <span slot="footer" class="dialog-footer">
+          <el-button @click.native="closeaccept">取 消</el-button>
+          <el-button type="primary" @click.native="closeaccept">确 定</el-button>
+        </span>
+      </el-dialog>
+
     </el-card>
   </div>
 </template>
@@ -80,7 +80,7 @@ export default {
   data() {
     return {
       // 通过不通过和内容
-      titleContent:[
+      titleContent: [
         "日程安排提醒",
         "面试结果通知"
       ],
@@ -93,7 +93,13 @@ export default {
         //目标用户的openid
         wxopenid: '',
         // 标题选择
-        select:''
+        select: '',
+        // 按钮选择
+        radio: 3,
+        // 气泡框的触发参数
+        dialogVisible1: false,
+        dialogVisible2: false,
+        dialogVisible3: false,
       },
       //表单检验规则对象 prop 标识需要检验的表单元素
       pushFormRules: {
@@ -116,10 +122,10 @@ export default {
           username: 1
         }
       ],
-      //单选默认选中内容
-      radio: 1
+      radio: "1"
     }
   },
+
   methods: {
     //发送推送信息
     async sendInfoPush() {
@@ -188,11 +194,6 @@ export default {
         return obj.wxopenid === targetwxopenid
       })
     },
-
-    // 点击实现自动绑定内容
-    // sendpassInformation() {
-    //   this.infoform.content = "关于考核期的信息，请联系相关负责人。微信号: lyr007learning"
-    // }
   },
 
   created() {
@@ -206,17 +207,15 @@ export default {
       this.getUserList()
     }
   },
-  updated(){
+  updated() {
     console.log(this.infoform.infoPushTitle);
-    if(this.infoform.infoPushTitle === '日程安排提醒')
-    {
+    if (this.infoform.infoPushTitle === '日程安排提醒') {
       this.infoform.content = "如果有时间上的冲突，请联系相应组别的联系人（点击链接即可）。线上面试的同学，腾讯会议号请留意群通知"
     }
-    else if (this.infoform.infoPushTitle === '面试结果通知')
-    {
+    else if (this.infoform.infoPushTitle === '面试结果通知') {
       this.infoform.content = "关于考核期的信息，请联系相关负责人。\n微信号:lyr007learning"
     }
-  }
+  },
 }
 </script>
 

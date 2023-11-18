@@ -2,7 +2,7 @@
   <div class="container">
     <!-- 头部大标题 -->
     <header>
-      <h1>超级管理员首页</h1>
+      <h1 class="title">首页---数据可视化面板</h1>
     </header>
     <!-- 页面主体部分 -->
     <section class="mainbox">
@@ -28,7 +28,19 @@
             <p>3.公平公正，择优录取，选拔具有团队精神、探索精神、解决问题能力的人才</p>
           </div>
           <div class="text item">
-            <p>4.熟悉各个方向的选拔标准，对投递者进行公正充分的筛查。</p>
+            <p>4.前端选拔标准：三件套知识储备；Vue、React、Angular框架；微信小程序开发能力和经验</p>
+          </div>
+          <div class="text item">
+            <p>5.后端选拔标准：掌握go，java，python等一门后端语言；Spring、Springboot、Gin、Django框架；微信小程序开发能力和经验</p>
+          </div>
+          <div class="text item">
+            <p>6.产品经理选拔标准：有商业思维和创新精神；善于抓住问题的关键矛盾；场景代入和同理心强；文笔流畅，表达清晰</p>
+          </div>
+          <div class="text item">
+            <p>7.UI设计选拔标准：有一定的平面设计基础；熟练使用ps等设计工具；熟练制作公众号推文和视频；有绘画基础</p>
+          </div>
+          <div class="text item">
+            <p>8.网络安全选拔标准：了解常见的网络安全知识以及网络安全攻击方式，如：XSS、DDOS等，对于安全，渗透等方向感兴趣</p>
           </div>
         </el-card>
       </div>
@@ -54,37 +66,12 @@ export default {
 
     // 年级人数分布图表
     var myChart2 = echarts.init(document.getElementById('chart2'));
-    myChart2.setOption({
-      title: {
-        text: '各年级人数分布'
-      },
-      tooltip: {},
-      xAxis: {
-        data: []
-      },
-      yAxis: {},
-      series: [{
-        type: 'bar',
-        data: []
-      }]
-    });
 
     // 方向人数分布图表
     var myChart3 = echarts.init(document.getElementById('chart4'));
-    myChart3.setOption({
-      title: {
-        text: '各方向人数分布'
-      },
-      tooltip: {},
-      xAxis: {
-        data: []
-      },
-      yAxis: {},
-      series: [{
-        type: 'line',
-        data: []
-      }]
-    });
+
+    // 状态人数分布图表
+    var myChart4 = echarts.init(document.getElementById('chart1'));
 
     const headers = { 'jwt-code': localStorage.getItem('token') }
     if (headers) {
@@ -93,6 +80,7 @@ export default {
         method: 'GET',
         headers,
       }).then(response => {
+        console.log(response.data.data);
         //对专业人数图表进行配置
         var getData = [];
         //先进行赋值
@@ -104,7 +92,7 @@ export default {
         }
         myChart1.setOption({
           title: {
-        text: '各专业人数分布'
+            text: '各专业人数分布'
           },
           tooltip: {
             trigger: 'item'
@@ -149,6 +137,9 @@ export default {
           return item
         })
         myChart2.setOption({
+          title: {
+            text:'各年级人数分布'
+          },
           xAxis: {
             data: gradename
           },
@@ -168,31 +159,102 @@ export default {
             }
           ]
         });
-
         // 对方向人数图表进行配置
-        this.data3 = response.data.data.方向[1];
-        let directionname = this.data3.map(item => {
-          return item
-        })
+        var getData2 = [];
+        for (let i = 0; i < response.data.data.方向[0].length; i++) {
+          var obj = new Object();
+          obj.name = response.data.data.方向[1][i];
+          obj.value = response.data.data.方向[0][i];
+          getData2[i] = obj;
+        }
         myChart3.setOption({
-          xAxis: {
-            data: directionname
+          title: {
+            text: '各专业人数分布'
           },
-          yAxis: [
-            {
-              type: 'value',
-              minInterval: 1, //设置成1保证坐标轴分割刻度显示成整数。
-              axisLabel: {
-                formatter: '{value}'
-              }
-            }
-          ],
+          tooltip: {
+            trigger: 'item'
+          },
+          legend: {
+            top: '8%',
+            left: 'center'
+          },
           series: [
             {
-              type: 'line',
-              data: response.data.data.方向[0]
+              name: '方向人数',
+              type: 'pie',
+              radius: ['40%', '70%'],
+              avoidLabelOverlap: false,
+              itemStyle: {
+                borderRadius: 10,
+                borderColor: '#fff',
+                borderWidth: 2
+              },
+              label: {
+                show: false,
+                position: 'center'
+              },
+              emphasis: {
+                label: {
+                  show: true,
+                  fontSize: 20,
+                  fontWeight: 'bold'
+                }
+              },
+              labelLine: {
+                show: false
+              },
+              data: getData2
             }
-          ]
+          ],
+        });
+
+        // 对状态人数图表进行配置
+        var getData3 = [];
+        for (let i = 0; i < response.data.data.状态[0].length; i++) {
+          var obj = new Object();
+          obj.name = response.data.data.状态[1][i];
+          obj.value = response.data.data.状态[0][i];
+          getData3[i] = obj;
+        }
+        myChart4.setOption({
+          title: {
+            text: '各人数状态分布'
+          },
+          tooltip: {
+            trigger: 'item'
+          },
+          legend: {
+            top: '8%',
+            left: 'center'
+          },
+          series: [
+            {
+              name: '方向人数',
+              type: 'pie',
+              radius: ['40%', '70%'],
+              avoidLabelOverlap: false,
+              itemStyle: {
+                borderRadius: 10,
+                borderColor: '#fff',
+                borderWidth: 2
+              },
+              label: {
+                show: false,
+                position: 'center'
+              },
+              emphasis: {
+                label: {
+                  show: true,
+                  fontSize: 20,
+                  fontWeight: 'bold'
+                }
+              },
+              labelLine: {
+                show: false
+              },
+              data: getData3
+            }
+          ],
         });
 
       }, err => {
@@ -209,20 +271,19 @@ export default {
 
   },
   methods: {
+
   },
 }
 </script>
 
 <style  scoped>
 .container {
-  background-color: #E9EEF3;
   height: 100%;
   padding: 18px;
 }
 
 header {
   height: 7vh;
-  background-color: #E9EEF3;
   font-size: 24px;
   font-weight: bold;
   text-align: center;
@@ -244,19 +305,14 @@ header {
 }
 
 .chart {
-  width: 31vw;
+  width: 26vw;
   height: 35vh;
   margin: 0.5%;
   padding: 1%;
 }
 
-#chart1 {
-  width: 40vw;
-  height: 35vh;
-}
-
 #chart2 {
-  width: 18vw;
+  width: 16vw;
   height: 35vh;
 }
 
@@ -278,7 +334,16 @@ header {
 }
 
 .box-card {
-  width: 20vw;
+  width: 24vw;
   margin: 2%;
+  color: rgb(0, 43, 87);
+  background-color: aliceblue;
+}
+
+.title{
+  /* color: rgb(175, 215, 237); */
+  color: #111;
+  text-align: center;
+  /* text-shadow: 0 0 30px rgb(136, 206, 250), 0 0 20px rgb(136, 206, 250), 0 0 30px rgb(136, 206, 250), 0 0 20px rgb(136, 206, 250); */
 }
 </style>

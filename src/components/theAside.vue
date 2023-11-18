@@ -8,7 +8,7 @@
             </div>
             <!-- 侧边导航列表 -->
             <el-menu default-active="1" class="el-menu-vertical-demo" @open="handleOpen" @close="handleClose"
-                background-color="#545c64" text-color="#fefefe" active-text-color="#409EFF" router >
+            text-color="#99ccff" active-text-color="#ffffcc" router >
                 <!-- 首页 -->
                 <el-menu-item index="/index">
                     <i class="el-icon-s-home"></i>
@@ -66,7 +66,8 @@ export default {
     }
 }
 </script>
-<style>
+
+<style scoped>
 li {
     text-align: left !important;
     padding-left: 10px;
@@ -79,11 +80,36 @@ li {
 }
 .el-col-12 {
     width: 100% !important;
+    background-image: linear-gradient(#175681, #112f57);
 }
+
 .el-submenu .el-menu-item {
     height: 50px;
     line-height: 50px;
     min-width: 140px;
+}
+
+/* 对导航栏颜色修改 */
+ul.el-menu-vertical-demo.el-menu {
+    background-image: linear-gradient(#175681, #112f57);
+}
+
+ul.el-menu-vertical-demo.el-menu :hover{
+  background-image: linear-gradient(#05446f, #112f57);
+}
+
+ul.el-menu-vertical-demo.el-menu :focus{
+  background-image: linear-gradient(#05446f, #112f57);
+}
+
+li.el-menu-item.is-active {
+  /* background-color: transparent; */
+  background-color: #112f57 !important;
+}
+
+.el-submenu .el-submenu__title:hover {
+  color: #091420 !important;
+  background: linear-gradient(#112f57, #122344) !important;
 }
 </style>
   
