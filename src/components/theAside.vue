@@ -2,23 +2,23 @@
     <el-row class="tac">
         <el-col :span="12">
             <!-- ab招牌 -->
-            <div id="ab_title" >
+            <div id="ab_title">
                 <p style="font-size: 1.8rem;  color: rgb(242, 240, 240); font-weight: bold; ">AchoBeta</p>
                 <p style="font-size: 1.8rem;  color: rgb(242, 240, 240); font-weight: bold; ">招 新 系 统</p>
             </div>
             <!-- 侧边导航列表 -->
             <el-menu default-active="1" class="el-menu-vertical-demo" @open="handleOpen" @close="handleClose"
-            text-color="#99ccff" active-text-color="#ffffcc" router >
+                background-color="#545c64" text-color="#fff" active-text-color="#ffd04b" router>
                 <!-- 首页 -->
                 <el-menu-item index="/index">
                     <i class="el-icon-s-home"></i>
                     <span slot="title">首页</span>
                 </el-menu-item>
                 <!-- 用户列表 -->
-                <el-menu-item index="/userlist" >
+                <el-menu-item index="/userlist">
                     <template slot="title">
-                    <i class="el-icon-user"></i>
-                    <span slot="title">用户列表</span>
+                        <i class="el-icon-user"></i>
+                        <span slot="title">用户列表</span>
                     </template>
                 </el-menu-item>
                 <!-- 消息推送 -->
@@ -60,7 +60,7 @@ export default {
     },
     data() {
         return {
-          
+
 
         };
     }
@@ -72,44 +72,23 @@ li {
     text-align: left !important;
     padding-left: 10px;
 }
+
 #ab_title {
     padding: 10px;
 }
+
 .el-menu {
     border-right-style: none;
 }
+
 .el-col-12 {
     width: 100% !important;
-    background-image: linear-gradient(#175681, #112f57);
 }
 
 .el-submenu .el-menu-item {
     height: 50px;
     line-height: 50px;
     min-width: 140px;
-}
-
-/* 对导航栏颜色修改 */
-ul.el-menu-vertical-demo.el-menu {
-    background-image: linear-gradient(#175681, #112f57);
-}
-
-ul.el-menu-vertical-demo.el-menu :hover{
-  background-image: linear-gradient(#05446f, #112f57);
-}
-
-ul.el-menu-vertical-demo.el-menu :focus{
-  background-image: linear-gradient(#05446f, #112f57);
-}
-
-li.el-menu-item.is-active {
-  /* background-color: transparent; */
-  background-color: #112f57 !important;
-}
-
-.el-submenu .el-submenu__title:hover {
-  color: #091420 !important;
-  background: linear-gradient(#112f57, #122344) !important;
 }
 </style>
   

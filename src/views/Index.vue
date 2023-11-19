@@ -73,6 +73,14 @@ export default {
     // 状态人数分布图表
     var myChart4 = echarts.init(document.getElementById('chart1'));
 
+    // echarts图表自适应
+    window.onresize = () => {
+      myChart1.resize();
+      myChart2.resize();
+      myChart3.resize();
+      myChart4.resize();
+    }
+
     const headers = { 'jwt-code': localStorage.getItem('token') }
     if (headers) {
       axios({
@@ -80,7 +88,7 @@ export default {
         method: 'GET',
         headers,
       }).then(response => {
-        console.log(response.data.data);
+
         //对专业人数图表进行配置
         var getData = [];
         //先进行赋值
@@ -98,14 +106,16 @@ export default {
             trigger: 'item'
           },
           legend: {
+            orient: 'vertical',
             top: '8%',
-            left: 'center'
+            left: 'left'
           },
           series: [
             {
               name: '专业人数',
               type: 'pie',
               radius: ['40%', '70%'],
+              center: ['60%', '50%'],
               avoidLabelOverlap: false,
               itemStyle: {
                 borderRadius: 10,
@@ -138,10 +148,11 @@ export default {
         })
         myChart2.setOption({
           title: {
-            text:'各年级人数分布'
+            text: '各年级人数分布'
           },
           xAxis: {
-            data: gradename
+            data: gradename,
+            type: 'category'
           },
           yAxis: [
             {
@@ -169,20 +180,22 @@ export default {
         }
         myChart3.setOption({
           title: {
-            text: '各专业人数分布'
+            text: '各方向人数分布'
           },
           tooltip: {
             trigger: 'item'
           },
           legend: {
+            orient: 'vertical',
             top: '8%',
-            left: 'center'
+            left: 'left'
           },
           series: [
             {
               name: '方向人数',
               type: 'pie',
               radius: ['40%', '70%'],
+              center: ['60%', '50%'],
               avoidLabelOverlap: false,
               itemStyle: {
                 borderRadius: 10,
@@ -218,20 +231,22 @@ export default {
         }
         myChart4.setOption({
           title: {
-            text: '各人数状态分布'
+            text: '各状态人数分布'
           },
           tooltip: {
             trigger: 'item'
           },
           legend: {
+            orient: 'vertical',
             top: '8%',
-            left: 'center'
+            left: 'left'
           },
           series: [
             {
               name: '方向人数',
               type: 'pie',
               radius: ['40%', '70%'],
+              center: ['60%', '50%'],
               avoidLabelOverlap: false,
               itemStyle: {
                 borderRadius: 10,
@@ -277,16 +292,17 @@ export default {
 </script>
 
 <style  scoped>
-*{
-  box-sizing: border-box ;
+* {
+  box-sizing: border-box;
 }
+
 .container {
   height: 100%;
 }
 
 header {
   height: 7vh;
-  font-size: 24px;
+  font-size: 1.5rem;
   font-weight: bold;
   text-align: center;
 }
@@ -309,7 +325,6 @@ header {
   overflow: auto;
 }
 
-
 .column {
   flex: 7;
   height: 100%;
@@ -320,15 +335,14 @@ header {
 }
 
 .chart {
-  /* flex: 1; */
-  width: 20vw;
+  width: 26vw;
   height: 35vh;
   margin-left: 5%;
 }
 
 #chart2 {
-  /* flex: 1; */
-  height: 30vh;
+  height: 35vh;
+  /* width: 20vw; */
 }
 
 .text {
@@ -355,11 +369,10 @@ header {
   overflow: auto !important;
 }
 
-.title{
+.title {
   /* color: rgb(175, 215, 237); */
   color: #111;
   text-align: center;
   /* text-shadow: 0 0 30px rgb(136, 206, 250), 0 0 20px rgb(136, 206, 250), 0 0 30px rgb(136, 206, 250), 0 0 20px rgb(136, 206, 250); */
 }
-
 </style>

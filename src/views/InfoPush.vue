@@ -207,7 +207,11 @@ export default {
     },
     changeOption(){
       console.log(1);
-    }
+    },
+    // 获取路由传参后的姓名和openid
+    getdata(){
+		  console.log(this.$route.query.infopushList);
+		}
   },
 
   created() {
@@ -220,6 +224,7 @@ export default {
       //获取用户列表用于下拉框
       this.getUserList()
     }
+    this.getdata();
   },
   updated() {
     console.log(this.infoform.infoPushTitle);

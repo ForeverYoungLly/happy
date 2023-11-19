@@ -1,10 +1,26 @@
 <template>
     <el-main>
         <div class="container">
+            <!-- 头部搜索框和发送按钮 -->
+            <el-card class="header">
+                <el-row :gutter="20">
+                    <el-col :span="7">
+                        <el-input placeholder="请输入待查询用户的姓名" v-model="keywords">
+                            <el-button slot="append" icon="el-icon-search" @click="searchResource"></el-button>
+                        </el-input>
+                    </el-col>
+                    <el-col :span="4">
+                        <el-button type="primary" @click="resetForm">重置表单</el-button>
+                    </el-col>
+                    <el-col :span="4" :offset="6">
+                        <el-button type="primary" @click="handleSelectionChange">批量发送</el-button>
+                    </el-col>
+                </el-row>
+            </el-card>
             <!-- 用户列表 -->
             <el-table :data="UserList.slice((currentPage - 1) * pageSize, currentPage * pageSize)"
-                style="width: 98% ; margin: auto; box-shadow: 1px 2px 4px #ccc;transition: all 0.3 ease-in!important;"
-                stripe @sort-change="handle">
+                style="width: 100% ; margin: 5px; box-shadow: 1px 2px 4px #ccc;transition: all 0.3 ease-in!important;"
+                stripe @sort-change="handle" ref="multipleTable">
                 <el-table-column type="selection" width="55">
                 </el-table-column>
                 <el-table-column prop="username" label="姓名">
@@ -13,7 +29,7 @@
                 </el-table-column>
                 <el-table-column prop="sex" label="性别">
                 </el-table-column>
-                <el-table-column prop="grade" label="年级">
+                <el-table-column prop="grade" label="年级" sortable>
                 </el-table-column>
                 <el-table-column prop="profession" label="专业">
                 </el-table-column>
@@ -47,6 +63,14 @@
                     </template>
                 </el-table-column>
             </el-table>
+            <!-- 分页器 -->
+            <div class="block">
+                <span class="demonstration"></span>
+                <el-pagination align="center" @size-change="handleSizeChange" @current-change="handleCurrentChange"
+                    :current-page="currentPage" :page-sizes="[1, 5, 10, 20]" :page-size="pageSize"
+                    layout="total, sizes, prev, pager, next, jumper" :total="UserList.length">
+                </el-pagination>
+            </div>
             <!-- 用户信息编辑的气泡框 -->
             <!-- :close-on-click-modal="false" 取消点击空白处关闭 -->
             <el-dialog :visible.sync="editDialogVisible" width="60%" :close-on-click-modal="false">
@@ -67,8 +91,8 @@
                                     </el-form-item>
                                 </el-col>
                                 <div class="demo-image__placeholder" style="position: absolute; right: 10%;">
-                                    <div class="block" >
-                                        <el-image :src="src" style="width: 10vw; height: 22vh; " :fit ="fit"
+                                    <div class="block">
+                                        <el-image :src="src" style="width: 10vw; height: 22vh; " :fit="fit"
                                             :preview-src-list="srcList">
                                             <div slot="placeholder" class="image-slot">
                                                 <i class="el-icon-loading"></i>加载中....
@@ -133,8 +157,8 @@
                             <!-- 个人简介 -->
                             <el-form-item label="个人简介" prop="introduction">
                                 <el-col>
-                                    <el-input type="textarea" placeholder="请输入个人简介" :rows="5" v-model="editForm.introduction"
-                                        resize='none' class="textarea"></el-input>
+                                    <el-input type="textarea" placeholder="请输入个人简介" :rows="5"
+                                        v-model="editForm.introduction" resize='none' class="textarea"></el-input>
                                 </el-col>
                             </el-form-item>
                             <!-- 加入ab的理由 -->
@@ -171,14 +195,10 @@
                     </el-tab-pane>
                     <el-tab-pane label="用户管理记录">
                         <el-row :gutter="20" style="margin-bottom: 20px; font-size: 16px;">
-                                用户信息和附件
+                            用户信息和附件
                         </el-row>
                         <el-row>
-                            <el-upload
-                                class="upload-demo"
-                                ref="upload"
-                                action="#"
-                                :file-list="fileList"
+                            <el-upload class="upload-demo" ref="upload" action="#" :file-list="fileList"
                                 :auto-upload="false">
                                 <!-- <div slot="tip" class="el-upload__tip">用户简历上的附件</div> -->
                             </el-upload>
@@ -188,7 +208,7 @@
                                 <el-input v-model="historyform.first" type="textarea"></el-input>
                             </el-form-item>
                             <el-form-item label="初试结论">
-                                <el-input v-model="historyform.firstresult" type="textarea" ></el-input>
+                                <el-input v-model="historyform.firstresult" type="textarea"></el-input>
                             </el-form-item>
                             <el-form-item label="复试安排">
                                 <el-input v-model="historyform.second" type="textarea"></el-input>
@@ -203,14 +223,6 @@
                     </el-tab-pane>
                 </el-tabs>
             </el-dialog>
-            <!-- 分页器 -->
-            <div class="block">
-                <span class="demonstration"></span>
-                <el-pagination align="center" @size-change="handleSizeChange" @current-change="handleCurrentChange"
-                    :current-page="currentPage" :page-sizes="[1, 5, 10, 20]" :page-size="pageSize"
-                    layout="total, sizes, prev, pager, next, jumper" :total="UserList.length">
-                </el-pagination>
-            </div>
         </div>
     </el-main>
 </template>
@@ -220,6 +232,10 @@ import axios from 'axios';
 export default {
     data() {
         return {
+            // 搜索的关键字
+            keywords: '',
+            // 复选框勾中列表大数组所有内容
+            // mutipleList: [],
             // 照片自适应容器的方式
             fit: "fit",
             // 大图预览图片的url地址
@@ -228,20 +244,20 @@ export default {
             src: 'http://123.207.73.185:8090/userFile/picture/2022463030728/2022463030728照片.jpg',
             fileList: [
                 {
-                name: 'food.jpeg',
-                url: 'http://123.207.73.185:8090/userFile/2022463030728/说明书.txt'
-                }, 
+                    name: 'food.jpeg',
+                    url: 'http://123.207.73.185:8090/userFile/2022463030728/说明书.txt'
+                },
                 {
-                name: 'food.jpeg',
-                url: 'http://123.207.73.185:8090/userFile/2022463030728/说明书.txt'
-                }, 
+                    name: 'food.jpeg',
+                    url: 'http://123.207.73.185:8090/userFile/2022463030728/说明书.txt'
+                },
                 {
-                name: 'food.jpeg',
-                url: 'http://123.207.73.185:8090/userFile/2022463030728/说明书.txt'
-                }, 
+                    name: 'food.jpeg',
+                    url: 'http://123.207.73.185:8090/userFile/2022463030728/说明书.txt'
+                },
                 {
-                name: 'food2.jpeg',
-                url: 'http://123.207.73.185:8090/userFile/2022463030728/说明书.txt'
+                    name: 'food2.jpeg',
+                    url: 'http://123.207.73.185:8090/userFile/2022463030728/说明书.txt'
                 }
             ],
             //存放用户列表的数组
@@ -265,8 +281,8 @@ export default {
                 status: '已通过',
                 personalid: '369',
                 introduction: '个人简介',
-                reasons:'',
-                experience:'',
+                reasons: '',
+                experience: '',
                 wxid: 'r1197',
                 remark: '非常优秀',
                 award: '蓝桥杯国赛一等奖',
@@ -296,14 +312,14 @@ export default {
         }
     },
     methods: {
-        //请求用户列表
-        async getUserList() {
+        // 重置搜索后的表单
+        resetForm() {
             const headers = {
                 'jwt-code': localStorage.getItem('token')
             }
             //有token
             if (headers) {
-                await axios({
+                axios({
                     url: 'http://123.207.73.185:8080/admin/userDirection',
                     params: {
                         direction: '全部'
@@ -329,6 +345,50 @@ export default {
             }
 
         },
+        searchResource() {
+            this.currentPage = 1; //将当前页设置为1，确保每次都是从第一页开始搜
+            let filterKeywords = this.keywords.trim();
+            let filerReasource = this.UserList.filter(item => { //过滤全部数据
+                if (item.username.includes(filterKeywords)) {
+                    return item
+                }
+            })
+            //将符合条件的内容赋给filterDataShow
+            this.UserList = filerReasource;
+        },
+        //请求用户列表
+        async getUserList() {
+            const headers = {
+                'jwt-code': localStorage.getItem('token')
+            }
+            //有token
+            if (headers) {
+                await axios({
+                    url: 'http://123.207.73.185:8080/admin/userDirection',
+                    params: {
+                        direction: '全部'
+                    },
+                    headers
+                }).then(res => {
+                    const userList = res.data.data
+                    this.UserList = userList
+                    // console.log(userList);
+                }).catch((e) => {
+                    //返回401
+                    if (!e.response.data.code) {
+                        this.$message.error('请先登录！')
+                        this.$router.push('/login')
+                    }
+                    else
+                        this.$message.error("用户列表数据获取失败！")
+                })
+            }
+            else {
+                this.$message.error('请先登录！')
+                this.$router.push('/login')
+            }
+
+        },
         //控制排序情况
         handle(val) {
             if (!val.column) {
@@ -336,7 +396,6 @@ export default {
                 this.sortField = val.prop == '11' ? 2 : 1
             }
         },
-        //修改当前页数
         handleCurrentChange(val) {
             this.currentPage = val
         },
@@ -415,8 +474,26 @@ export default {
         filterTag2(value, row) {
             return row.status === value;
         },
+        // 复选表格获取对象
+        handleSelectionChange() {
+            var mutipleList = this.$refs.multipleTable.selection;
+            var infopushList = [];
+            for (let i = 0; i < mutipleList.length; i++) {
+                var obj = new Object();
+                obj.username = mutipleList[i].username;
+                obj.wxopenid = mutipleList[i].wxopenid;
+                infopushList[i] = obj;
+            }
+            this.$router.push({
+                path: '/infopush',
+			    query:{
+				infopushList
+			}
+            })
+        },
 
     },
+
     created() {
         const token = localStorage.getItem('token')
         if (!token) {
@@ -430,28 +507,28 @@ export default {
 }
 </script>
 
-<style>
-.el-main {
-
-    color: #333;
-    text-align: center;
-    height: 100% !important;
-    display: flex;
-    flex: 1;
-    padding: 20px 20px 0px 20px;
-    flex-direction: column !important;
-    justify-content: space-between !important;
+<style scoped>
+.header {
+    height: 8vh;
 }
+
 .upload-demo {
     border: 1px dotted black;
     padding-bottom: 20px;
     margin-bottom: 20px;
 }
+
 .el-upload__tip {
     font-size: 16px;
     font-weight: 700;
 }
-el-form-item {
+
+.el-form-item {
     max-width: 50%;
+}
+
+.el-card {
+    width: 100%;
+    box-shadow: 1px 2px 4px #b4b1b1;
 }
 </style>

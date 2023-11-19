@@ -42,11 +42,11 @@ export default {
     justify-content: space-between;
     height: 60px;
     color: #fff;
-    background-image: linear-gradient(#05446f, #112f57);
     line-height: 60px;
     font-size: 24px;
     font-weight: bold;
     margin-left: 2px;
+    background-color: #545c64;
 }
 /* 退出登录 */
 #exit{
