@@ -1,5 +1,9 @@
 <template>
   <div class="container">
+    <!-- 头部大标题 -->
+    <header>
+      <h1 class="title">首页---数据可视化面板</h1>
+    </header>
     <!-- 页面主体部分 -->
     <section class="mainbox">
       <!-- 数据可视化部分 -->
@@ -9,8 +13,9 @@
         <div class="chart" id="chart3"></div>
         <div class="chart" id="chart4"></div>
       </div>
+
       <!-- 管理员小tips部分 -->
-       <div class="tips">
+      <div class="tips">
         <el-card class="box-card">
           <div slot="header" class="clearfix"><span>对管理员的温馨提示：</span></div>
           <div class="text item">
@@ -38,8 +43,7 @@
             <p>8.网络安全选拔标准：了解常见的网络安全知识以及网络安全攻击方式，如：XSS、DDOS等，对于安全，渗透等方向感兴趣</p>
           </div>
         </el-card>
-      </div> 
-
+      </div>
     </section>
   </div>
 </template>
@@ -158,7 +162,7 @@ export default {
         // 对方向人数图表进行配置
         var getData2 = [];
         for (let i = 0; i < response.data.data.方向[0].length; i++) {
-          const obj = new Object();
+          var obj = new Object();
           obj.name = response.data.data.方向[1][i];
           obj.value = response.data.data.方向[0][i];
           getData2[i] = obj;
@@ -207,7 +211,7 @@ export default {
         // 对状态人数图表进行配置
         var getData3 = [];
         for (let i = 0; i < response.data.data.状态[0].length; i++) {
-          const obj = new Object();
+          var obj = new Object();
           obj.name = response.data.data.状态[1][i];
           obj.value = response.data.data.状态[0][i];
           getData3[i] = obj;
@@ -288,9 +292,8 @@ header {
 }
 
 .mainbox {
-  padding: 10px;
   width: 100%;
-  height: 100%;
+  height: 90%;
   margin: 0 auto;
   display: flex;
   box-shadow: 1px 2px 4px #eee;
