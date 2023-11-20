@@ -2,7 +2,7 @@
   <div class="container">
     <!-- 头部大标题 -->
     <header>
-      <h1 class="title">首页---数据可视化面板</h1>
+      <h3 class="title">首页---数据可视化面板</h3>
     </header>
     <!-- 页面主体部分 -->
     <section class="mainbox">
@@ -173,7 +173,7 @@ export default {
         // 对方向人数图表进行配置
         var getData2 = [];
         for (let i = 0; i < response.data.data.方向[0].length; i++) {
-          var obj = new Object();
+          const obj = new Object();
           obj.name = response.data.data.方向[1][i];
           obj.value = response.data.data.方向[0][i];
           getData2[i] = obj;
@@ -224,7 +224,7 @@ export default {
         // 对状态人数图表进行配置
         var getData3 = [];
         for (let i = 0; i < response.data.data.状态[0].length; i++) {
-          var obj = new Object();
+          const obj = new Object();
           obj.name = response.data.data.状态[1][i];
           obj.value = response.data.data.状态[0][i];
           getData3[i] = obj;
@@ -301,10 +301,11 @@ export default {
 }
 
 header {
-  height: 7vh;
+  height: 6.5vh;
   font-size: 1.5rem;
   font-weight: bold;
   text-align: center;
+  line-height: 6.5vh;
 }
 
 .mainbox {

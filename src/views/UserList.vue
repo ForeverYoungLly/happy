@@ -2,21 +2,16 @@
     <el-main>
         <div class="container">
             <!-- 头部搜索框和发送按钮 -->
-            <el-card class="header">
-                <el-row :gutter="20">
-                    <el-col :span="7">
-                        <el-input placeholder="请输入待查询用户的姓名" v-model="keywords">
+            <div class="header">
+                    <!-- 查询框 -->
+                        <el-input placeholder="请输入待查询用户的姓名" v-model="keywords" class="search-input" >
                             <el-button slot="append" icon="el-icon-search" @click="searchResource"></el-button>
                         </el-input>
-                    </el-col>
-                    <el-col :span="4">
+                    <!-- 重置表单 -->
                         <el-button type="primary" @click="resetForm">重置表单</el-button>
-                    </el-col>
-                    <el-col :span="4" :offset="6">
+                    <!-- 批量发送 -->
                         <el-button type="primary" @click="handleSelectionChange">批量发送</el-button>
-                    </el-col>
-                </el-row>
-            </el-card>
+            </div>
             <!-- 用户列表 -->
             <el-table :data="UserList.slice((currentPage - 1) * pageSize, currentPage * pageSize)"
                 style="width: 100% ; margin: 5px; box-shadow: 1px 2px 4px #ccc;transition: all 0.3 ease-in!important;"
@@ -485,9 +480,9 @@ export default {
                 infopushList[i] = obj;
             }
             this.$router.push({
-                path: '/infopush',
-			    query:{
-				infopushList
+            path: '/infopush',
+            query:{
+            infopushList
 			}
             })
         },
@@ -508,9 +503,7 @@ export default {
 </script>
 
 <style scoped>
-.header {
-    height: 8vh;
-}
+
 
 .upload-demo {
     border: 1px dotted black;
@@ -526,9 +519,13 @@ export default {
 .el-form-item {
     max-width: 50%;
 }
-
-.el-card {
-    width: 100%;
-    box-shadow: 1px 2px 4px #b4b1b1;
+.header {
+    display: flex;
+    justify-content: space-between;
+    padding-left:5px;
+}
+.search-input {
+   min-width: 20vw;
+   width: 30vw;
 }
 </style>
