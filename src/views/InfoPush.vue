@@ -11,9 +11,16 @@
           <!-- 目标用户区域 -->
           <el-row>
             <el-col :span="12">
-              <el-form-item label="用户">
-                <el-select v-model="infoform.wxopenid" clearable placeholder="请选择目标用户" @change="getId(infoform.wxopenid)">
+              <!-- <el-form-item label="用户">
+                <el-select v-model="infoform.wxopenid" clearable :filterable = "true" placeholder="请选择目标用户" @change="getId(infoform.woxpenid)">
                   <el-option v-for="(item,index) in options" :key="index" :label="item.username" :value="item.wxopenid">
+                  </el-option>
+                </el-select>
+              </el-form-item> -->
+              <el-form-item label="用户">
+                <el-select v-model="infoform.infopushList" :multiple="true" clearable :filterable="true"
+                  placeholder="请选择目标用户" @change="getId(infoform.infopushList)">
+                  <el-option v-for="(item, index) in options" :key="index" :label="item.username" :value="item.wxopenid">
                   </el-option>
                 </el-select>
               </el-form-item>
@@ -47,17 +54,19 @@
             <el-form-item label="选项">
               <el-radio v-model="radio" label="1" @change="show = !show">接受/拒绝/反馈</el-radio>
               <el-radio v-model="radio" label="2" @change="show = !show">跳转到指定连接</el-radio>
-                <div  v-show="!show">
-                  <el-select v-model="currentStatus" placeholder="当前状态" class="currentStatus">
-                    <el-option v-for="(item,index) in statusList" :label="item.status" :key="index"  value="currentStatus"></el-option>
-                  </el-select>
-                  <el-select v-model="nextStatus" placeholder="下一个状态" class="nextStatus">
-                    <el-option v-for="(item,index) in statusList" :label="item.status" :key="index"  value="currentStatus"></el-option>
-                  </el-select>
-                </div>
-                <div  v-show="show">
-                  <el-input v-model="link" class="link" placeholder="请输入链接"></el-input>
-                </div>
+              <div v-show="!show">
+                <el-select v-model="currentStatus" placeholder="同意后状态" class="currentStatus">
+                  <el-option v-for="(item, index) in statusList" :label="item.status" :key="index"
+                    :value="item.value"></el-option>
+                </el-select>
+                <el-select v-model="nextStatus" placeholder="拒绝后状态" class="nextStatus">
+                  <el-option v-for="(item, index) in statusList" :label="item.status" :key="index"
+                    :value="item.value"></el-option>
+                </el-select>
+              </div>
+              <div v-show="show">
+                <el-input v-model="link" class="link" placeholder="请输入链接"></el-input>
+              </div>
             </el-form-item>
           </el-row>
           <!-- 发送按钮 -->
@@ -68,8 +77,6 @@
           </el-form-item>
         </el-form>
       </div>
-
-
     </el-card>
   </div>
 </template>
@@ -87,6 +94,8 @@ export default {
       ],
       //表单绑定的数据对象
       infoform: {
+        // 消息推送用户列表wxopenid数组
+        infopushList: [],
         //推送标题
         infoPushTitle: '',
         //推送内容
@@ -114,26 +123,61 @@ export default {
       //目标用户的所有数据
       targetData: [
         {
-          username: 1
+          username: 1,
+          wxopenid: ''
         }
       ],
-      statusList:[
+      statusList: [
         {
-            status:'待录取'
+          status: ' ',
+          value: ' '
         },
         {
-            status:'待复试'
+          status: '待初试',
+          value: '待初试'
         },
         {
-            status:'待终试'
+          status: '初试不通过',
+          value: '初试不通过'
         },
-
+        {
+          status: '初试通过',
+          value: '初试通过'
+        },
+        {
+          status: '待复试',
+          value: '待复试'
+        },
+        {
+          status: '复试不通过',
+          value: '复试不通过'
+        },
+        {
+          status: '复试通过',
+          value: '复试通过'
+        },
+        {
+          status: '待终试',
+          value: '待终试'
+        },
+        {
+          status: '终试通过',
+          value: '终试通过'
+        },
+        {
+          status: '待处理',
+          value: '待处理'
+        },
+        {
+          status: '挂起',
+          value: '挂起'
+        },
       ],
-      currentStatus:"",
-      nextStatus:"",
-      link:"",
+      currentStatus: "",
+      nextStatus: "",
+      link: "",
       radio: "1",
-      show:false,
+      show: false,
     }
   },
 
@@ -161,7 +205,7 @@ export default {
       // 清空表单内容
       Object.assign(this.$data.infoform, this.$options.data().infoform)
     },
-
+    // 获取用户列表
     async getUserList() {
       const headers = {
         'jwt-code': localStorage.getItem('token')
@@ -199,19 +243,29 @@ export default {
       }
     },
 
-    //获取目标用户的所有数据，并存入targetData中
-    getId(targetwxopenid) {
-      this.targetData = this.options.find(obj => {
-        return obj.wxopenid === targetwxopenid
-      })
+    //获取目标用户的所有数据，并存入targetData中,
+    getId(targetdata) {
+      // this.targetData = this.options.find(obj => {
+
+      // return obj.wxopenid === targetwxopenid
+      // })
+      var getData = [];
+      for (let i = 0; i < targetdata.length; i++) {
+        const Obj = new Object();
+        Obj.wxopenid = targetdata[i];
+        
+        getData[i] = Obj;
+      }
+      console.log(targetdata);
     },
-    changeOption(){
+    changeOption() {
       console.log(1);
     },
     // 获取路由传参后的姓名和openid
-    getdata(){
-    console.log(this.$route.query.infopushList);
-		}
+    getdata() {
+      this.infoform.infopushList = this.$route.query.openidlist;
+      // console.log(this.infopushList);
+    }
   },
 
   created() {
@@ -227,7 +281,7 @@ export default {
     this.getdata();
   },
   updated() {
-    console.log(this.infoform.infoPushTitle);
+    // console.log(this.infoform.infoPushTitle);
     if (this.infoform.infoPushTitle === '日程安排提醒') {
       this.infoform.content = "如果有时间上的冲突，请联系相应组别的联系人（点击链接即可）。线上面试的同学，腾讯会议号请留意群通知"
     }
@@ -252,13 +306,16 @@ textarea {
   width: 400px !important;
   height: 100px !important;
 }
-.currentStatus,.nextStatus {
+
+.currentStatus,
+.nextStatus {
   width: 25vh;
   margin-right: 5vh;
   transition: all 0.5s ease-out;
 }
+
 .link {
-  width:60vh;
+  width: 60vh;
   transition: all 0.5s ease-out;
 }
 </style>

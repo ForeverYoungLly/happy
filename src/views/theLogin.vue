@@ -205,14 +205,14 @@ export default {
 .pink {
     top: 100px;
     left: 800px;
-    background: #fff;
+    background: #f9ed69;
     animation-delay: 3s;
     -webkit-animation-delay: 3s;
     -moz-animation-delay: 3s;
 }
 
 .pink:after {
-    border-color: transparent transparent transparent #fefefe;
+    border-color: transparent transparent transparent #f9ed69;
     animation-delay: 3s;
     -webkit-animation-delay: 3s;
     -moz-animation-delay: 3s;
@@ -221,17 +221,17 @@ export default {
 .blue {
     top: 120px;
     left: 1200px;
-    background: fff;
-    animation-delay: 7s;
-    -webkit-animation-delay: 7s;
-    -moz-animation-delay: 7s;
+    background: #ffffd2;
+    animation-delay: 5s;
+    -webkit-animation-delay: 5s;
+    -moz-animation-delay: 5s;
 }
 
 .blue:after {
-    border-color: transparent transparent transparent fff;
-    -webkit-animation-delay: 7s;
-    -moz-animation-delay: 7s;
-    animation-delay: 7s;
+    border-color: transparent transparent transparent #ffffd2;
+    -webkit-animation-delay: 5s;
+    -moz-animation-delay: 5s;
+    animation-delay: 5s;
 }
 
 @keyframes star-ani {

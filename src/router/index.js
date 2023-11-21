@@ -12,7 +12,7 @@ Vue.use(VueRouter)
 //将路由与组件进行映射
 const routes = [
   // 配置主登录路由
-  { path: '/',component:theLogin, redirect: '/index'},
+  { path: '/',component:theLogin, redirect: '/login'},
   //配置主路由
   { path: '/login',component: theLogin},
   {
