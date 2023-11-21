@@ -3,14 +3,12 @@
         <div class="container">
             <!-- 头部搜索框和发送按钮 -->
             <div class="header">
-                    <!-- 查询框 -->
-                        <el-input placeholder="请输入待查询用户的姓名" v-model="keywords" class="search-input" >
-                            <el-button slot="append" icon="el-icon-search" @click="searchResource"></el-button>
-                        </el-input>
-                    <!-- 重置表单 -->
-                        <el-button type="primary" @click="resetForm">重置表单</el-button>
-                    <!-- 批量发送 -->
-                        <el-button type="primary" @click="handleSelectionChange">批量发送</el-button>
+                <!-- 查询框 -->
+                <el-input placeholder="请输入待查询用户的姓名" v-model="keywords" class="search-input" clearable>
+                    <el-button slot="append" icon="el-icon-search" @click="searchResource"></el-button>
+                </el-input>
+                <!-- 批量发送 -->
+                <el-button type="primary" @click="handleSelectionChange">批量发送</el-button>
             </div>
             <!-- 用户列表 -->
             <el-table :data="UserList.slice((currentPage - 1) * pageSize, currentPage * pageSize)"
@@ -41,11 +39,10 @@
                     </template>
                 </el-table-column>
                 <el-table-column prop="status" label="状态" column-key="status" :filters="[{ text: '草稿', value: '草稿' }, { text: '待筛选', value: '待筛选' }, { text: '筛选不通过', value: '筛选不通过' },
-                { text: '待安排初试', value: '待安排初试' }, { text: '初试不通过', value: '初试不通过' }, { text: '初试通过', value: '初试通过' }, { text: '初试不通过', value: '初试不通过' },
-                { text: '待复试', value: '待复试' }, { text: '待安排复试', value: '待安排复试' }, { text: '复试通过', value: '复试通过' }
-                    , { text: '待终试', value: '待终试' }, { text: '终试不通过', value: '终试不通过' }, { text: '终试通过', value: '终试通过' }
-                    , { text: '待处理', value: '待处理' }, { text: '挂起', value: '挂起' }]" :filter-method="filterTag2"
-                    filter-placement="bottom-end">
+                { text: '待初试', value: '待初试' },{ text: '待安排初试', value: '待安排初试' }, { text: '初试不通过', value: '初试不通过' }, { text: '初试通过', value: '初试通过' }, 
+                { text: '待复试', value: '待复试' }, { text: '待安排复试', value: '待安排复试' }, { text: '复试通过', value: '复试通过' },
+                { text: '待终试', value: '待终试' }, { text: '终试不通过', value: '终试不通过' }, { text: '终试通过', value: '终试通过' }, { text: '待处理', value: '待处理' }, { text: '挂起', value: '挂起' }]"
+                 :filter-method="filterTag2" filter-placement="bottom-end">
                     <template slot-scope="scope">
                         <el-tag :type="scope.row.status === '待处理' ? 'primary' : 'success'" disable-transitions>{{
                             scope.row.status }}</el-tag>
@@ -257,6 +254,8 @@ export default {
             ],
             //存放用户列表的数组
             UserList: [],
+            // 搜索时暂存列表的数组
+            templist: [],
             //当前页数
             currentPage: 1,
             //每页最多显示多少条数据
@@ -307,48 +306,16 @@ export default {
         }
     },
     methods: {
-        // 重置搜索后的表单
-        resetForm() {
-            const headers = {
-                'jwt-code': localStorage.getItem('token')
-            }
-            //有token
-            if (headers) {
-                axios({
-                    url: 'http://123.207.73.185:8080/admin/userDirection',
-                    params: {
-                        direction: '全部'
-                    },
-                    headers
-                }).then(res => {
-                    const userList = res.data.data
-                    this.UserList = userList
-                    console.log(userList);
-                }).catch((e) => {
-                    //返回401
-                    if (!e.response.data.code) {
-                        this.$message.error('请先登录！')
-                        this.$router.push('/login')
-                    }
-                    else
-                        this.$message.error("用户列表数据获取失败！")
-                })
-            }
-            else {
-                this.$message.error('请先登录！')
-                this.$router.push('/login')
-            }
-
-        },
+        // 搜索用户方法
         searchResource() {
             this.currentPage = 1; //将当前页设置为1，确保每次都是从第一页开始搜
             let filterKeywords = this.keywords.trim();
-            let filerReasource = this.UserList.filter(item => { //过滤全部数据
+            let templist = this.UserList;
+            let filerReasource = templist.filter(item => { //过滤全部数据
                 if (item.username.includes(filterKeywords)) {
                     return item
                 }
             })
-            //将符合条件的内容赋给filterDataShow
             this.UserList = filerReasource;
         },
         //请求用户列表
@@ -366,8 +333,8 @@ export default {
                     headers
                 }).then(res => {
                     const userList = res.data.data
-                    this.UserList = userList
-                    // console.log(userList);
+                    this.UserList = userList;
+                    this.templist = userList;
                 }).catch((e) => {
                     //返回401
                     if (!e.response.data.code) {
@@ -469,24 +436,41 @@ export default {
         filterTag2(value, row) {
             return row.status === value;
         },
-        // 复选表格获取对象
+        // 复选表格获取对象并进行推送
         handleSelectionChange() {
             var mutipleList = this.$refs.multipleTable.selection;
-            var infopushList = [];
+            var infopushlist = [];
+            var openidlist = [];
             for (let i = 0; i < mutipleList.length; i++) {
                 var obj = new Object();
                 obj.username = mutipleList[i].username;
                 obj.wxopenid = mutipleList[i].wxopenid;
-                infopushList[i] = obj;
+                infopushlist[i] = obj;
+                openidlist[i] = mutipleList[i].wxopenid;
             }
-            this.$router.push({
-            path: '/infopush',
-            query:{
-            infopushList
-			}
-            })
+            if (infopushlist.length != 0) {
+                this.$router.push({
+                    path: '/infopush',
+                    query: {
+                        infopushlist,
+                        openidlist
+                    }
+                })
+            }
+            else {
+                this.$message.error('请选择发送用户');
+            }
         },
 
+    },
+    watch: {
+        keywords(){
+            this.searchResource();
+            if(this.keywords=='')
+           {
+            this.UserList = this.templist;
+           }
+        }
     },
 
     created() {
@@ -503,8 +487,6 @@ export default {
 </script>
 
 <style scoped>
-
-
 .upload-demo {
     border: 1px dotted black;
     padding-bottom: 20px;
@@ -519,13 +501,15 @@ export default {
 .el-form-item {
     max-width: 50%;
 }
+
 .header {
     display: flex;
     justify-content: space-between;
-    padding-left:5px;
+    padding-left: 5px;
 }
+
 .search-input {
-   min-width: 20vw;
-   width: 30vw;
+    min-width: 20vw;
+    width: 30vw;
 }
 </style>
