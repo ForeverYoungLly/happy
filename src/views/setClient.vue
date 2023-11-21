@@ -2,18 +2,20 @@
   <div class="container">
     <el-card class="box-card">
       <div slot="header" class="clearfix">
-        <span>图片上传</span>
-        <el-button style="float: right; padding: 3px 0" type="text">上传</el-button>
+        <span>当前图片</span>
       </div>
       <el-upload
-        action="https://jsonplaceholder.typicode.com/posts/"
+        v-loading="loading"
+        action="http://123.207.73.185:8080/admin/uploadPicture"
         list-type="picture-card"
-        :headers="headers"
-        :data = "params"
         :on-preview="handlePictureCardPreview"
         :auto-upload="false"
         accept=".jpg, .png,.jpeg"
         :on-remove="handleRemove"
+        :on-exceed = "exceed"
+        :limit="1"
+        :on-change="uploadPic"
+        :file-list="fileList"
         >
         <i class="el-icon-plus"></i>
       </el-upload>
@@ -21,23 +23,27 @@
         <img width="100%" :src="dialogImageUrl" alt="">
       </el-dialog>
     </el-card>
+    <div class="btn">
+      <el-button class="btn" type="primary" @click="submit">修改</el-button>
+    </div>
   </div>
 </template>
 
 <script>
-// import axios from 'axios';
+import axios from 'axios';
 export default {
   data() {
       return {
+        fileList:[],
+        fileFormData:'',
+        // 预览图片的url地址
         dialogImageUrl: '',
         dialogVisible: false,
         headers:{
                 'jwt-code': localStorage.getItem('token'),
                 'Content-Type': 'multipart/form-data'
             },
-        params:{
-          studentid:"2022463030728"
-        }
+        loading : false
       };
     },
     methods: {
@@ -45,9 +51,32 @@ export default {
         console.log(file, fileList);
       },
       handlePictureCardPreview(file) {
-        console.log(file);
         this.dialogImageUrl = file.url;
         this.dialogVisible = true;
+        console.log(this.dialogImageUrl);
+      },
+      uploadPic(fileList){
+          const formData = new FormData()
+          formData.append('picture', fileList.raw)
+          this.fileFormData = formData
+      },
+      exceed(){
+        this.$message.warning('只能上传一张图片')
+      },
+      submit(){
+        this.loading = true
+        axios({
+          url:'http://123.207.73.185:8080/admin/uploadPicture',
+          method:'POST',
+          headers:{
+                'jwt-code': localStorage.getItem('token'),
+                'Content-Type': 'multipart/form-data'
+          },
+          data:this.fileFormData
+        }).then(()=>{
+          this.loading = false
+          this.$message.success('修改成功！')
+        })
       }
     },
   created(){
@@ -57,6 +86,15 @@ export default {
       this.$message.error('请先登录！')
       this.$router.push('/login')
     }
+    this.loading = true
+    axios({
+      url:'http://123.207.73.185:8080/homePicture'
+    }).then((res)=>{
+      this.loading = false
+      const obj = new Object
+      obj.url = 'http://' + res.data.data
+      this.fileList.push(obj)
+    })
   }
 }
 </script>
@@ -86,6 +124,7 @@ export default {
   }
 .container {
   display: flex;
+  flex-direction: column;
   justify-content: center;
 }
   .text {
@@ -111,20 +150,12 @@ export default {
   }
 
   .box-card {
+    max-width: 30vw;
     margin-top: 2vh;
-    width: 40vw;
+    margin: 0 auto
   }
-  .el-upload__tip{
-    color: lightgrey;
-    text-align: center;
-  }
-  .avatar-uploader {
-    display: flex;
-    justify-content: center;
-  }
-  .el-upload .el-upload--text{
-    border-style: dotted !important;
-    border-width: 1px !important;
-    border-color: #409EFF !important;
+
+  .btn {
+    margin: 10px auto;
   }
 </style>
