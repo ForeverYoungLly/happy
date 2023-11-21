@@ -5,6 +5,7 @@
         <span>当前图片</span>
       </div>
       <el-upload
+        v-loading="loading"
         action="http://123.207.73.185:8080/admin/uploadPicture"
         list-type="picture-card"
         :on-preview="handlePictureCardPreview"
@@ -41,7 +42,8 @@ export default {
         headers:{
                 'jwt-code': localStorage.getItem('token'),
                 'Content-Type': 'multipart/form-data'
-            }
+            },
+        loading : false
       };
     },
     methods: {
@@ -62,6 +64,7 @@ export default {
         this.$message.warning('只能上传一张图片')
       },
       submit(){
+        this.loading = true
         axios({
           url:'http://123.207.73.185:8080/admin/uploadPicture',
           method:'POST',
@@ -71,7 +74,8 @@ export default {
           },
           data:this.fileFormData
         }).then(()=>{
-            this.$message.success('修改成功！')
+          this.loading = false
+          this.$message.success('修改成功！')
         })
       }
     },
@@ -82,9 +86,11 @@ export default {
       this.$message.error('请先登录！')
       this.$router.push('/login')
     }
+    this.loading = true
     axios({
       url:'http://123.207.73.185:8080/homePicture'
     }).then((res)=>{
+      this.loading = false
       const obj = new Object
       obj.url = 'http://' + res.data.data
       this.fileList.push(obj)
