@@ -11,12 +11,6 @@
           <!-- 目标用户区域 -->
           <el-row>
             <el-col :span="12">
-              <!-- <el-form-item label="用户">
-                <el-select v-model="infoform.wxopenid" clearable :filterable = "true" placeholder="请选择目标用户" @change="getId(infoform.woxpenid)">
-                  <el-option v-for="(item,index) in options" :key="index" :label="item.username" :value="item.wxopenid">
-                  </el-option>
-                </el-select>
-              </el-form-item> -->
               <el-form-item label="用户">
                 <el-select v-model="infoform.infopushList" :multiple="true" clearable :filterable="true"
                   placeholder="请选择目标用户" @change="getId(infoform.infopushList)">
@@ -30,8 +24,6 @@
           <el-row>
             <el-col :span="8">
               <el-form-item label="标题">
-                <!-- <el-input prop="title" v-model.trim="infoform.infoPushTitle" maxlength="10" placeholder="请输入标题"
-                  style="width: 400px;" class="input-with-select"></el-input> -->
                 <el-select v-model.trim="infoform.infoPushTitle" placeholder="请输入标题" maxlength="10" prop="title"
                   style="width: 400px;" class="title">
                   <el-option :label="titleContent[0]" value="日程安排提醒"></el-option>
@@ -127,6 +119,9 @@ export default {
           wxopenid: ''
         }
       ],
+      // 所有用户列表
+      userList: [],
+      // 状态列表
       statusList: [
         {
           status: ' ',
@@ -186,7 +181,7 @@ export default {
     async sendInfoPush() {
       if (this.targetData) {
         await axios({
-          url: 'http://42.194.194.197:80/templateMessage',
+          url: 'http://42.194.194.197/sendMessageToUser',
           method: 'POST',
           params: {
             wxOpenId: this.targetData.wxopenid,
@@ -222,7 +217,9 @@ export default {
           //获取用户列表
           const userList = res.data.data
           //更新下拉框
-          this.options = userList
+          this.options = userList;
+          // 获取用户列表
+          this.userList = userList;
         }).catch((e) => {
           //token有误
           if (!e.response.data.code) {
@@ -253,10 +250,11 @@ export default {
       for (let i = 0; i < targetdata.length; i++) {
         const Obj = new Object();
         Obj.wxopenid = targetdata[i];
-        
+        const arr = this.userList.find(element => element.wxopenid === targetdata[i]);
+        Obj.username = arr.username
         getData[i] = Obj;
       }
-      console.log(targetdata);
+      this.targetData = getData;
     },
     changeOption() {
       console.log(1);
@@ -264,7 +262,7 @@ export default {
     // 获取路由传参后的姓名和openid
     getdata() {
       this.infoform.infopushList = this.$route.query.openidlist;
-      // console.log(this.infopushList);
+      this.targetData = this.$route.query.infopushlist;
     }
   },
 

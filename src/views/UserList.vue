@@ -182,8 +182,8 @@
                                 </el-col>
                             </el-form-item>
                         </el-form>
-                        <el-button type="primary" @click="editDialogVisible = false">关闭</el-button>
-                        <el-button type="primary" @click="saveEdit">保存</el-button>
+                            <el-button type="primary" @click="editDialogVisible = false">关闭</el-button>
+                            <el-button type="primary" @click="saveEdit">保存</el-button>
                     </el-tab-pane>
                     <el-tab-pane label="用户管理记录">
                         <el-row :gutter="20" style="margin-bottom: 20px; font-size: 16px;">
@@ -212,6 +212,8 @@
                                 <el-input v-model="historyform.manageRemark" type="textarea"></el-input>
                             </el-form-item>
                         </el-form>
+                        <el-button type="primary" @click="editDialogVisible = false">关闭</el-button>
+                        <el-button type="primary" @click="saveEdit">保存</el-button>
                     </el-tab-pane>
                 </el-tabs>
             </el-dialog>
@@ -441,19 +443,22 @@ export default {
             var mutipleList = this.$refs.multipleTable.selection;
             var infopushlist = [];
             var openidlist = [];
+            var namelist = [];
             for (let i = 0; i < mutipleList.length; i++) {
                 var obj = new Object();
                 obj.username = mutipleList[i].username;
                 obj.wxopenid = mutipleList[i].wxopenid;
                 infopushlist[i] = obj;
                 openidlist[i] = mutipleList[i].wxopenid;
+                namelist[i] = mutipleList[i].username;
             }
             if (infopushlist.length != 0) {
                 this.$router.push({
                     path: '/infopush',
                     query: {
                         infopushlist,
-                        openidlist
+                        openidlist,
+                        namelist
                     }
                 })
             }
