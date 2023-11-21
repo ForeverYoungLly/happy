@@ -3,13 +3,12 @@
     <el-card class="box-card">
       <div slot="header" class="clearfix">
         <span>图片上传</span>
-        <el-button style="float: right; padding: 3px 0" type="text">上传</el-button>
+        <el-button style="float: right; padding: 3px 0" type="text" @click="send">上传</el-button>
       </div>
       <el-upload
-        action="https://jsonplaceholder.typicode.com/posts/"
+        action="http://123.207.73.185:8080/admin/uploadPicture"
         list-type="picture-card"
         :headers="headers"
-        :data = "params"
         :on-preview="handlePictureCardPreview"
         :auto-upload="false"
         accept=".jpg, .png,.jpeg"
@@ -25,19 +24,17 @@
 </template>
 
 <script>
-// import axios from 'axios';
+import axios from 'axios';
 export default {
   data() {
       return {
+        // 预览图片的url地址
         dialogImageUrl: '',
         dialogVisible: false,
         headers:{
                 'jwt-code': localStorage.getItem('token'),
                 'Content-Type': 'multipart/form-data'
-            },
-        params:{
-          studentid:"2022463030728"
-        }
+            }
       };
     },
     methods: {
@@ -47,7 +44,23 @@ export default {
       handlePictureCardPreview(file) {
         console.log(file);
         this.dialogImageUrl = file.url;
-        this.dialogVisible = true;
+        const formData = new FormData()
+        formData.append('picture', file.raw)
+        axios({
+          url:'http://123.207.73.185:8080/admin/uploadPicture',
+          method:'POST',
+          headers:{
+                'jwt-code': localStorage.getItem('token'),
+                'Content-Type': 'multipart/form-data'
+          },
+          data:formData
+        }).then(res=>{
+          console.log(res);
+        })
+        // this.dialogVisible = true;
+        // console.log(this.dialogImageUrl);
+      },
+      send(){
       }
     },
   created(){

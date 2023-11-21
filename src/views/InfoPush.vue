@@ -210,7 +210,7 @@ export default {
     },
     // 获取路由传参后的姓名和openid
     getdata(){
-		  console.log(this.$route.query.infopushList);
+    console.log(this.$route.query.infopushList);
 		}
   },
 
