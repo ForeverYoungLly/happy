@@ -75,7 +75,6 @@
 
 <script>
 import axios from 'axios';
-
 export default {
   data() {
     return {
@@ -197,6 +196,7 @@ export default {
           this.$message.error('推送失败')
         })
       }
+
       // 清空表单内容
       Object.assign(this.$data.infoform, this.$options.data().infoform)
     },
@@ -243,7 +243,6 @@ export default {
     //获取目标用户的所有数据，并存入targetData中,
     getId(targetdata) {
       // this.targetData = this.options.find(obj => {
-
       // return obj.wxopenid === targetwxopenid
       // })
       var getData = [];

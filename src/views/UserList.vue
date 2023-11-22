@@ -190,7 +190,7 @@
                         <el-row :gutter="20" style="margin-bottom: 20px; font-size: 16px;">
                             用户信息和附件
                         </el-row>
-                        <el-row>
+                        <el-row >
                             <el-upload class="upload-demo" ref="upload" action="#" :file-list="fileList"
                                 :auto-upload="false">
                                 <!-- <div slot="tip" class="el-upload__tip">用户简历上的附件</div> -->
@@ -229,14 +229,13 @@ export default {
         return {
             // 搜索的关键字
             keywords: '',
-            // 复选框勾中列表大数组所有内容
-            // mutipleList: [],
             // 照片自适应容器的方式
             fit: "fit",
             // 大图预览图片的url地址
             srcList: ['http://123.207.73.185:8090/userFile/picture/2022463030728/2022463030728照片.jpg'],
             // 用户照片url地址
             src: 'http://123.207.73.185:8090/userFile/picture/2022463030728/2022463030728照片.jpg',
+            // 附件列表
             fileList: [
                 {
                     name: 'food.jpeg',
@@ -397,6 +396,8 @@ export default {
             this.editForm = JSON.parse(str)
             //设置当前操作用户的wxopenid
             this.targetWxopenId = id
+            // 获取大头照
+            this.getUserPic()
             this.editDialogVisible = true
         },
         //保存编辑
@@ -492,6 +493,25 @@ export default {
             else {
                 this.$message.error('请选择发送用户');
             }
+        },
+        // 获取大头照
+        getUserPic(){
+            console.log(this.editForm.studentid);
+            axios({
+              url:'http://123.207.73.185:8080/showUserFileMessage',
+              params:{
+                studentid:this.editForm.studentid
+              }
+            }).then( res =>{
+                const fileList = res.data.data
+                this.src = fileList[0].url
+                // 大头照回显
+                this.srcList.push(fileList[0].url)
+
+                // 附件回显
+                fileList.shift()
+                this.fileList = fileList
+            })
         },
 
     },
