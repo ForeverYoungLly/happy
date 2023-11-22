@@ -244,7 +244,7 @@ export default {
             sexoptions: [{
                 value: '男',
                 label: '男'
-            },{
+            }, {
                 value: '女',
                 label: '女'
             },],
@@ -385,6 +385,12 @@ export default {
                 studentid: [
                     { required: true, message: '请输入学号', trigger: 'blur' },
                 ],
+                class: [
+                    { required: true, message: '请输入班级', trigger: 'blur' },
+                ],
+                profession: [
+                    { required: true, message: '请输入专业', trigger: 'blur' },
+                ],
                 phone: [
                     { required: true, message: '请输入手机号码', trigger: 'blur' },
                     {
@@ -502,35 +508,29 @@ export default {
                 }
                 //有token
                 if (headers) {
-                    if (this.$refs.editFormRef.validate === true) {
-                        await axios({
-                            url: 'http://123.207.73.185:8080/admin/updateUserMessage',
-                            method: 'POST',
-                            data: this.editForm,
-                            headers,
-                        }).then(res => {
-                            console.log(res)
-                            this.getUserList()
-                            if (res.data.code === 1) {
-                                this.$message.success('修改成功！')
-                                this.editDialogVisible = false
-                            } else {
-                                this.$message.success('修改失败' + res.data.msg)
-                                this.editDialogVisible = false
-                            }
-                        }).catch((e) => {
-                            //返回401
-                            if (!e.response.data.code) {
-                                this.$message.error('请先登录！')
-                                this.$router.push('/login')
-                            }
-                            this.$message.error("修改失败！")
-                        })
-                    }
-                    else {
-                        this.$message.error('修改信息不合法')
-                    }
-
+                    await axios({
+                        url: 'http://123.207.73.185:8080/admin/updateUserMessage',
+                        method: 'POST',
+                        data: this.editForm,
+                        headers,
+                    }).then(res => {
+                        console.log(res)
+                        this.getUserList()
+                        if (res.data.code === 1) {
+                            this.$message.success('修改成功！')
+                            this.editDialogVisible = false
+                        } else {
+                            this.$message.success('修改失败' + res.data.msg)
+                            this.editDialogVisible = false
+                        }
+                    }).catch((e) => {
+                        //返回401
+                        if (!e.response.data.code) {
+                            this.$message.error('请先登录！')
+                            this.$router.push('/login')
+                        }
+                        this.$message.error("修改失败！")
+                    })
                 }
                 //无token
                 else {
