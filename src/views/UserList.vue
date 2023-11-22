@@ -38,11 +38,12 @@
                             scope.row.direction }}</el-tag>
                     </template>
                 </el-table-column>
-                <el-table-column prop="status" label="状态" column-key="status" :filters="[{ text: '草稿', value: '草稿' }, { text: '待筛选', value: '待筛选' }, { text: '筛选不通过', value: '筛选不通过' },
-                { text: '待初试', value: '待初试' },{ text: '待安排初试', value: '待安排初试' }, { text: '初试不通过', value: '初试不通过' }, { text: '初试通过', value: '初试通过' }, 
-                { text: '待复试', value: '待复试' }, { text: '待安排复试', value: '待安排复试' }, { text: '复试通过', value: '复试通过' },
-                { text: '待终试', value: '待终试' }, { text: '终试不通过', value: '终试不通过' }, { text: '终试通过', value: '终试通过' }, { text: '待处理', value: '待处理' }, { text: '挂起', value: '挂起' }]"
-                 :filter-method="filterTag2" filter-placement="bottom-end">
+                <el-table-column prop="status" label="状态" column-key="status"
+                    :filters="[{ text: '草稿', value: '草稿' }, { text: '待筛选', value: '待筛选' }, { text: '筛选不通过', value: '筛选不通过' },
+                    { text: '待初试', value: '待初试' }, { text: '待安排初试', value: '待安排初试' }, { text: '初试不通过', value: '初试不通过' }, { text: '初试通过', value: '初试通过' },
+                    { text: '待复试', value: '待复试' }, { text: '待安排复试', value: '待安排复试' }, { text: '复试通过', value: '复试通过' },
+                    { text: '待终试', value: '待终试' }, { text: '终试不通过', value: '终试不通过' }, { text: '终试通过', value: '终试通过' }, { text: '待处理', value: '待处理' }, { text: '挂起', value: '挂起' }]"
+                    :filter-method="filterTag2" filter-placement="bottom-end">
                     <template slot-scope="scope">
                         <el-tag :type="scope.row.status === '待处理' ? 'primary' : 'success'" disable-transitions>{{
                             scope.row.status }}</el-tag>
@@ -182,8 +183,8 @@
                                 </el-col>
                             </el-form-item>
                         </el-form>
-                            <el-button type="primary" @click="editDialogVisible = false">关闭</el-button>
-                            <el-button type="primary" @click="saveEdit">保存</el-button>
+                        <el-button type="primary" @click="editDialogVisible = false">关闭</el-button>
+                        <el-button type="primary" @click="saveEdit">保存</el-button>
                     </el-tab-pane>
                     <el-tab-pane label="用户管理记录">
                         <el-row :gutter="20" style="margin-bottom: 20px; font-size: 16px;">
@@ -296,6 +297,22 @@ export default {
                 studentid: [
                     { required: true, message: '请输入学号', trigger: 'blur' },
                 ],
+                phone: [
+                    { required: true, message: '请输入手机号码', trigger: 'blur' },
+                    {
+                        validator: function (rule, value, callback) {
+                            if (/^1[34578]\d{9}$/.test(value) == false) {
+                                callback(new Error("请输入正确的手机号"));
+                            } else {
+                                callback();
+                            }
+                        }, trigger: 'blur'
+                    },
+                ],
+                grade: [
+                    { required: true, message: '请输入年龄', trigger: 'blur' },
+                    { pattern: /^(201[0-9]|202[0-9]|2030)$/, message: '范围在2010到2030', trigger: 'blur' }
+                ]
             },
             // 用户消息历史记录
             historyform: {
@@ -384,7 +401,6 @@ export default {
         },
         //保存编辑
         async saveEdit() {
-
             const editStr = JSON.stringify(this.editForm)
             const editUserData = this.UserList.find(obj => { return obj.wxopenid === this.targetWxopenIdid })
             const UserlistStr = JSON.stringify(editUserData)
@@ -396,24 +412,35 @@ export default {
                 }
                 //有token
                 if (headers) {
-                    await axios({
-                        url: 'http://123.207.73.185:8080/admin/updateUserMessage',
-                        method: 'POST',
-                        data: this.editForm,
-                        headers,
-                    }).then(res => {
-                        console.log(res)
-                        this.getUserList()
-                        this.$message.success('修改成功！')
-                        this.editDialogVisible = false
-                    }).catch((e) => {
-                        //返回401
-                        if (!e.response.data.code) {
-                            this.$message.error('请先登录！')
-                            this.$router.push('/login')
-                        }
-                        this.$message.error("修改失败！")
-                    })
+                    if (this.$refs.editFormRef.validate === true) {
+                        await axios({
+                            url: 'http://123.207.73.185:8080/admin/updateUserMessage',
+                            method: 'POST',
+                            data: this.editForm,
+                            headers,
+                        }).then(res => {
+                            console.log(res)
+                            this.getUserList()
+                            if (res.data.code === 1) {
+                                this.$message.success('修改成功！')
+                                this.editDialogVisible = false
+                            } else {
+                                this.$message.success('修改失败' + res.data.msg)
+                                this.editDialogVisible = false
+                            }
+                        }).catch((e) => {
+                            //返回401
+                            if (!e.response.data.code) {
+                                this.$message.error('请先登录！')
+                                this.$router.push('/login')
+                            }
+                            this.$message.error("修改失败！")
+                        })
+                    }
+                    else {
+                        this.$message.error('修改信息不合法')
+                    }
+
                 }
                 //无token
                 else {
@@ -469,12 +496,11 @@ export default {
 
     },
     watch: {
-        keywords(){
+        keywords() {
             this.searchResource();
-            if(this.keywords=='')
-           {
-            this.UserList = this.templist;
-           }
+            if (this.keywords == '') {
+                this.UserList = this.templist;
+            }
         }
     },
 
