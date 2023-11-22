@@ -47,11 +47,11 @@
               <el-radio v-model="radio" label="1" @change="show = !show">接受/拒绝/反馈</el-radio>
               <el-radio v-model="radio" label="2" @change="show = !show">跳转到指定连接</el-radio>
               <div v-show="!show">
-                <el-select v-model="currentStatus" placeholder="同意后状态" class="currentStatus">
+                <el-select v-model="acceptStatus" placeholder="同意后状态" class="currentStatus">
                   <el-option v-for="(item, index) in statusList" :label="item.status" :key="index"
                     :value="item.value"></el-option>
                 </el-select>
-                <el-select v-model="nextStatus" placeholder="拒绝后状态" class="nextStatus">
+                <el-select v-model="rejectStatus" placeholder="拒绝后状态" class="nextStatus">
                   <el-option v-for="(item, index) in statusList" :label="item.status" :key="index"
                     :value="item.value"></el-option>
                 </el-select>
@@ -167,8 +167,8 @@ export default {
           value: '挂起'
         },
       ],
-      currentStatus: "",
-      nextStatus: "",
+      acceptStatus: "",
+      rejectStatus: "",
       link: "",
       radio: "1",
       show: false,
@@ -186,7 +186,7 @@ export default {
             wxOpenId: this.targetData.wxopenid,
             name: this.targetData.username,
             msg: this.infoform.content,
-            nowStatus: this.targetData.status,
+            title: this.infoform.infoPushTitle,
             //点击推送信息后跳转的页面
             HTTP: 'https://www.baidu.com'
           }

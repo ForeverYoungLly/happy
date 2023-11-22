@@ -98,7 +98,13 @@
                             <el-row :gutter="12">
                                 <el-col :span="6">
                                     <el-form-item label="性别" prop="sex">
-                                        <el-input v-model="editForm.sex"></el-input>
+                                        <!-- <el-select v-model="editForm.sex" placeholder="请选择性别">
+                                            <el-option v-for="item in sexoptions" :key="item.value" :label="item.label"
+                                                :value="item.value">
+                                            </el-option>
+                                        </el-select> -->
+                                        <el-radio v-model="editForm.sex" label="男">男</el-radio>
+                                        <el-radio v-model="editForm.sex" label="女">女</el-radio>
                                     </el-form-item>
                                 </el-col>
                                 <el-col :span="8">
@@ -129,21 +135,29 @@
                                 </el-col>
                                 <el-col :span="11">
                                     <el-form-item label="方向" prop="direction">
-                                        <el-input v-model="editForm.direction"></el-input>
+                                        <el-select v-model="editForm.direction" placeholder="请选择方向">
+                                            <el-option v-for="item in directionoptions" :key="item.value"
+                                                :label="item.label" :value="item.value">
+                                            </el-option>
+                                        </el-select>
                                     </el-form-item>
                                 </el-col>
                             </el-row>
                             <!-- 状态、编号-->
                             <el-row :gutter="20">
-                                <el-col :span="11">
-                                    <el-form-item label="状态" prop="status">
-                                        <el-input v-model="editForm.status"></el-input>
-                                    </el-form-item>
-                                </el-col>
                                 <!-- 微信id -->
                                 <el-col :span="11">
                                     <el-form-item label="微信号" prop="wxid">
                                         <el-input v-model="editForm.wxid"></el-input>
+                                    </el-form-item>
+                                </el-col>
+                                <el-col :span="10">
+                                    <el-form-item label="状态" prop="status">
+                                        <el-select v-model="editForm.status" placeholder="请选择状态">
+                                            <el-option v-for="item in statusoptions" :key="item.value" :label="item.label"
+                                                :value="item.value">
+                                            </el-option>
+                                        </el-select>
                                     </el-form-item>
                                 </el-col>
                             </el-row>
@@ -190,7 +204,7 @@
                         <el-row :gutter="20" style="margin-bottom: 20px; font-size: 16px;">
                             用户信息和附件
                         </el-row>
-                        <el-row >
+                        <el-row>
                             <el-upload class="upload-demo" ref="upload" action="#" :file-list="fileList"
                                 :auto-upload="false">
                                 <!-- <div slot="tip" class="el-upload__tip">用户简历上的附件</div> -->
@@ -227,6 +241,81 @@ import axios from 'axios';
 export default {
     data() {
         return {
+            sexoptions: [{
+                value: '男',
+                label: '男'
+            },{
+                value: '女',
+                label: '女'
+            },],
+            // 状态下拉框
+            statusoptions: [{
+                value: '草稿',
+                label: '草稿'
+            }, {
+                value: '待筛选',
+                label: '待筛选'
+            }, {
+                value: '筛选不通过',
+                label: '筛选不通过'
+            }, {
+                value: '待安排初试',
+                label: '待安排初试'
+            }, {
+                value: '待初试',
+                label: '待初试'
+            }, {
+                value: '初试不通过',
+                label: '初试不通过'
+            }, {
+                value: '初试通过',
+                label: '初试通过'
+            }, {
+                value: '待复试',
+                label: '待复试'
+            }, {
+                value: '待安排复试',
+                label: '待安排复试'
+            }, {
+                value: '复试通过',
+                label: '复试通过'
+            }, {
+                value: '待复试',
+                label: '待复试'
+            }, {
+                value: '待终试',
+                label: '待终试'
+            }, {
+                value: '待安排终试',
+                label: '待安排终试'
+            }, {
+                value: '终试通过',
+                label: '终试通过'
+            }, {
+                value: '待处理',
+                label: '待处理'
+            }, {
+                value: '挂起',
+                label: '挂起'
+            },
+            ],
+            // 方向下拉框
+            directionoptions: [{
+                value: '前端开发',
+                label: '前端开发'
+            }, {
+                value: '后端开发',
+                label: '后端开发'
+            }, {
+                value: '网络安全',
+                label: '网络安全'
+            }, {
+                value: 'UI设计',
+                label: 'UI设计'
+            }, {
+                value: '产品经理',
+                label: '产品经理'
+            },],
             // 搜索的关键字
             keywords: '',
             // 照片自适应容器的方式
@@ -495,14 +584,14 @@ export default {
             }
         },
         // 获取大头照
-        getUserPic(){
+        getUserPic() {
             console.log(this.editForm.studentid);
             axios({
-              url:'http://123.207.73.185:8080/showUserFileMessage',
-              params:{
-                studentid:this.editForm.studentid
-              }
-            }).then( res =>{
+                url: 'http://123.207.73.185:8080/showUserFileMessage',
+                params: {
+                    studentid: this.editForm.studentid
+                }
+            }).then(res => {
                 const fileList = res.data.data
                 this.src = fileList[0].url
                 // 大头照回显
