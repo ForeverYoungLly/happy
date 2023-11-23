@@ -1,6 +1,5 @@
 <template>
     <div class="container">
-        <div class="shine shine2"></div>
         <div class="star"></div>
         <div class="star pink"></div>
         <div class="star blue"></div>
@@ -182,8 +181,8 @@ export default {
     left: 500px;
     position: relative;
     transform-origin: 100% 0;
-    animation: star-ani 4s linear infinite;
-    -webkit-animation: star-ani 3s linear infinite;
+    animation: star-ani 3s linear infinite;
+    -webkit-animation: star-ani 2s linear infinite;
     box-shadow: 0 0 5px 5px rgba(255, 255, 255, 0.3);
     opacity: 0;
     z-index: 2;
@@ -206,32 +205,32 @@ export default {
     top: 100px;
     left: 800px;
     background: #f9ed69;
-    animation-delay: 3s;
-    -webkit-animation-delay: 3s;
-    -moz-animation-delay: 3s;
+    animation-delay: 2s;
+    -webkit-animation-delay: 2s;
+    -moz-animation-delay: 2s;
 }
 
 .pink:after {
     border-color: transparent transparent transparent #f9ed69;
-    animation-delay: 3s;
-    -webkit-animation-delay: 3s;
-    -moz-animation-delay: 3s;
+    animation-delay: 2s;
+    -webkit-animation-delay: 2s;
+    -moz-animation-delay: 2s;
 }
 
 .blue {
     top: 120px;
     left: 1200px;
     background: #ffffd2;
-    animation-delay: 5s;
-    -webkit-animation-delay: 5s;
-    -moz-animation-delay: 5s;
+    animation-delay: 3s;
+    -webkit-animation-delay: 3s;
+    -moz-animation-delay: 3s;
 }
 
 .blue:after {
     border-color: transparent transparent transparent #ffffd2;
-    -webkit-animation-delay: 5s;
-    -moz-animation-delay: 5s;
-    animation-delay: 5s;
+    -webkit-animation-delay: 3s;
+    -moz-animation-delay: 3s;
+    animation-delay: 3s;
 }
 
 @keyframes star-ani {
@@ -266,81 +265,6 @@ export default {
     }
 }
 
-.shine {
-    background-image: url("https://sucai.suoluomei.cn/sucai_zs/images/20201211172037-211357_VOTl_3549294.png");
-    background-repeat: no-repeat;
-    background-position: center;
-    width: 155px;
-    height: 155px;
-    position: absolute;
-    animation: opacity-change 1s ease-in-out infinite;
-    -webkit-animation: opacity-change 1s ease-in-out infinite;
-    -moz-animation: opacity-change 1s ease-in-out infinite;
-    -o-animation: opacity-change 1s ease-in-out infinite;
-}
-
-.shine2 {
-    animation: opacity-change 1.75s ease-in-out infinite;
-    -webkit-animation: opacity-change 1.75s ease-in-out infinite;
-    -moz-animation: opacity-change 1.75s ease-in-out infinite;
-    -o-animation: opacity-change 1.75s ease-in-out infinite;
-}
-
-@keyframes opacity-change {
-    0% {
-        opacity: 0;
-    }
-
-    50% {
-        opacity: 1;
-    }
-
-    100% {
-        opacity: 0;
-    }
-}
-
-@-webkit-keyframes opacity-change {
-    0% {
-        opacity: 0;
-    }
-
-    50% {
-        opacity: 1;
-    }
-
-    100% {
-        opacity: 0;
-    }
-}
-
-@-moz-keyframes opacity-change {
-    0% {
-        opacity: 0;
-    }
-
-    50% {
-        opacity: 1;
-    }
-
-    100% {
-        opacity: 0;
-    }
-}
-
-@-o-keyframes opacity-change {
-    0% {
-        opacity: 0;
-    }
-
-    50% {
-        opacity: 1;
-    }
-
-    100% {
-        opacity: 0;
-    }
-}
 // 标题样式
 .title {
     text-align: center;
