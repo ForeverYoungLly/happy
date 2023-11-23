@@ -123,8 +123,12 @@ export default {
       // 状态列表
       statusList: [
         {
-          status: ' ',
-          value: ' '
+          status: '不修改',
+          value: '不修改'
+        },
+        {
+          status: '待安排初试',
+          value: '待安排初试'
         },
         {
           status: '待初试',
@@ -139,9 +143,14 @@ export default {
           value: '初试通过'
         },
         {
+          status: '待安排复试',
+          value: '待安排复试'
+        },
+        {
           status: '待复试',
           value: '待复试'
         },
+        
         {
           status: '复试不通过',
           value: '复试不通过'
@@ -151,12 +160,20 @@ export default {
           value: '复试通过'
         },
         {
+          status: '待安排终试',
+          value: '待安排终试'
+        },
+        {
           status: '待终试',
           value: '待终试'
         },
         {
           status: '终试通过',
           value: '终试通过'
+        },
+        {
+          status: '终试不通过',
+          value: '终试不通过'
         },
         {
           status: '待处理',
@@ -179,24 +196,34 @@ export default {
     //发送推送信息
     async sendInfoPush() {
       if (this.targetData) {
-        await axios({
-          url: 'http://42.194.194.197/sendMessageToUser',
-          method: 'POST',
-          params: {
-            wxOpenId: this.targetData.wxopenid,
-            name: this.targetData.username,
-            msg: this.infoform.content,
-            title: this.infoform.infoPushTitle,
-            //点击推送信息后跳转的页面
-            HTTP: 'https://www.baidu.com'
-          }
-        }).then(() => {
-          this.$message.success('推送成功！')
-        }).catch(() => {
-          this.$message.error('推送失败')
-        })
-      }
+        let cnt = 0;
+        for(let i =0;i<this.targetData.length;i++)
+        {
+          const feedback= 'http://123.207.73.185:100/#/feedback'
 
+          let id = Date.now()
+          id *=1000+i
+          const query = feedback + `?id=${id}&wxopenid=${this.targetData[i].wxopenid}&now=${this.acceptStatus}&next=${this.rejectStatus}`
+           await axios({
+           url: 'http://42.194.194.197/templateMessage',
+           method: 'POST',
+           params: {
+             wxOpenId: this.targetData[i].wxopenid,
+             name: this.targetData[i].username,
+             msg: this.infoform.content,
+             //点击推送信息后跳转的页面
+             HTTP: query
+           }
+         }).then(() => {
+            cnt++;
+         }).catch(() => {
+         })
+        }
+          if(cnt === this.targetData.length)
+          {
+           this.$message.success('发送成功！')
+          }else this.$message.error('发送失败！')
+      }
       // 清空表单内容
       Object.assign(this.$data.infoform, this.$options.data().infoform)
     },
@@ -242,9 +269,6 @@ export default {
 
     //获取目标用户的所有数据，并存入targetData中,
     getId(targetdata) {
-      // this.targetData = this.options.find(obj => {
-      // return obj.wxopenid === targetwxopenid
-      // })
       var getData = [];
       for (let i = 0; i < targetdata.length; i++) {
         const Obj = new Object();
@@ -266,6 +290,9 @@ export default {
   },
 
   created() {
+    const query = document.location.query
+    console.log(1);
+    console.log(query);
     const token = localStorage.getItem('token')
     if (!token) {
       this.$message.error('请先登录！')

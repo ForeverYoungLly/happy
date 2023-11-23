@@ -7,6 +7,7 @@ import LayOut from '@/views/LayOut'
 import index from '@/views/Index'
 import setClient from '@/views/setClient'
 import theLogin from '@/views/theLogin'
+import feedback from '@/views/feedback'
 Vue.use(VueRouter)
 
 //将路由与组件进行映射
@@ -28,6 +29,8 @@ const routes = [
       { path:'/index',component:index},
       //用户端配置
       { path:'/setClient',component:setClient},
+      // 意见反馈
+      { path:'/feedback',component:feedback},
     ]
   },
 
