@@ -533,10 +533,10 @@ export default {
                             this.getUserList()
                             if (res.data.code === 1) {
                                 this.$message.success('修改成功！')
-                                this.editDialogVisible = false
+                                this.editDialogVisible = false;
                             } else {
                                 this.$message.success('修改失败' + res.data.msg)
-                                this.editDialogVisible = false
+                                this.editDialogVisible = false;
                             }
                         }).catch((e) => {
                             //返回401
