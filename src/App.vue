@@ -15,6 +15,6 @@ body {
 #app {
   width: 375px;
   height: 100vh;
-  background-color:#ccc;
+  background-color:#F8F8FF;
 }
 </style>

@@ -1,5 +1,5 @@
 <template>
-  <div class="container" >
+  <div class="container"  >
     <van-button type="primary" @click="toResume"  style="margin-bottom: 30px; width: 200px!important">{{ tips }}</van-button>
   </div>
 </template>
@@ -12,11 +12,13 @@ export default {
   name: 'MyIndex',
   data () {
     return {
-      wxOnpenid: '1',
+      wxopenid: '',
       tips: '投递简历', // 按钮文字
       exist: 1, // wxopenid已注册
+      // 用户信息
       userData: {},
-      bgImage: ''
+      // 背景图片
+      imgurl: ''
     }
   },
   methods: {
@@ -25,12 +27,12 @@ export default {
       if (!this.exist) {
         this.$router.push('/resume')
       } else {
-        // 成功提交,ok = 1 ，前往查看进度,带上status
+        // 成功提交,ok = 1 ，前往查看进度,带上wxopenid
         if (this.userData.ok) {
           this.$router.push({
             path: '/result',
             query: {
-              status: this.userData.status
+              wxopenid: this.userData.wxopenid
             }
           })
         } else { // 存过草稿，ok = 0 ,带上数据回显，继续填写
@@ -42,49 +44,71 @@ export default {
           })
         }
       }
-      // 去获取openid
     }
   },
   created () {
+    Toast.loading({
+      message: '加载中...',
+      forbidClick: true,
+      overlay: true
+    })
+    // 获取首页图片
+    axios({
+      url: 'http://123.207.73.185:8080/homePicture'
+    }).then(res => {
+      if (res.data.code) {
+        const str = 'http://'
+        this.imgurl = str + res.data.data
+        const container = document.querySelector('.container')
+        container.style.backgroundImage = `url(${this.imgurl})`
+        Toast.clear()
+      } else {
+        console.log('图片加载失败！')
+      }
+    }).catch(() => {
+      Toast.fail('背景图片获取失败，网络有误')
+    })
     // 截取微信openid
-    const wxopenid = document.location.search.slice(4)
+    const wxopenid = document.location.search.slice(10)
     console.log(wxopenid)
     // 带有微信openid
     if (wxopenid) {
-      this.wxOnpenid = wxopenid
-      Toast.loading({
-        message: '加载中...',
-        forbidClick: true,
-        overlay: true
-      })
-      // 查看用户是否已经注册
+      this.wxopenid = wxopenid
+      // 查看用户是否已经注册 -> 决定按钮的功能
       axios({
         url: 'http://123.207.73.185:8080/isUserExist',
         params: {
           wxopenid
         }
       }).then(res => {
-        this.userData = res.data.data
-        // 未注册
-        if (!res.data.code) {
-          this.tips = '投递简历'
-          this.exist = 0 // 标记注册
-        } else {
-          // 已注册
+        // 用户提交过
+        if (res.data.code) {
+          this.userData = res.data.data
+          // 是否草稿 ok=1 不是草稿 ok = 0 是草稿
           if (this.userData.ok) {
             this.tips = '查看当前进度'
           } else {
+            console.log('继续填写')
             this.tips = '继续填写'
           }
+        } else {
+          this.tips = '投递简历'
+          this.exist = 0 // 标记未注册
         }
       })
-    } else { // 没有微信openid
+    } else { // 没带wxopenid进来的 请先关注测试号
       // 跳转到获取微信openid
-      Toast.loading('正在前往授权')
+      Toast.loading('正在前往微信授权')
       setTimeout(() => {
-        Toast.clear()
         document.location.href = 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx8ba1b60caf51ed26&redirect_uri=http://123.207.73.185:100/%23/resume&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect'
       }, 1000)
+    }
+  },
+  mounted () {
+    // 渲染背景图片
+    if (this.imgurl) {
+      const container = document.querySelector('.container')
+      container.style.backgroundImage = `url(${this.imgurl})`
     }
   }
 }
@@ -98,8 +122,10 @@ export default {
   position: relative;
   width: 100%;
   height: 100%;
-  background: no-repeat url(../assets/images/abbg01.png) ;
   background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-image: url(../assets/images/abbg01.png);
 }
 
 </style>

@@ -3,7 +3,6 @@
     <van-nav-bar
       title="填写简历"
       left-arrow
-      @click-left="$router.go(-1)"
     />
     <van-form @submit="onSubmit" label-align="center" input-align="center" colon ref="resumeForm"  error-message-align="center"  validateOnRuleChange="false" >
       <!-- scroll-to-error  校验不通过时滚动至错误的表单项 -->
@@ -79,7 +78,7 @@
         name=""
         label="微信号"
         placeholder="请输入你的微信号"
-        :rules="[{required: false,
+        :rules="[{required: true,
           message: '微信号不能为空',
           trigger: 'onBlur'}]"
         autocomplete="off"
@@ -94,7 +93,7 @@
           label="意向岗位"
           placeholder="请选择你的意向岗位"
           @click="showPicker = true"
-          :rules="[{required: false,
+          :rules="[{required: true,
           message: '意向岗位不能为空',
           trigger: 'onBlur'}]"
       />
@@ -115,7 +114,7 @@
         label="个人介绍"
         type="textarea"
         placeholder="自我认知、字数不限"
-        :rules="[{required: false,
+        :rules="[{required: true,
           message: '个人介绍不能为空',
           trigger: 'onBlur'}]"
         autocomplete="off"
@@ -131,7 +130,7 @@
         label="加入ab实验室的理由"
         type="textarea"
         placeholder="加入ab实验室的理由"
-        :rules="[{required: false,
+        :rules="[{required: true,
           message: '理由不能为空',
           trigger: 'onBlur'}]"
         autocomplete="off"
@@ -147,16 +146,37 @@
         label="个人经历"
         type="textarea"
         placeholder="项目经历、职业规划等"
-        :rules="[{required: false,
+        :rules="[{required: true,
           message: '个人经历不能为空',
           trigger: 'onBlur'}]"
         autocomplete="off"
-
+      />
+      <!-- 获奖情况 -->
+      <van-field
+        v-model="UserInfo.award"
+        rows="2"
+        autosize
+        maxlength="50"
+        show-word-limit
+        label="获奖情况"
+        type="textarea"
+        placeholder="获奖情况,没有的话填空"
+      />
+      <!-- 备注 -->
+      <van-field
+        v-model="UserInfo.remark"
+        rows="2"
+        autosize
+        maxlength="50"
+        show-word-limit
+        label="备注"
+        type="textarea"
+        placeholder="请输入备注"
       />
       <!-- 照片上传 -->
-      <van-field name="photosList" label="照片上传" >
+      <van-field name="photosList" label="照片上传" :rules="picRules" required>
         <template #input>
-          <van-uploader v-model="photosList" :max-count="1"  :after-read="afterPhotoRead" :max-size="500 * 1024 *1024" :before-delete="delPhoto"/>
+          <van-uploader v-model="photosList" :max-count="1"  :after-read="afterPhotoRead" :max-size="500 * 1024 *1024" :before-delete="delPhoto" />
         </template>
       </van-field>
       <!-- 上传附件 -->
@@ -164,7 +184,7 @@
         <template #input>
           <!-- accept 支持上传的文件类型为全部，max-size最大上传内存 500m  -->
           <van-uploader v-model="fileList" :after-read="afterFileRead" accept="" :max-size="500 * 1024 *1024" :before-delete="delFile">
-            <van-button icon="plus" type="primary">上传文件</van-button>
+            <van-button icon="plus" type="primary" block>上传文件</van-button>
           </van-uploader>
 
         </template>
@@ -200,8 +220,9 @@ export default {
         reasons: '',
         experience: '',
         award: '',
-        status: '待录取',
-        wxopenid: ''
+        status: '待筛选',
+        wxopenid: '',
+        remark: ''
       },
       // 岗位选择框内容
       chosedDirection: '',
@@ -210,21 +231,21 @@ export default {
       // 显示下拉框
       showPicker: false,
       // // 校验手机号码
-      // telRules: [
-      //   {
-      //     required: true,
-      //     message: '手机号码不能为空',
-      //     trigger: 'onBlur'
-      //   },
-      //   {
-      //     validator: value => {
-      //       return /^(0|86|17951)?(13[0-9]|15[012356789]|166|17[3678]|18[0-9]|14[57])[0-9]{8}$/
-      //         .test(value)
-      //     },
-      //     message: '请输入正确格式的手机号码',
-      //     trigger: 'onBlur'
-      //   }
-      // ],
+      telRules: [
+        {
+          required: true,
+          message: '手机号码不能为空',
+          trigger: 'onBlur'
+        },
+        {
+          validator: value => {
+            return /^(0|86|17951)?(13[0-9]|15[012356789]|166|17[3678]|18[0-9]|14[57])[0-9]{8}$/
+              .test(value)
+          },
+          message: '请输入正确格式的手机号码',
+          trigger: 'onBlur'
+        }
+      ],
       // 校验学号
       studentidRules: [
         {
@@ -257,56 +278,61 @@ export default {
           trigger: 'onBlur'
         }
       ],
-      // // 检验年级
-      // gradeRules: [
-      //   {
-      //     required: true,
-      //     message: '年级不能为空',
-      //     trigger: 'onBlur'
-      //   },
-      //   {
-      //     validator: value => {
-      //       return /^20(1[0-9]|2[0-9]|30)$/
-      //         .test(value)
-      //     },
-      //     message: '请输入正确的年级',
-      //     trigger: 'onBlur'
-      //   }
-      // ],
-      // // 检验班级
-      // classRules: [
-      //   {
-      //     required: true,
-      //     message: '班级不能为空',
-      //     trigger: 'onBlur'
-      //   },
-      //   {
-      //     validator: value => {
-      //       return /^[1-9]班$/
-      //         .test(value)
-      //     },
-      //     message: '请输入正确的班级',
-      //     trigger: 'onBlur'
-      //   }
-      // ],
-      // // 校验专业
-      // professionRules: [
-      //   {
-      //     required: true,
-      //     message: '专业不能为空',
-      //     trigger: 'onBlur'
-      //   },
-      //   {
-      //     validator: value => {
-      //       return /^[\u4E00-\u9FFF]+$/
-      //         .test(value)
-      //     },
-      //     message: '请输入正确的专业',
-      //     trigger: 'onBlur'
-      //   }
-      // ],
-      // // 校验结果
-      testCondition: false,
+      // 检验年级
+      gradeRules: [
+        {
+          required: true,
+          message: '年级不能为空',
+          trigger: 'onBlur'
+        },
+        {
+          validator: value => {
+            return /^20(1[0-9]|2[0-9]|30)$/
+              .test(value)
+          },
+          message: '请输入正确的年级',
+          trigger: 'onBlur'
+        }
+      ],
+      // 检验班级
+      classRules: [
+        {
+          required: true,
+          message: '班级不能为空',
+          trigger: 'onBlur'
+        },
+        {
+          validator: value => {
+            return /^[1-9]班$/
+              .test(value)
+          },
+          message: '请输入正确的班级',
+          trigger: 'onBlur'
+        }
+      ],
+      // 校验专业
+      professionRules: [
+        {
+          required: true,
+          message: '专业不能为空',
+          trigger: 'onBlur'
+        },
+        {
+          validator: value => {
+            return /^[\u4E00-\u9FFF]+$/
+              .test(value)
+          },
+          message: '请输入正确的专业',
+          trigger: 'onBlur'
+        }
+      ],
+      // 图片表单
+      picRules: [
+        {
+          required: true,
+          trigger: 'onBlur'
+        }
+      ],
       // 图片
       photosList: [],
       // 附件
@@ -326,10 +352,9 @@ export default {
     },
     // 提交表单且验证通过后触发
     async submit () {
-      await this.$refs.resumeForm.validate()
-      this.testCondition = true
-      if (this.testCondition) {
+      await this.$refs.resumeForm.validate().then(() => {
         this.UserInfo.direction = this.chosedDirection
+        console.log('表单验证通过')
         // 上传附件
         Toast.loading({
           message: '加载中...',
@@ -360,13 +385,19 @@ export default {
             }
           }).then(() => {
             // 简历上传成功
+            this.UserInfo.ok = 1
             axios({
               url: 'http://123.207.73.185:8080/postUserMessage',
               method: 'POST',
               data: this.UserInfo
             }).then(() => {
               Toast.clear()
-              this.$router.push('/result')
+              this.$router.push({
+                path: '/result',
+                query: {
+                  wxopenid: this.UserInfo.wxopenid
+                }
+              })
             }).catch(() => {
               Toast.fail('简历提交失败！')
             })
@@ -378,7 +409,10 @@ export default {
         // 上传失败
           Toast.fail('附件上传失败')
         })
-      }
+      }).catch(error => {
+        console.log(error)
+        Toast.fail('表单验证不通过')
+      })
     },
     // 另存为草稿
     draft () {
@@ -522,10 +556,40 @@ export default {
         this.photosList.splice(detail.index, 1)
         e.file.status = 'done'
       }
+    },
+    showFilePic () {
+      // 文件回显
+      axios({
+        url: 'http://123.207.73.185:8080/showUserFileMessage',
+        params: {
+          studentid: this.UserInfo.studentid
+        }
+      }).then((res) => {
+        if (res.data.data[0].name) {
+          const item = {
+            url: res.data.data[0].url,
+            // 要用到file.status
+            file: new File([], res.data.data[0].name, {}) // 回显文件名称
+          }
+          this.photosList.push(item)
+          for (let i = 1; i < res.data.data.length; i++) {
+            const item1 = {
+              url: res.data.data[i].url,
+              file: new File([], res.data.data[i].name, {}) // 回显文件名称
+            }
+            this.fileList.push(item1)
+          }
+        }
+      }).catch(() => {
+        Toast.fail('文件回显失败!')
+      })
     }
   },
   created () {
     const query = document.location.search
+    console.log('location:', query)
+    const quer = this.$route.query
+    console.log('query', quer)
     // 带着code进来的
     if (query[1] === 'c') {
       const code = query.slice(6)
@@ -538,7 +602,7 @@ export default {
       }).then(res => {
         // 拿到了wxopenid
         this.wxOpenid = res.data.data
-        this.UserInfo.wxopenid = res.data.data
+        this.UserInfo.wxopenid = this.wxOpenid
         // 查询该openid是否注册过
         axios({
           url: 'http://123.207.73.185:8080/isUserExist',
@@ -546,53 +610,34 @@ export default {
             wxopenid: this.wxOpenid
           }
         }).then(res => {
-          // 已经提交过
+          // 该微信用户存在
           if (res.data.code) {
             const userData = res.data.data
             // 成功提交,ok = 1 ，前往查看进度,带上status
             if (userData.ok) {
-              console.log('新用户')
               this.$router.push({
                 path: '/result',
                 query: {
-                  status: userData.status
+                  wxopenid: userData.wxopenid
                 }
               })
             } else { // 存过草稿，ok = 0 ,数据回显，继续填写
               this.UserInfo = userData
+              console.log('数据回显，继续填写')
               this.chosedDirection = this.UserInfo.direction
-              axios({
-                url: 'http://123.207.73.185:8080/showUserFileMessage',
-                params: {
-                  studentid: this.UserInfo.studentid
-                }
-              }).then((res) => {
-                console.log(res)
-                const item = {
-                  url: res.data.data[0].url,
-                  // 要用到file.status
-                  file: new File([], res.data.data[0].name, {}) // 就是这个new File([], item.attachmentName, {}),有他就可以回显文件名称了
-                }
-                this.photosList.push(item)
-                for (let i = 1; i < res.data.data.length; i++) {
-                  const item1 = {
-                    url: res.data.data[i].url,
-                    file: new File([], res.data.data[i].name, {}) // 就是这个new File([], item.attachmentName, {}),有他就可以回显文件名称了
-                  }
-                  this.fileList.push(item1)
-                }
-              })
+              this.showFilePic()
             }
           }
         })
       }).catch(() => {
-        Toast.error('查询openid失败！')
+        Toast.fail('查询openid失败！')
       })
-    } else { // 不带code,已经有了wxopenid,从涵哥那边过来的
-      console.log(this.$route.query)
-      // 将路径带来参数的回显
-      this.UserInfo = this.$route.query
+    } else {
+    // 不带code,已经有了wxopenid,从涵哥那边过来的
+    // 将路径带来参数的回显
+      this.UserInfo = this.$route.query.userData
       this.chosedDirection = this.UserInfo.direction
+      this.showFilePic()
     }
   }
 }
