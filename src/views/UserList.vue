@@ -50,9 +50,9 @@
                     </template>
                 </el-table-column>
                 <el-table-column label="操作">
-                    <template slot-scope="scope">
+                    <template slot-scope="scope" >
                         <el-button @click="showEditDialog(scope)" icon="el-icon-edit" type="primary"
-                            size="small">查看/编辑</el-button>
+                            size="small" >查看/编辑</el-button>
                     </template>
                 </el-table-column>
             </el-table>
@@ -201,15 +201,14 @@
                         <el-button type="primary" @click="saveEdit">保存</el-button>
                     </el-tab-pane>
                     <el-tab-pane label="用户管理记录">
-                        <el-row :gutter="20" style="margin-bottom: 20px; font-size: 16px;">
-                            用户信息和附件
-                        </el-row>
-                        <el-row>
-                            <el-upload class="upload-demo" ref="upload" action="#" :file-list="fileList"
-                                :auto-upload="false">
-                                <!-- <div slot="tip" class="el-upload__tip">用户简历上的附件</div> -->
-                            </el-upload>
-                        </el-row>
+                        <div class="fileBox">
+                            <div class="text">附件下载</div>
+                            <div class="fileList">
+                                <div class="fileItem" v-for="(item,index) in fileList" :key="index" @click="download(index)">
+                                    <i class="el-icon-document" style="float: left;">{{ item.name }}</i>
+                                </div>
+                            </div>
+                        </div>
                         <el-form ref="historyformref" :model="historyform" label-width="80px">
                             <el-form-item label="初试安排">
                                 <el-input v-model="historyform.first" type="textarea"></el-input>
@@ -227,6 +226,16 @@
                                 <el-input v-model="historyform.manageRemark" type="textarea"></el-input>
                             </el-form-item>
                         </el-form>
+                        <div class="historyInfo">
+                            <div class="history_title" style="text-align: center;">历史信息</div>
+                            <div class="info">
+                                <div class="infoItem" v-for="(item,index) in historyInfo" :key="index" >
+                                    <div class="type">{{ item.type }}:</div>
+                                    <div class="message">{{ item.message}}</div>
+                                    <div class="time">{{ item.time }}</div>
+                                </div>
+                            </div>
+                        </div>
                         <el-button type="primary" @click="editDialogVisible = false">关闭</el-button>
                         <el-button type="primary" @click="saveEdit">保存</el-button>
                     </el-tab-pane>
@@ -326,22 +335,6 @@ export default {
             src: 'http://123.207.73.185:8090/userFile/picture/2022463030728/2022463030728照片.jpg',
             // 附件列表
             fileList: [
-                {
-                    name: 'food.jpeg',
-                    url: 'http://123.207.73.185:8090/userFile/2022463030728/说明书.txt'
-                },
-                {
-                    name: 'food.jpeg',
-                    url: 'http://123.207.73.185:8090/userFile/2022463030728/说明书.txt'
-                },
-                {
-                    name: 'food.jpeg',
-                    url: 'http://123.207.73.185:8090/userFile/2022463030728/说明书.txt'
-                },
-                {
-                    name: 'food2.jpeg',
-                    url: 'http://123.207.73.185:8090/userFile/2022463030728/说明书.txt'
-                }
             ],
             //存放用户列表的数组
             UserList: [],
@@ -409,7 +402,30 @@ export default {
                 second: '',
                 secondresult: '',
                 manageRemark: ''
-            }
+            },
+            // 历史操作信息
+            historyInfo:[
+                {
+                    type:"异常反馈",
+                    message:"我有异常反馈我有异常反馈我有异常反馈我有异常反馈我有异常反馈我有异常反馈我有异常反馈我有异常反馈我有异常反馈我有异常反馈我有异常反馈我有异常反馈我有异常反馈我有异常反馈我有异常反馈我有异常反馈我有异常反馈",
+                    time:"2023/11/23/22:00"
+                },
+                {
+                    type:"发送信息",
+                    message:"我有异常反馈",
+                    time:"2023/11/22"
+                },
+                {
+                    type:"异常反馈",
+                    message:"我有异常反馈",
+                    time:"2023/11/23"
+                },
+                {
+                    type:"发送信息",
+                    message:"我有异常反馈",
+                    time:"2023/11/22"
+                },
+            ]
         }
     },
     methods: {
@@ -456,7 +472,6 @@ export default {
                 this.$message.error('请先登录！')
                 this.$router.push('/login')
             }
-
         },
         //控制排序情况
         handle(val) {
@@ -465,6 +480,7 @@ export default {
                 this.sortField = val.prop == '11' ? 2 : 1
             }
         },
+
         handleCurrentChange(val) {
             this.currentPage = val
         },
@@ -476,10 +492,9 @@ export default {
         showEditDialog(scope) {
             //获取打开对象的wxopenid
             const id = scope.row.wxopenid
-            console.log(id);
-            // 在用户列表中找到具有对应id的用户的数据
+            // 在用户列表中找到具有对应wxopenid的用户的数据
             const editUserData = this.UserList.find(obj => { return obj.wxopenid === id })
-            console.log(editUserData.username);
+            // 对象无法直接赋值
             const str = JSON.stringify(editUserData)
             //数据回显到表单
             this.editForm = JSON.parse(str)
@@ -509,7 +524,6 @@ export default {
                             data: this.editForm,
                             headers,
                         }).then(res => {
-                            console.log(res)
                             this.getUserList()
                             if (res.data.code === 1) {
                                 this.$message.success('修改成功！')
@@ -593,18 +607,25 @@ export default {
                 }
             }).then(res => {
                 const fileList = res.data.data
+                // 预览
                 this.src = fileList[0].url
                 // 大头照回显
                 this.srcList.push(fileList[0].url)
-
                 // 附件回显
                 fileList.shift()
-                this.fileList = fileList
+                // 避免出现删除过渡效果
+                const files = fileList
+                this.fileList = files
             })
         },
-
+        // 下载附件
+        download(index){
+            console.log(index);
+            location.href = this.fileList[index].url
+        }
     },
     watch: {
+    // 搜索框内容
         keywords() {
             this.searchResource();
             if (this.keywords == '') {
@@ -620,6 +641,7 @@ export default {
             this.$router.push('/login')
         }
         else {
+            // 获取用户列表
             this.getUserList()
         }
     }
@@ -651,5 +673,73 @@ export default {
 .search-input {
     min-width: 20vw;
     width: 30vw;
+}
+.fileBox {
+    display: flex;
+    align-items: center;
+    min-height: 10vh;
+}
+.text {
+    width:80px;
+    text-align: center;
+}
+.fileList {
+    border: 1px solid #DCDFE6;
+    min-height: 10vh;
+    min-width: 50%;
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 10px;
+}
+.fileList:hover {
+    border-color: gray;
+}
+.fileItem {
+    padding: 10px;
+    min-height: 30px;
+    border-bottom: 0.5px solid #efefef;
+    cursor: pointer;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+.fileItem:hover {
+    color: lightskyblue;
+}
+.historyInfo{
+    display: flex;
+    flex-direction: column;
+}
+.history_title {
+    text-align: center;
+    font-size: 18px;
+    font-weight: bold;
+    border-bottom: 1px solid #efefef;
+}
+.info {
+    display: flex;
+    flex-direction: column;
+}
+.infoItem {
+    display: flex;
+    justify-content: space-around;
+    border-bottom: 1px solid #efefef;
+    align-items: center;
+    padding:25px 0px;
+}
+.infoItem:hover {
+    color: black;
+}
+.type {
+    flex:2;
+    text-align: center;
+}
+.message {
+    flex:8;
+    max-width: 40vw;
+}
+.time {
+    flex:3;
+    text-align: center;
+    
 }
 </style>

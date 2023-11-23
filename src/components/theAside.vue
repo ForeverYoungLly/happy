@@ -21,6 +21,13 @@
                         <span slot="title">用户列表</span>
                     </template>
                 </el-menu-item>
+                <!-- 意见反馈列表 -->
+                <el-menu-item index="/feedback">
+                    <template slot="title">
+                        <i class="el-icon-user"></i>
+                        <span slot="title">意见反馈用户</span>
+                    </template>
+                </el-menu-item>
                 <!-- 消息推送 -->
                 <el-menu-item index="/infopush">
                     <i class="el-icon-message"></i>
