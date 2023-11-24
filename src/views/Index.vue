@@ -73,6 +73,152 @@ export default {
     // 状态人数分布图表
     var myChart4 = echarts.init(document.getElementById('chart1'));
 
+    // 给图表赋初值
+    myChart1.setOption({
+      tooltip: {
+        trigger: 'item'
+      },
+      legend: {
+        top: '5%',
+        left: 'center'
+      },
+      series: [
+        {
+          name: 'Access From',
+          type: 'pie',
+          radius: ['40%', '70%'],
+          avoidLabelOverlap: false,
+          itemStyle: {
+            borderRadius: 10,
+            borderColor: '#fff',
+            borderWidth: 2
+          },
+          label: {
+            show: false,
+            position: 'center'
+          },
+          emphasis: {
+            label: {
+              show: true,
+              fontSize: 40,
+              fontWeight: 'bold'
+            }
+          },
+          labelLine: {
+            show: false
+          },
+          data: [
+            { value: 1048, name: 'Search Engine' },
+            { value: 735, name: 'Direct' },
+            { value: 580, name: 'Email' },
+            { value: 484, name: 'Union Ads' },
+            { value: 300, name: 'Video Ads' }
+          ]
+        }
+      ]
+    });
+    myChart2.setOption({
+      xAxis: {
+        type: 'category',
+        data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+      },
+      yAxis: {
+        type: 'value'
+      },
+      series: [
+        {
+          data: [120, 200, 150, 80, 70, 110, 130],
+          type: 'bar'
+        }
+      ]
+    });
+    myChart3.setOption({
+      tooltip: {
+        trigger: 'item'
+      },
+      legend: {
+        top: '5%',
+        left: 'center'
+      },
+      series: [
+        {
+          name: 'Access From',
+          type: 'pie',
+          radius: ['40%', '70%'],
+          avoidLabelOverlap: false,
+          itemStyle: {
+            borderRadius: 10,
+            borderColor: '#fff',
+            borderWidth: 2
+          },
+          label: {
+            show: false,
+            position: 'center'
+          },
+          emphasis: {
+            label: {
+              show: true,
+              fontSize: 40,
+              fontWeight: 'bold'
+            }
+          },
+          labelLine: {
+            show: false
+          },
+          data: [
+            { value: 1048, name: 'Search Engine' },
+            { value: 735, name: 'Direct' },
+            { value: 580, name: 'Email' },
+            { value: 484, name: 'Union Ads' },
+            { value: 300, name: 'Video Ads' }
+          ]
+        }
+      ]
+    });
+    myChart4.setOption({
+      tooltip: {
+        trigger: 'item'
+      },
+      legend: {
+        top: '5%',
+        left: 'center'
+      },
+      series: [
+        {
+          name: 'Access From',
+          type: 'pie',
+          radius: ['40%', '70%'],
+          avoidLabelOverlap: false,
+          itemStyle: {
+            borderRadius: 10,
+            borderColor: '#fff',
+            borderWidth: 2
+          },
+          label: {
+            show: false,
+            position: 'center'
+          },
+          emphasis: {
+            label: {
+              show: true,
+              fontSize: 40,
+              fontWeight: 'bold'
+            }
+          },
+          labelLine: {
+            show: false
+          },
+          data: [
+            { value: 1048, name: 'Search Engine' },
+            { value: 735, name: 'Direct' },
+            { value: 580, name: 'Email' },
+            { value: 484, name: 'Union Ads' },
+            { value: 300, name: 'Video Ads' }
+          ]
+        }
+      ]
+    });
+
     // echarts图表自适应
     window.onresize = () => {
       myChart1.resize();
@@ -88,15 +234,17 @@ export default {
         method: 'GET',
         headers,
       }).then(response => {
-
         //对专业人数图表进行配置
         var getData = [];
         //先进行赋值
-        for (let i = 0; i < response.data.data.专业[0].length; i++) {
-          var obj = new Object();
-          obj.name = response.data.data.专业[1][i];
-          obj.value = response.data.data.专业[0][i];
-          getData[i] = obj;
+        const a = response.data.data.专业[0].length;
+        if (a!== null && a!== undefined) {
+          for (let i = 0; i < a; i++) {
+            var obj = new Object();
+            obj.name = response.data.data.专业[1][i];
+            obj.value = response.data.data.专业[0][i];
+            getData[i] = obj;
+          }
         }
         myChart1.setOption({
           title: {
@@ -172,12 +320,16 @@ export default {
         });
         // 对方向人数图表进行配置
         var getData2 = [];
-        for (let i = 0; i < response.data.data.方向[0].length; i++) {
-          const obj = new Object();
-          obj.name = response.data.data.方向[1][i];
-          obj.value = response.data.data.方向[0][i];
-          getData2[i] = obj;
+        const b = response.data.data.方向[0].length;
+        if (b!== null && b!== undefined) {
+          for (let i = 0; i < b; i++) {
+            const obj = new Object();
+            obj.name = response.data.data.方向[1][i];
+            obj.value = response.data.data.方向[0][i];
+            getData2[i] = obj;
+          }
         }
+
         myChart3.setOption({
           title: {
             text: '各方向人数分布'
@@ -223,12 +375,16 @@ export default {
 
         // 对状态人数图表进行配置
         var getData3 = [];
-        for (let i = 0; i < response.data.data.状态[0].length; i++) {
-          const obj = new Object();
-          obj.name = response.data.data.状态[1][i];
-          obj.value = response.data.data.状态[0][i];
-          getData3[i] = obj;
+        const c = response.data.data.状态[0].length;
+        if (c!== null && c!== undefined) {
+          for (let i = 0; i < c; i++) {
+            const obj = new Object();
+            obj.name = response.data.data.状态[1][i];
+            obj.value = response.data.data.状态[0][i];
+            getData3[i] = obj;
+          }
         }
+
         myChart4.setOption({
           title: {
             text: '各状态人数分布'
@@ -273,6 +429,7 @@ export default {
         });
 
       }, err => {
+        this.UserList = null;
         console.log('错误信息：', err.message)
       })
     }
@@ -283,10 +440,8 @@ export default {
       this.$message.error('请先登录！')
       this.$router.push('/login')
     }
-
   },
   methods: {
-
   },
 }
 </script>
