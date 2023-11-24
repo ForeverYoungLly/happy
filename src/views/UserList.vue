@@ -66,8 +66,8 @@
             </div>
             <!-- 用户信息编辑的气泡框 -->
             <!-- :close-on-click-modal="false" 取消点击空白处关闭 -->
-            <el-dialog :visible.sync="editDialogVisible" width="60%" :close-on-click-modal="false">
-                <el-tabs type="border-card">
+            <el-dialog :visible.sync="editDialogVisible" width="60%" :close-on-click-modal="false" >
+                <el-tabs type="border-card" v-loading="loading">
                     <el-tab-pane label="用户信息">
                         <!-- 内容主体区 -->
                         <el-form :model="editForm" :rules="editFormRules" ref="editFormRef">
@@ -420,27 +420,17 @@ export default {
             },
             // 历史操作信息
             historyInfo:[
+                // {
+                //     type:"异常反馈",
+                //     message:"我有异常反馈我有异常反馈我有异常反馈我有异常反馈我有异常反馈我有异常反馈我有异常反馈我有异常反馈我有异常反馈我有异常反馈我有异常反馈我有异常反馈我有异常反馈我有异常反馈我有异常反馈我有异常反馈我有异常反馈",
+                //     time:"2023/11/23/22:00"
+                // },
                 {
-                    type:"异常反馈",
-                    message:"我有异常反馈我有异常反馈我有异常反馈我有异常反馈我有异常反馈我有异常反馈我有异常反馈我有异常反馈我有异常反馈我有异常反馈我有异常反馈我有异常反馈我有异常反馈我有异常反馈我有异常反馈我有异常反馈我有异常反馈",
-                    time:"2023/11/23/22:00"
-                },
-                {
-                    type:"发送信息",
-                    message:"我有异常反馈",
-                    time:"2023/11/22"
-                },
-                {
-                    type:"异常反馈",
-                    message:"我有异常反馈",
-                    time:"2023/11/23"
-                },
-                {
-                    type:"发送信息",
-                    message:"我有异常反馈",
-                    time:"2023/11/22"
-                },
-            ]
+                    message:'暂无数据'
+                }
+            ],
+            // 加载
+            loading:false
         }
     },
     methods: {
@@ -505,6 +495,8 @@ export default {
         },
         // 打开编辑表单
         showEditDialog(scope) {
+            // 开启加载
+            this.loading = true
             //获取打开对象的wxopenid
             const id = scope.row.wxopenid
             // 在用户列表中找到具有对应wxopenid的用户的数据
@@ -677,24 +669,30 @@ export default {
                     // 数据为空
                     if(newUserHistoryInfo.length === 0)
                     {
-                        this.historyInfo=[
-                        {
-                        message:'暂无数据'
-                        }
+                        this.historyInfo=
+                        [
+                            {
+                            message:'暂无数据'
+                            }
                         ]
+                        this.loading = false
+
                     }
                     // 不为空
                     else{
                         this.historyInfo = newUserHistoryInfo
+                        this.loading = false
                     }
                 }
                 // 请求失败
                 else{
-                    this.historyInfo=[
+                    this.historyInfo=
+                    [
                         {
                         message:'暂无数据'
                         }
-                ]
+                    ]
+                    this.loading = false
                 }
             })
         }
