@@ -171,7 +171,7 @@
                             <!-- 加入ab的理由 -->
                             <el-form-item label="加入ab的理由" prop="reason">
                                 <el-col>
-                                    <el-input type="textarea" placeholder="请输入个人经历及项目经验" :rows="5" v-model="editForm.reason"
+                                    <el-input type="textarea" placeholder="请输入个人经历及项目经验" :rows="5" v-model="editForm.reasons"
                                         resize='none' class="textarea"></el-input>
                                 </el-col>
                             </el-form-item>
@@ -229,8 +229,13 @@
                         <div class="historyInfo">
                             <div class="history_title" style="text-align: center;">历史信息</div>
                             <div class="info">
+                                <div class="header">
+                                    <div class="type">状态</div>
+                                    <div class="message">内容</div>
+                                    <div class="time">时间</div>
+                                </div>
                                 <div class="infoItem" v-for="(item,index) in historyInfo" :key="index" >
-                                    <div class="type">{{ item.type }}:</div>
+                                    <div class="type">{{ item.type }}</div>
                                     <div class="message">{{ item.message}}</div>
                                     <div class="time">{{ item.time }}</div>
                                 </div>
@@ -289,8 +294,8 @@ export default {
                 value: '复试通过',
                 label: '复试通过'
             }, {
-                value: '待复试',
-                label: '待复试'
+                value: '复试不通过',
+                label: '复试不通过'
             }, {
                 value: '待终试',
                 label: '待终试'
@@ -300,6 +305,10 @@ export default {
             }, {
                 value: '终试通过',
                 label: '终试通过'
+            }, {
+            }, {
+                value: '终试不通过',
+                label: '终试补通过'
             }, {
                 value: '待处理',
                 label: '待处理'
@@ -508,6 +517,8 @@ export default {
             this.targetWxopenId = id
             // 获取大头照
             this.getUserPic()
+            // 获取用户信息记录
+            this.getHistory(this.editForm.studentid)
             this.editDialogVisible = true
         },
         //保存编辑
@@ -550,30 +561,6 @@ export default {
                     else {
                         this.$message.error('修改信息不合法')
                     }
-
-                    await axios({
-                        url: 'http://123.207.73.185:8080/admin/updateUserMessage',
-                        method: 'POST',
-                        data: this.editForm,
-                        headers,
-                    }).then(res => {
-                        console.log(res)
-                        this.getUserList()
-                        if (res.data.code === 1) {
-                            this.$message.success('修改成功！')
-                            this.editDialogVisible = false
-                        } else {
-                            this.$message.success('修改失败' + res.data.msg)
-                            this.editDialogVisible = false
-                        }
-                    }).catch((e) => {
-                        //返回401
-                        if (!e.response.data.code) {
-                            this.$message.error('请先登录！')
-                            this.$router.push('/login')
-                        }
-                        this.$message.error("修改失败！")
-                    })
                 }
                 //无token
                 else {
@@ -651,6 +638,65 @@ export default {
         download(index){
             console.log(index);
             location.href = this.fileList[index].url
+        },
+        // 获取用户历史信息
+        getHistory(id){
+            axios({
+                url:"http://123.207.73.185:8080/admin/showUserHistory",
+                params:{
+                studentid:id
+                },
+                headers:{
+                    'jwt-code': localStorage.getItem('token')
+                }
+            }).then( res =>{
+                if(res.data.code)
+                {
+                    const data = res.data.data
+                    let newUserHistoryInfo = data.map((item)=>{
+                        const timeBack = item.CreatedAt
+                        const T = timeBack.indexOf('T')
+                        const year = timeBack.slice(0,T)
+                        const hour = timeBack.slice(T+1,T+6)
+                        let time = year + '-' + hour
+                        time = time.replace('-','/')
+                        time = time.replace('-','/')
+                        time = time.replace('-','/')
+                        const obj = {
+                            code:item.Code,
+                            type:item.Message,
+                            message:item.Message,
+                            time:time
+                        }
+                        return obj
+                    })
+                    console.log(newUserHistoryInfo)
+                    newUserHistoryInfo =  newUserHistoryInfo.filter((item)=>{
+                        return item.code === 1 || item.code === 2
+                    })
+                    // 数据为空
+                    if(newUserHistoryInfo.length === 0)
+                    {
+                        this.historyInfo=[
+                        {
+                        message:'暂无数据'
+                        }
+                        ]
+                    }
+                    // 不为空
+                    else{
+                        this.historyInfo = newUserHistoryInfo
+                    }
+                }
+                // 请求失败
+                else{
+                    this.historyInfo=[
+                        {
+                        message:'暂无数据'
+                        }
+                ]
+                }
+            })
         }
     },
     watch: {
@@ -765,10 +811,16 @@ export default {
 .message {
     flex:8;
     max-width: 40vw;
+    text-align: center;
 }
 .time {
     flex:3;
     text-align: center;
     
+}
+.header{
+    font-size: 16px;
+    font-weight: bold;
+    padding: 10px 0;
 }
 </style>

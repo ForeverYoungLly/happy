@@ -204,6 +204,7 @@ export default {
           let id = Date.now()
           id *=1000+i
           const query = feedback + `?id=${id}&wxopenid=${this.targetData[i].wxopenid}&now=${this.acceptStatus}&next=${this.rejectStatus}`
+          console.log(query);
            await axios({
            url: 'http://42.194.194.197/templateMessage',
            method: 'POST',
@@ -222,6 +223,8 @@ export default {
           if(cnt === this.targetData.length)
           {
            this.$message.success('发送成功！')
+           this.acceptStatus = '',
+           this.rejectStatus = ''
           }else this.$message.error('发送失败！')
       }
       // 清空表单内容
@@ -291,7 +294,6 @@ export default {
 
   created() {
     const query = document.location.query
-    console.log(1);
     console.log(query);
     const token = localStorage.getItem('token')
     if (!token) {
