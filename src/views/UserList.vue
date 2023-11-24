@@ -50,9 +50,9 @@
                     </template>
                 </el-table-column>
                 <el-table-column label="操作">
-                    <template slot-scope="scope" >
+                    <template slot-scope="scope">
                         <el-button @click="showEditDialog(scope)" icon="el-icon-edit" type="primary"
-                            size="small" >查看/编辑</el-button>
+                            size="small">查看/编辑</el-button>
                     </template>
                 </el-table-column>
             </el-table>
@@ -197,14 +197,17 @@
                                 </el-col>
                             </el-form-item>
                         </el-form>
-                        <el-button type="primary" @click="editDialogVisible = false">关闭</el-button>
-                        <el-button type="primary" @click="saveEdit">保存</el-button>
+                        <el-row type="flex" justify="center">
+                            <el-button type="primary" @click="editDialogVisible = false">关闭</el-button>
+                            <el-button type="primary" @click="saveEdit">保存</el-button>
+                        </el-row>
                     </el-tab-pane>
                     <el-tab-pane label="用户管理记录">
                         <div class="fileBox">
                             <div class="text">附件下载</div>
                             <div class="fileList">
-                                <div class="fileItem" v-for="(item,index) in fileList" :key="index" @click="download(index)">
+                                <div class="fileItem" v-for="(item, index) in fileList" :key="index"
+                                    @click="download(index)">
                                     <i class="el-icon-document" style="float: left;">{{ item.name }}</i>
                                 </div>
                             </div>
@@ -241,8 +244,10 @@
                                 </div>
                             </div>
                         </div>
-                        <el-button type="primary" @click="editDialogVisible = false">关闭</el-button>
-                        <el-button type="primary" @click="saveEdit">保存</el-button>
+                        <el-row type="flex" justify="center">
+                            <el-button type="primary" @click="editDialogVisible = false">关闭</el-button>
+                            <el-button type="primary" @click="saveEdit">保存</el-button>
+                        </el-row>
                     </el-tab-pane>
                 </el-tabs>
             </el-dialog>
@@ -387,11 +392,23 @@ export default {
                 studentid: [
                     { required: true, message: '请输入学号', trigger: 'blur' },
                 ],
+                status: [
+                    { required: true, message: '请输入状态', trigger: 'blur' },
+                ],
+                direction: [
+                    { required: true, message: '请输入方向', trigger: 'blur' },
+                ],
+                sex: [
+                    { required: true, message: '请输入性别', trigger: 'blur' },
+                ],
                 class: [
                     { required: true, message: '请输入班级', trigger: 'blur' },
                 ],
                 profession: [
                     { required: true, message: '请输入专业', trigger: 'blur' },
+                ],
+                wxid: [
+                    { required: true, message: '请输入微信号', trigger: 'blur' },
                 ],
                 phone: [
                     { required: true, message: '请输入手机号码', trigger: 'blur' },
@@ -627,7 +644,7 @@ export default {
             })
         },
         // 下载附件
-        download(index){
+        download(index) {
             console.log(index);
             location.href = this.fileList[index].url
         },
@@ -698,7 +715,7 @@ export default {
         }
     },
     watch: {
-    // 搜索框内容
+        // 搜索框内容
         keywords() {
             this.searchResource();
             if (this.keywords == '') {
@@ -747,15 +764,18 @@ export default {
     min-width: 20vw;
     width: 30vw;
 }
+
 .fileBox {
     display: flex;
     align-items: center;
     min-height: 10vh;
 }
+
 .text {
-    width:80px;
+    width: 80px;
     text-align: center;
 }
+
 .fileList {
     border: 1px solid #DCDFE6;
     min-height: 10vh;
@@ -764,9 +784,11 @@ export default {
     overflow: hidden;
     margin-bottom: 10px;
 }
+
 .fileList:hover {
     border-color: gray;
 }
+
 .fileItem {
     padding: 10px;
     min-height: 30px;
@@ -775,44 +797,53 @@ export default {
     white-space: nowrap;
     text-overflow: ellipsis;
 }
+
 .fileItem:hover {
     color: lightskyblue;
 }
-.historyInfo{
+
+.historyInfo {
     display: flex;
     flex-direction: column;
 }
+
 .history_title {
     text-align: center;
     font-size: 18px;
     font-weight: bold;
     border-bottom: 1px solid #efefef;
 }
+
 .info {
     display: flex;
     flex-direction: column;
 }
+
 .infoItem {
     display: flex;
     justify-content: space-around;
     border-bottom: 1px solid #efefef;
     align-items: center;
-    padding:25px 0px;
+    padding: 25px 0px;
 }
+
 .infoItem:hover {
     color: black;
 }
+
 .type {
-    flex:2;
+    flex: 2;
     text-align: center;
 }
+
 .message {
-    flex:8;
+    flex: 8;
     max-width: 40vw;
     text-align: center;
 }
+
 .time {
-    flex:3;
+    flex: 3;
     text-align: center;
     
 }
