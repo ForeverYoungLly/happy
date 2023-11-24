@@ -14,7 +14,7 @@
         <el-table-column label="操作">
           <template slot-scope="scope">
             <el-button icon="el-icon-edit" type="primary" size="small" @click="showEditDialog(scope)">查看/编辑</el-button>
-            <el-button icon="el-icon-s-tools" type="primary" size="small">解决异常</el-button>
+            <el-button icon="el-icon-s-tools" type="primary" size="small" @click="solveProblem">解决异常</el-button>
             <el-button icon="el-icon-s-promotion" type="primary" size="small" @click="infoPush">发送消息</el-button>
           </template>
         </el-table-column>
@@ -329,7 +329,7 @@ export default {
       this.editDialogVisible = true;
     },
     // 保存编辑
-    saveEdit(editFormRef) {
+    saveEdit() {
       const editStr = JSON.stringify(this.editForm)
       const editUserData = this.UserList.find(obj => { return obj.wxopenid === this.targetWxopenIdid })
       const UserlistStr = JSON.stringify(editUserData)
@@ -341,8 +341,11 @@ export default {
         }
         //有token
         if (headers) {
-          this.$refs.editFormRef.validate((valid) => {
-            if (valid) {
+          this.$refs.editFormRef.validate(valid => {
+            if (valid === false) {
+              this.$message.error('修改信息不合法');
+            } 
+            else {
               axios({
                 url: 'http://123.207.73.185:8080/admin/updateUserMessage',
                 method: 'POST',
@@ -353,8 +356,9 @@ export default {
                 if (res.data.code === 1) {
                   this.$message.success('修改成功！')
                   this.editDialogVisible = false;
-                } else {
-                  this.$message.success('修改失败' + res.data.msg)
+                } 
+                else {
+                  this.$message.success('修改失败')
                   this.editDialogVisible = false;
                 }
               }).catch((e) => {
@@ -365,9 +369,6 @@ export default {
                 }
                 this.$message.error("修改失败！")
               })
-            } 
-            else {
-              this.$message.error('修改信息不合法')
             }
           });
         }
@@ -432,6 +433,28 @@ export default {
         this.fileList = files
       })
     },
+    // 解决异常后重新渲染表单函数
+    async solveProblem() {
+      const headers = {
+        'jwt-code': localStorage.getItem('token')
+      }
+      if(headers){
+        await axios({
+          url: 'http://42.194.194.197/admin/overComeProblem',
+          method: 'GET',
+          headers,
+        }).then( response =>{
+          console.log(response);
+        }).catch( error =>{
+          console.log(error);
+          // this.$message.error('请先登录！')
+          // this.$router.push('/login')
+        })
+      }
+      else{
+
+      }
+    }
   },
   created() {
     const token = localStorage.getItem('token')
@@ -443,7 +466,6 @@ export default {
       // 获取用户列表
       this.getUserList()
     }
-    console.log(this.$refs.editFormRef.validate);
   }
 }
 </script>

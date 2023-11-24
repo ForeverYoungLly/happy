@@ -50,9 +50,9 @@
                     </template>
                 </el-table-column>
                 <el-table-column label="操作">
-                    <template slot-scope="scope" >
+                    <template slot-scope="scope">
                         <el-button @click="showEditDialog(scope)" icon="el-icon-edit" type="primary"
-                            size="small" >查看/编辑</el-button>
+                            size="small">查看/编辑</el-button>
                     </template>
                 </el-table-column>
             </el-table>
@@ -197,14 +197,17 @@
                                 </el-col>
                             </el-form-item>
                         </el-form>
-                        <el-button type="primary" @click="editDialogVisible = false">关闭</el-button>
-                        <el-button type="primary" @click="saveEdit">保存</el-button>
+                        <el-row type="flex" justify="center">
+                            <el-button type="primary" @click="editDialogVisible = false">关闭</el-button>
+                            <el-button type="primary" @click="saveEdit">保存</el-button>
+                        </el-row>
                     </el-tab-pane>
                     <el-tab-pane label="用户管理记录">
                         <div class="fileBox">
                             <div class="text">附件下载</div>
                             <div class="fileList">
-                                <div class="fileItem" v-for="(item,index) in fileList" :key="index" @click="download(index)">
+                                <div class="fileItem" v-for="(item, index) in fileList" :key="index"
+                                    @click="download(index)">
                                     <i class="el-icon-document" style="float: left;">{{ item.name }}</i>
                                 </div>
                             </div>
@@ -229,15 +232,17 @@
                         <div class="historyInfo">
                             <div class="history_title" style="text-align: center;">历史信息</div>
                             <div class="info">
-                                <div class="infoItem" v-for="(item,index) in historyInfo" :key="index" >
+                                <div class="infoItem" v-for="(item, index) in historyInfo" :key="index">
                                     <div class="type">{{ item.type }}:</div>
-                                    <div class="message">{{ item.message}}</div>
+                                    <div class="message">{{ item.message }}</div>
                                     <div class="time">{{ item.time }}</div>
                                 </div>
                             </div>
                         </div>
-                        <el-button type="primary" @click="editDialogVisible = false">关闭</el-button>
-                        <el-button type="primary" @click="saveEdit">保存</el-button>
+                        <el-row type="flex" justify="center">
+                            <el-button type="primary" @click="editDialogVisible = false">关闭</el-button>
+                            <el-button type="primary" @click="saveEdit">保存</el-button>
+                        </el-row>
                     </el-tab-pane>
                 </el-tabs>
             </el-dialog>
@@ -378,11 +383,23 @@ export default {
                 studentid: [
                     { required: true, message: '请输入学号', trigger: 'blur' },
                 ],
+                status: [
+                    { required: true, message: '请输入状态', trigger: 'blur' },
+                ],
+                direction: [
+                    { required: true, message: '请输入方向', trigger: 'blur' },
+                ],
+                sex: [
+                    { required: true, message: '请输入性别', trigger: 'blur' },
+                ],
                 class: [
                     { required: true, message: '请输入班级', trigger: 'blur' },
                 ],
                 profession: [
                     { required: true, message: '请输入专业', trigger: 'blur' },
+                ],
+                wxid: [
+                    { required: true, message: '请输入微信号', trigger: 'blur' },
                 ],
                 phone: [
                     { required: true, message: '请输入手机号码', trigger: 'blur' },
@@ -410,26 +427,26 @@ export default {
                 manageRemark: ''
             },
             // 历史操作信息
-            historyInfo:[
+            historyInfo: [
                 {
-                    type:"异常反馈",
-                    message:"我有异常反馈我有异常反馈我有异常反馈我有异常反馈我有异常反馈我有异常反馈我有异常反馈我有异常反馈我有异常反馈我有异常反馈我有异常反馈我有异常反馈我有异常反馈我有异常反馈我有异常反馈我有异常反馈我有异常反馈",
-                    time:"2023/11/23/22:00"
+                    type: "异常反馈",
+                    message: "我有异常反馈我有异常反馈我有异常反馈我有异常反馈我有异常反馈我有异常反馈我有异常反馈我有异常反馈我有异常反馈我有异常反馈我有异常反馈我有异常反馈我有异常反馈我有异常反馈我有异常反馈我有异常反馈我有异常反馈",
+                    time: "2023/11/23/22:00"
                 },
                 {
-                    type:"发送信息",
-                    message:"我有异常反馈",
-                    time:"2023/11/22"
+                    type: "发送信息",
+                    message: "我有异常反馈",
+                    time: "2023/11/22"
                 },
                 {
-                    type:"异常反馈",
-                    message:"我有异常反馈",
-                    time:"2023/11/23"
+                    type: "异常反馈",
+                    message: "我有异常反馈",
+                    time: "2023/11/23"
                 },
                 {
-                    type:"发送信息",
-                    message:"我有异常反馈",
-                    time:"2023/11/22"
+                    type: "发送信息",
+                    message: "我有异常反馈",
+                    time: "2023/11/22"
                 },
             ]
         }
@@ -511,7 +528,7 @@ export default {
             this.editDialogVisible = true
         },
         //保存编辑
-        async saveEdit() {
+        saveEdit() {
             const editStr = JSON.stringify(this.editForm)
             const editUserData = this.UserList.find(obj => { return obj.wxopenid === this.targetWxopenIdid })
             const UserlistStr = JSON.stringify(editUserData)
@@ -523,57 +540,35 @@ export default {
                 }
                 //有token
                 if (headers) {
-                    if (this.$refs.editFormRef.validate === true) {
-                        await axios({
-                            url: 'http://123.207.73.185:8080/admin/updateUserMessage',
-                            method: 'POST',
-                            data: this.editForm,
-                            headers,
-                        }).then(res => {
-                            this.getUserList()
-                            if (res.data.code === 1) {
-                                this.$message.success('修改成功！')
-                                this.editDialogVisible = false;
-                            } else {
-                                this.$message.success('修改失败' + res.data.msg)
-                                this.editDialogVisible = false;
-                            }
-                        }).catch((e) => {
-                            //返回401
-                            if (!e.response.data.code) {
-                                this.$message.error('请先登录！')
-                                this.$router.push('/login')
-                            }
-                            this.$message.error("修改失败！")
-                        })
-                    }
-                    else {
-                        this.$message.error('修改信息不合法')
-                    }
-
-                    await axios({
-                        url: 'http://123.207.73.185:8080/admin/updateUserMessage',
-                        method: 'POST',
-                        data: this.editForm,
-                        headers,
-                    }).then(res => {
-                        console.log(res)
-                        this.getUserList()
-                        if (res.data.code === 1) {
-                            this.$message.success('修改成功！')
-                            this.editDialogVisible = false
-                        } else {
-                            this.$message.success('修改失败' + res.data.msg)
-                            this.editDialogVisible = false
+                    this.$refs.editFormRef.validate(valid => {
+                        if (valid === false) {
+                            this.$message.error('修改信息不合法');
                         }
-                    }).catch((e) => {
-                        //返回401
-                        if (!e.response.data.code) {
-                            this.$message.error('请先登录！')
-                            this.$router.push('/login')
+                        else {
+                            axios({
+                                url: 'http://123.207.73.185:8080/admin/updateUserMessage',
+                                method: 'POST',
+                                data: this.editForm,
+                                headers,
+                            }).then(res => {
+                                this.getUserList()
+                                if (res.data.code === 1) {
+                                    this.$message.success('修改成功！')
+                                    this.editDialogVisible = false;
+                                } else {
+                                    this.$message.success('修改失败')
+                                    this.editDialogVisible = false;
+                                }
+                            }).catch((e) => {
+                                //返回401
+                                if (!e.response.data.code) {
+                                    this.$message.error('请先登录！')
+                                    this.$router.push('/login')
+                                }
+                                this.$message.error("修改失败！")
+                            })
                         }
-                        this.$message.error("修改失败！")
-                    })
+                    });
                 }
                 //无token
                 else {
@@ -648,13 +643,13 @@ export default {
             })
         },
         // 下载附件
-        download(index){
+        download(index) {
             console.log(index);
             location.href = this.fileList[index].url
         }
     },
     watch: {
-    // 搜索框内容
+        // 搜索框内容
         keywords() {
             this.searchResource();
             if (this.keywords == '') {
@@ -703,15 +698,18 @@ export default {
     min-width: 20vw;
     width: 30vw;
 }
+
 .fileBox {
     display: flex;
     align-items: center;
     min-height: 10vh;
 }
+
 .text {
-    width:80px;
+    width: 80px;
     text-align: center;
 }
+
 .fileList {
     border: 1px solid #DCDFE6;
     min-height: 10vh;
@@ -720,9 +718,11 @@ export default {
     overflow: hidden;
     margin-bottom: 10px;
 }
+
 .fileList:hover {
     border-color: gray;
 }
+
 .fileItem {
     padding: 10px;
     min-height: 30px;
@@ -731,44 +731,52 @@ export default {
     white-space: nowrap;
     text-overflow: ellipsis;
 }
+
 .fileItem:hover {
     color: lightskyblue;
 }
-.historyInfo{
+
+.historyInfo {
     display: flex;
     flex-direction: column;
 }
+
 .history_title {
     text-align: center;
     font-size: 18px;
     font-weight: bold;
     border-bottom: 1px solid #efefef;
 }
+
 .info {
     display: flex;
     flex-direction: column;
 }
+
 .infoItem {
     display: flex;
     justify-content: space-around;
     border-bottom: 1px solid #efefef;
     align-items: center;
-    padding:25px 0px;
+    padding: 25px 0px;
 }
+
 .infoItem:hover {
     color: black;
 }
+
 .type {
-    flex:2;
+    flex: 2;
     text-align: center;
 }
+
 .message {
-    flex:8;
+    flex: 8;
     max-width: 40vw;
 }
+
 .time {
-    flex:3;
+    flex: 3;
     text-align: center;
-    
-}
-</style>
+
+}</style>
