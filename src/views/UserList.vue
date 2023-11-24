@@ -66,7 +66,7 @@
             </div>
             <!-- 用户信息编辑的气泡框 -->
             <!-- :close-on-click-modal="false" 取消点击空白处关闭 -->
-            <el-dialog :visible.sync="editDialogVisible" width="60%" :close-on-click-modal="false" >
+            <el-dialog :visible.sync="editDialogVisible" width="60%" :close-on-click-modal="false">
                 <el-tabs type="border-card" v-loading="loading">
                     <el-tab-pane label="用户信息">
                         <!-- 内容主体区 -->
@@ -171,8 +171,8 @@
                             <!-- 加入ab的理由 -->
                             <el-form-item label="加入ab的理由" prop="reason">
                                 <el-col>
-                                    <el-input type="textarea" placeholder="请输入个人经历及项目经验" :rows="5" v-model="editForm.reasons"
-                                        resize='none' class="textarea"></el-input>
+                                    <el-input type="textarea" placeholder="请输入个人经历及项目经验" :rows="5"
+                                        v-model="editForm.reasons" resize='none' class="textarea"></el-input>
                                 </el-col>
                             </el-form-item>
                             <!-- 个人经历 -->
@@ -237,9 +237,9 @@
                                     <div class="message">内容</div>
                                     <div class="time">时间</div>
                                 </div>
-                                <div class="infoItem" v-for="(item,index) in historyInfo" :key="index" >
+                                <div class="infoItem" v-for="(item, index) in historyInfo" :key="index">
                                     <div class="type">{{ item.type }}</div>
-                                    <div class="message">{{ item.message}}</div>
+                                    <div class="message">{{ item.message }}</div>
                                     <div class="time">{{ item.time }}</div>
                                 </div>
                             </div>
@@ -436,18 +436,18 @@ export default {
                 manageRemark: ''
             },
             // 历史操作信息
-            historyInfo:[
+            historyInfo: [
                 // {
                 //     type:"异常反馈",
                 //     message:"我有异常反馈我有异常反馈我有异常反馈我有异常反馈我有异常反馈我有异常反馈我有异常反馈我有异常反馈我有异常反馈我有异常反馈我有异常反馈我有异常反馈我有异常反馈我有异常反馈我有异常反馈我有异常反馈我有异常反馈",
                 //     time:"2023/11/23/22:00"
                 // },
                 {
-                    message:'暂无数据'
+                    message: '暂无数据'
                 }
             ],
             // 加载
-            loading:false
+            loading: false
         }
     },
     methods: {
@@ -531,7 +531,7 @@ export default {
             this.editDialogVisible = true
         },
         //保存编辑
-        async saveEdit() {
+        saveEdit() {
             const editStr = JSON.stringify(this.editForm)
             const editUserData = this.UserList.find(obj => { return obj.wxopenid === this.targetWxopenIdid })
             const UserlistStr = JSON.stringify(editUserData)
@@ -543,33 +543,36 @@ export default {
                 }
                 //有token
                 if (headers) {
-                    if (this.$refs.editFormRef.validate === true) {
-                        await axios({
-                            url: 'http://123.207.73.185:8080/admin/updateUserMessage',
-                            method: 'POST',
-                            data: this.editForm,
-                            headers,
-                        }).then(res => {
-                            this.getUserList()
-                            if (res.data.code === 1) {
-                                this.$message.success('修改成功！')
-                                this.editDialogVisible = false;
-                            } else {
-                                this.$message.success('修改失败' + res.data.msg)
-                                this.editDialogVisible = false;
-                            }
-                        }).catch((e) => {
-                            //返回401
-                            if (!e.response.data.code) {
-                                this.$message.error('请先登录！')
-                                this.$router.push('/login')
-                            }
-                            this.$message.error("修改失败！")
-                        })
-                    }
-                    else {
-                        this.$message.error('修改信息不合法')
-                    }
+                    this.$refs.editFormRef.validate(valid => {
+                        if (valid === false) {
+                            this.$message.error('修改信息不合法');
+                        }
+                        else {
+                            axios({
+                                url: 'http://123.207.73.185:8080/admin/updateUserMessage',
+                                method: 'POST',
+                                data: this.editForm,
+                                headers,
+                            }).then(res => {
+                                this.getUserList()
+                                if (res.data.code === 1) {
+                                    this.$message.success('修改成功！')
+                                    this.editDialogVisible = false;
+                                }
+                                else {
+                                    this.$message.success('修改失败')
+                                    this.editDialogVisible = false;
+                                }
+                            }).catch((e) => {
+                                //返回401
+                                if (!e.response.data.code) {
+                                    this.$message.error('请先登录！')
+                                    this.$router.push('/login')
+                                }
+                                this.$message.error("修改失败！")
+                            })
+                        }
+                    });
                 }
                 //无token
                 else {
@@ -649,66 +652,64 @@ export default {
             location.href = this.fileList[index].url
         },
         // 获取用户历史信息
-        getHistory(id){
+        getHistory(id) {
             axios({
-                url:"http://123.207.73.185:8080/admin/showUserHistory",
-                params:{
-                studentid:id
+                url: "http://123.207.73.185:8080/admin/showUserHistory",
+                params: {
+                    studentid: id
                 },
-                headers:{
+                headers: {
                     'jwt-code': localStorage.getItem('token')
                 }
-            }).then( res =>{
-                if(res.data.code)
-                {
+            }).then(res => {
+                if (res.data.code) {
                     const data = res.data.data
-                    let newUserHistoryInfo = data.map((item)=>{
+                    let newUserHistoryInfo = data.map((item) => {
                         const timeBack = item.CreatedAt
                         const T = timeBack.indexOf('T')
-                        const year = timeBack.slice(0,T)
-                        const hour = timeBack.slice(T+1,T+6)
+                        const year = timeBack.slice(0, T)
+                        const hour = timeBack.slice(T + 1, T + 6)
                         let time = year + '-' + hour
-                        time = time.replace('-','/')
-                        time = time.replace('-','/')
-                        time = time.replace('-','/')
+                        time = time.replace('-', '/')
+                        time = time.replace('-', '/')
+                        time = time.replace('-', '/')
                         const obj = {
-                            code:item.Code,
-                            type:item.Message,
-                            message:item.Message,
-                            time:time
+                            code: item.Code,
+                            type: item.Message,
+                            message: item.Message,
+                            time: time
                         }
                         return obj
                     })
                     console.log(newUserHistoryInfo)
-                    newUserHistoryInfo =  newUserHistoryInfo.filter((item)=>{
+                    newUserHistoryInfo = newUserHistoryInfo.filter((item) => {
                         return item.code === 1 || item.code === 2
                     })
                     // 数据为空
-                    if(newUserHistoryInfo.length === 0)
-                    {
-                        this.historyInfo=
-                        [
-                            {
-                            message:'暂无数据'
-                            }
-                        ]
+                    if (newUserHistoryInfo.length === 0) {
+                        this.historyInfo =
+                            [
+                                {
+                                    message: '暂无数据'
+                                }
+                            ]
                         this.loading = false
 
                     }
                     // 不为空
-                    else{
+                    else {
                         this.historyInfo = newUserHistoryInfo
                         this.loading = false
                     }
                 }
                 // 请求失败
-                else{
-                    this.historyInfo=
-                    [
-                        {
-                        message:'暂无数据'
-                        }
-                    ]
+                else {
+                    this.historyInfo =
+                        [
+                            {
+                                message: '暂无数据'
+                            }
+                        ]
                     this.loading = false
                 }
             })
@@ -845,9 +846,10 @@ export default {
 .time {
     flex: 3;
     text-align: center;
-    
+
 }
-.header{
+
+.header {
     font-size: 16px;
     font-weight: bold;
     padding: 10px 0;
