@@ -7,7 +7,9 @@
                 <el-input placeholder="请输入待查询用户的姓名" v-model="keywords" class="search-input" clearable>
                     <el-button slot="append" icon="el-icon-search" @click="searchResource"></el-button>
                 </el-input>
-                <!-- 批量发送 -->
+                <!-- 批量修改状态 -->
+                <el-button type="primary" @click="statusDialogVisible = true">批量修改状态</el-button>
+                <!-- 批量发送--消息推送 -->
                 <el-button type="primary" @click="handleSelectionChange">批量发送</el-button>
             </div>
             <!-- 用户列表 -->
@@ -251,6 +253,16 @@
                     </el-tab-pane>
                 </el-tabs>
             </el-dialog>
+            <!-- 批量修改状态的气泡框 -->
+            <el-dialog :visible.sync="statusDialogVisible" width="30%" :close-on-click-modal="false">
+                <el-select v-model="editForm.status" placeholder="请选择修改后的状态">
+                    <el-option v-for="item in statusoptions" :key="item.value" 
+                    :label="item.label" :value="item.value">
+                    </el-option>
+               </el-select>
+               <el-button @click="statusDialogVisible = false">取 消</el-button>
+               <el-button type="primary" @click="savestatusEdit">确定修改</el-button>
+            </el-dialog>
         </div>
     </el-main>
 </template>
@@ -313,7 +325,7 @@ export default {
             }, {
             }, {
                 value: '终试不通过',
-                label: '终试补通过'
+                label: '终试不通过'
             }, {
                 value: '待处理',
                 label: '待处理'
@@ -360,6 +372,8 @@ export default {
             pageSize: 5,
             //编辑对话框的显示隐藏
             editDialogVisible: false,
+            // 批量修改状态对话框显示与隐藏
+            statusDialogVisible: false,
             //编辑表单绑定的内容
             editForm: {
                 username: '小明',
@@ -713,6 +727,103 @@ export default {
                     this.loading = false
                 }
             })
+        },
+        // 批量修改状态
+        // async changeStatus() {
+        //     const headers = {
+        //         'jwt-code': localStorage.getItem('token')
+        //     }
+        //     var mutipleList = this.$refs.multipleTable.selection;
+        //     var statuslist = [];
+        //     for (let i = 0; i < mutipleList.length; i++) {
+        //         const obj = new Object();
+        //         obj.status = mutipleList[i].status;
+        //         obj.wxopenid = mutipleList[i].wxopenid;
+        //         obj.studentid = mutipleList[i].studentid;
+        //         statuslist[i] = obj;
+        //     }
+        //     if (headers) {
+        //         await axios({
+        //             url: 'http://123.207.73.185:8080/postUserMessage',
+        //             params: {
+        //                 list: statuslist,
+        //                 headers
+        //             },
+        //         }).then(res => {
+        //             console(res)
+        //         }).catch((e) => {
+        //             // this.$message.error('请先登录！')
+        //             // this.$router.push('/login')
+        //             console.log(e);
+        //         })
+        //     }
+        // }
+        savestatusEdit() {
+            const editStr = JSON.stringify(this.editForm)
+            const editUserData = this.UserList.find(obj => { return obj.wxopenid === this.targetWxopenIdid })
+            const UserlistStr = JSON.stringify(editUserData)
+            var mutipleList = this.$refs.multipleTable.selection;
+            var statuslist = [];
+            for (let i = 0; i < mutipleList.length; i++) {
+                const obj = new Object();
+                obj.status = mutipleList[i].status;
+                obj.wxopenid = mutipleList[i].wxopenid;
+                obj.studentid = mutipleList[i].studentid;
+                statuslist[i] = obj;
+            }
+            for (let i = 0;i < statuslist.length; i++){
+                
+            }
+            //发生改动
+            if (editStr !== UserlistStr) {
+                //修改数据库数据
+                const headers = {
+                    'jwt-code': localStorage.getItem('token')
+                }
+                //有token
+                if (headers) {
+                    this.$refs.editFormRef.validate(valid => {
+                        if (valid === false) {
+                            this.$message.error('修改信息不合法');
+                        }
+                        else {
+                            axios({
+                                url: 'http://123.207.73.185:8080/admin/updateUserMessage',
+                                method: 'POST',
+                                data: this.editForm,
+                                headers,
+                            }).then(res => {
+                                this.getUserList()
+                                if (res.data.code === 1) {
+                                    this.$message.success('修改成功！')
+                                    this.editDialogVisible = false;
+                                }
+                                else {
+                                    this.$message.success('修改失败')
+                                    this.editDialogVisible = false;
+                                }
+                            }).catch((e) => {
+                                //返回401
+                                if (!e.response.data.code) {
+                                    this.$message.error('请先登录！')
+                                    this.$router.push('/login')
+                                }
+                                this.$message.error("修改失败！")
+                            })
+                        }
+                    });
+                }
+                //无token
+                else {
+                    this.$message.error('请先登录！')
+                    this.$router.push('/login')
+                }
+            }
+            //没有改动
+            else {
+                this.$message.error('表单未进行任何修改！修改失败')
+                this.editDialogVisible = false
+            }
         }
     },
     watch: {
