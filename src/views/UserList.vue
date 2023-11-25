@@ -8,12 +8,11 @@
                     <el-button slot="append" icon="el-icon-search" @click="searchResource"></el-button>
                 </el-input>
                 <div>
-                <!-- 批量修改状态 -->
-                <el-button type="primary" @click="statusDialogVisible = true">批量修改状态</el-button>
-                <!-- 批量发送--消息推送 -->
-                <el-button type="primary" @click="handleSelectionChange">批量发送</el-button>
+                    <!-- 批量修改状态 -->
+                    <el-button type="primary" @click="openDialog">批量修改状态</el-button>
+                    <!-- 批量发送--消息推送 -->
+                    <el-button type="primary" @click="handleSelectionChange">批量发送</el-button>
                 </div>
-
             </div>
             <!-- 用户列表 -->
             <el-table :data="UserList.slice((currentPage - 1) * pageSize, currentPage * pageSize)"
@@ -261,7 +260,7 @@
             </el-dialog>
             <!-- 批量修改状态的气泡框 -->
             <el-dialog :visible.sync="statusDialogVisible" width="30%" :close-on-click-modal="false">
-                <el-select v-model="editForm.statusChangeDefault" placeholder="请选择修改后的状态">
+                <el-select v-model="statusChange" placeholder="请选择修改后的状态">
                     <el-option v-for="item in statusoptions" :key="item.value" 
                     :label="item.label" :value="item.value">
                     </el-option>
@@ -374,6 +373,8 @@ export default {
             UserList: [],
             // 搜索时暂存列表的数组
             templist: [],
+            // 修改状态后的列表数组
+            statusList: [],
             //当前页数
             currentPage: 1,
             //每页最多显示多少条数据
@@ -402,6 +403,8 @@ export default {
                 award: '蓝桥杯国赛一等奖',
                 reason: ''
             },
+            // 修改后的状态
+            statusChange: '',
             //当前编辑表单的id
             editId: 0,
             //编辑表单的检验规则
@@ -587,6 +590,7 @@ export default {
                                 data: this.editForm,
                                 headers,
                             }).then(res => {
+                                console.log(res);
                                 this.getUserList()
                                 if (res.data.code === 1) {
                                     this.$message.success('修改成功！')
@@ -800,20 +804,46 @@ export default {
         //         })
         //     }
         // }
+        // 批量保存状态
         savestatusEdit() {
-            var mutipleList = this.$refs.multipleTable.selection;
-            console.log(mutipleList)
-            var statuslist = [];
-            for (let i = 0; i < mutipleList.length; i++) {
-                const obj = new Object();
-                obj.status = mutipleList[i].status;
-                obj.wxopenid = mutipleList[i].wxopenid;
-                obj.studentid = mutipleList[i].studentid;
-                statuslist[i] = obj;
+            const a = this.changeList.length;
+            const headers = {
+                'jwt-code': localStorage.getItem('token')
             }
-            // for (let i = 0;i < statuslist.length; i++){
-                
-            // }
+            let statuslist = [];
+            for (let i = 0; i < a; i++) {
+                statuslist[i] = this.changeList[i];
+                statuslist[i].status = this.statusChange;
+                this.statusList[i] = statuslist[i];
+                console.log(this.statusList[i]);
+                if (headers) {
+                axios({
+                    url: 'http://123.207.73.185:8080/admin/updateUserMessage',
+                    method: 'POST',
+                    data: this.statusList[i],
+                    headers
+                }).then(response => {
+                    this.getUserList();
+                        if (response.data.code === 1) {
+                            this.$message.success('修改成功！')
+                            this.statusDialogVisible = false;
+                        }
+                        else {
+                            this.$message.success('修改失败')
+                            this.statusDialogVisible = false;
+                        }
+                }).catch((error) => {
+                    
+                    console.log(error);
+                })
+            }
+        }
+},
+        // 打开状态气泡框
+        openDialog() {
+            let mutiplelist = this.$refs.multipleTable.selection;
+            this.changeList = mutiplelist;
+            this.statusDialogVisible = true;
         }
     },
     watch: {
