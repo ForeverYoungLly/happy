@@ -115,7 +115,8 @@ export default {
       targetData: [
         {
           username: 1,
-          wxopenid: ''
+          wxopenid: '',
+          status:''
         }
       ],
       // 所有用户列表
@@ -125,6 +126,14 @@ export default {
         {
           status: '不修改',
           value: '不修改'
+        },
+        {
+          status: '筛选通过',
+          value: '筛选通过'
+        },
+        {
+          status: '筛选不通过',
+          value: '筛选不通过'
         },
         {
           status: '待安排初试',
@@ -197,21 +206,23 @@ export default {
     async sendInfoPush() {
       if (this.targetData) {
         let cnt = 0;
+        console.log(this.targetData);
+
         for(let i =0;i<this.targetData.length;i++)
         {
           const feedback= 'http://123.207.73.185:100/#/feedback'
 
           let id = Date.now()
           id *=1000+i
-          const query = feedback + `?id=${id}&wxopenid=${this.targetData[i].wxopenid}&now=${this.acceptStatus}&next=${this.rejectStatus}`
-          console.log(query);
-           await axios({
+          const query = feedback + `?id=${id}&wxopenid=${this.targetData[i].wxopenid}&accept=${this.acceptStatus}&reject=${this.rejectStatus}`
+          await axios({
            url: 'http://42.194.194.197/templateMessage',
            method: 'POST',
            params: {
              wxOpenId: this.targetData[i].wxopenid,
              name: this.targetData[i].username,
              msg: this.infoform.content,
+             nowStatus:this.targetData[i].status,
              //点击推送信息后跳转的页面
              HTTP: query
            }
@@ -279,23 +290,23 @@ export default {
         Obj.wxopenid = targetdata[i];
         const arr = this.userList.find(element => element.wxopenid === targetdata[i]);
         Obj.username = arr.username
+        Obj.status = arr.status
         getData[i] = Obj;
       }
       this.targetData = getData;
     },
     changeOption() {
-      console.log(1);
     },
     // 获取路由传参后的姓名和openid
     getdata() {
       this.infoform.infopushList = this.$route.query.openidlist;
+      console.log(this.$route.query.infopushlist);
       this.targetData = this.$route.query.infopushlist;
+      console.log(this.targetData);
     }
   },
 
   created() {
-    const query = document.location.query
-    console.log(query);
     const token = localStorage.getItem('token')
     if (!token) {
       this.$message.error('请先登录！')

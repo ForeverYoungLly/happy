@@ -152,7 +152,7 @@ export default {
   .box-card {
     max-width: 30vw;
     margin-top: 2vh;
-    margin: 0 auto
+    margin: 10px auto
   }
 
   .btn {
