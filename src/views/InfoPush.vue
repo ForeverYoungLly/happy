@@ -214,6 +214,7 @@ export default {
 
           let id = Date.now()
           id *=1000+i
+          console.log(id);
           const query = feedback + `?id=${id}&wxopenid=${this.targetData[i].wxopenid}&accept=${this.acceptStatus}&reject=${this.rejectStatus}`
           await axios({
            url: 'http://42.194.194.197/templateMessage',
