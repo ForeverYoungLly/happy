@@ -35,8 +35,8 @@ export default {
       query: {
         // id: '',
         // wxopenid: '',
-        // now: '',
-        // next: ''
+        // accept: '',
+        // reject: ''
       },
       // 遮罩层
       overlayShow: false
@@ -53,7 +53,7 @@ export default {
           code: 1,
           message: '',
           wxopenid: this.query.wxopenid,
-          status: this.query.next,
+          status: this.query.accept,
           id: this.query.id
         }
       }).then((res) => {
@@ -95,7 +95,7 @@ export default {
           code: 2,
           message: '',
           wxopenid: this.query.wxopenid,
-          status: this.query.now,
+          status: this.query.reject,
           id: this.query.id
         }
       }).then((res) => {
