@@ -7,7 +7,9 @@
                 <el-input placeholder="请输入待查询用户的姓名" v-model="keywords" class="search-input" clearable>
                     <el-button slot="append" icon="el-icon-search" @click="searchResource"></el-button>
                 </el-input>
-                <!-- 批量发送 -->
+                <!-- 批量修改状态 -->
+                <el-button type="primary" @click="statusDialogVisible = true">批量修改状态</el-button>
+                <!-- 批量发送--消息推送 -->
                 <el-button type="primary" @click="handleSelectionChange">批量发送</el-button>
             </div>
             <!-- 用户列表 -->
@@ -66,7 +68,7 @@
             </div>
             <!-- 用户信息编辑的气泡框 -->
             <!-- :close-on-click-modal="false" 取消点击空白处关闭 -->
-            <el-dialog :visible.sync="editDialogVisible" width="60%" :close-on-click-modal="false" >
+            <el-dialog :visible.sync="editDialogVisible" width="60%" :close-on-click-modal="false">
                 <el-tabs type="border-card" v-loading="loading">
                     <el-tab-pane label="用户信息">
                         <!-- 内容主体区 -->
@@ -171,8 +173,8 @@
                             <!-- 加入ab的理由 -->
                             <el-form-item label="加入ab的理由" prop="reason">
                                 <el-col>
-                                    <el-input type="textarea" placeholder="请输入个人经历及项目经验" :rows="5" v-model="editForm.reasons"
-                                        resize='none' class="textarea"></el-input>
+                                    <el-input type="textarea" placeholder="请输入个人经历及项目经验" :rows="5"
+                                        v-model="editForm.reasons" resize='none' class="textarea"></el-input>
                                 </el-col>
                             </el-form-item>
                             <!-- 个人经历 -->
@@ -246,13 +248,23 @@
                                 </div>
                                 <div class="infoItem" v-for="(item,index) in historyInfo" :key="index" :style="{backgroundColor: colorList[0]}">
                                     <div class="type">{{ item.type }}</div>
-                                    <div class="message">{{ item.message}}</div>
+                                    <div class="message">{{ item.message }}</div>
                                     <div class="time">{{ item.time }}</div>
                                 </div>
                             </div>
                         </div>
                     </el-tab-pane>
                 </el-tabs>
+            </el-dialog>
+            <!-- 批量修改状态的气泡框 -->
+            <el-dialog :visible.sync="statusDialogVisible" width="30%" :close-on-click-modal="false">
+                <el-select v-model="editForm.status" placeholder="请选择修改后的状态">
+                    <el-option v-for="item in statusoptions" :key="item.value" 
+                    :label="item.label" :value="item.value">
+                    </el-option>
+               </el-select>
+               <el-button @click="statusDialogVisible = false">取 消</el-button>
+               <el-button type="primary" @click="savestatusEdit">确定修改</el-button>
             </el-dialog>
         </div>
     </el-main>
@@ -316,7 +328,7 @@ export default {
             }, {
             }, {
                 value: '终试不通过',
-                label: '终试补通过'
+                label: '终试不通过'
             }, {
                 value: '待处理',
                 label: '待处理'
@@ -363,6 +375,8 @@ export default {
             pageSize: 5,
             //编辑对话框的显示隐藏
             editDialogVisible: false,
+            // 批量修改状态对话框显示与隐藏
+            statusDialogVisible: false,
             //编辑表单绑定的内容
             editForm: {
                 username: '小明',
@@ -439,18 +453,18 @@ export default {
                 manageRemark: ''
             },
             // 历史操作信息
-            historyInfo:[
+            historyInfo: [
                 // {
                 //     type:"异常反馈",
                 //     message:"我有异常反馈我有异常反馈我有异常反馈我有异常反馈我有异常反馈我有异常反馈我有异常反馈我有异常反馈我有异常反馈我有异常反馈我有异常反馈我有异常反馈我有异常反馈我有异常反馈我有异常反馈我有异常反馈我有异常反馈",
                 //     time:"2023/11/23/22:00"
                 // },
                 {
-                    message:'暂无数据'
+                    message: '暂无数据'
                 }
             ],
             // 加载
-            loading:false,
+            loading: false,
             // 颜色数组
             colorList:[
                 '#FFFFCC',
@@ -545,7 +559,7 @@ export default {
             this.editDialogVisible = true
         },
         //保存编辑
-        async saveEdit() {
+        saveEdit() {
             const editStr = JSON.stringify(this.editForm)
             const editUserData = this.UserList.find(obj => { return obj.wxopenid === this.targetWxopenIdid })
             const UserlistStr = JSON.stringify(editUserData)
@@ -557,33 +571,36 @@ export default {
                 }
                 //有token
                 if (headers) {
-                    if (this.$refs.editFormRef.validate === true) {
-                        await axios({
-                            url: 'http://123.207.73.185:8080/admin/updateUserMessage',
-                            method: 'POST',
-                            data: this.editForm,
-                            headers,
-                        }).then(res => {
-                            this.getUserList()
-                            if (res.data.code === 1) {
-                                this.$message.success('修改成功！')
-                                this.editDialogVisible = false;
-                            } else {
-                                this.$message.success('修改失败' + res.data.msg)
-                                this.editDialogVisible = false;
-                            }
-                        }).catch((e) => {
-                            //返回401
-                            if (!e.response.data.code) {
-                                this.$message.error('请先登录！')
-                                this.$router.push('/login')
-                            }
-                            this.$message.error("修改失败！")
-                        })
-                    }
-                    else {
-                        this.$message.error('修改信息不合法')
-                    }
+                    this.$refs.editFormRef.validate(valid => {
+                        if (valid === false) {
+                            this.$message.error('修改信息不合法');
+                        }
+                        else {
+                            axios({
+                                url: 'http://123.207.73.185:8080/admin/updateUserMessage',
+                                method: 'POST',
+                                data: this.editForm,
+                                headers,
+                            }).then(res => {
+                                this.getUserList()
+                                if (res.data.code === 1) {
+                                    this.$message.success('修改成功！')
+                                    this.editDialogVisible = false;
+                                }
+                                else {
+                                    this.$message.success('修改失败')
+                                    this.editDialogVisible = false;
+                                }
+                            }).catch((e) => {
+                                //返回401
+                                if (!e.response.data.code) {
+                                    this.$message.error('请先登录！')
+                                    this.$router.push('/login')
+                                }
+                                this.$message.error("修改失败！")
+                            })
+                        }
+                    });
                 }
                 //无token
                 else {
@@ -665,25 +682,24 @@ export default {
             location.href = this.fileList[index].url
         },
         // 获取用户历史信息
-        getHistory(id){
+        getHistory(id) {
             axios({
-                url:"http://123.207.73.185:8080/admin/showUserHistory",
-                params:{
-                studentid:id
+                url: "http://123.207.73.185:8080/admin/showUserHistory",
+                params: {
+                    studentid: id
                 },
-                headers:{
+                headers: {
                     'jwt-code': localStorage.getItem('token')
                 }
-            }).then( res =>{
-                if(res.data.code)
-                {
+            }).then(res => {
+                if (res.data.code) {
                     const data = res.data.data
                     let newUserHistoryInfo = data.map((item)=>{
                         // 时间
                         const timeBack = item.CreatedAt
                         const T = timeBack.indexOf('T')
-                        const year = timeBack.slice(0,T)
-                        const hour = timeBack.slice(T+1,T+6)
+                        const year = timeBack.slice(0, T)
+                        const hour = timeBack.slice(T + 1, T + 6)
                         let time = year + '-' + hour
                         time = time.replace('-','/')
                         time = time.replace('-','/')
@@ -721,34 +737,130 @@ export default {
                     //     return item.code === 1 || item.code === 2
                     // })
                     // 数据为空
-                    if(newUserHistoryInfo.length === 0)
-                    {
-                        this.historyInfo=
-                        [
-                            {
-                            message:'暂无数据'
-                            }
-                        ]
+                    if (newUserHistoryInfo.length === 0) {
+                        this.historyInfo =
+                            [
+                                {
+                                    message: '暂无数据'
+                                }
+                            ]
                         this.loading = false
 
                     }
                     // 不为空
-                    else{
+                    else {
                         this.historyInfo = newUserHistoryInfo
                         this.loading = false
                     }
                 }
                 // 请求失败
-                else{
-                    this.historyInfo=
-                    [
-                        {
-                        message:'暂无数据'
-                        }
-                    ]
+                else {
+                    this.historyInfo =
+                        [
+                            {
+                                message: '暂无数据'
+                            }
+                        ]
                     this.loading = false
                 }
             })
+        },
+        // 批量修改状态
+        // async changeStatus() {
+        //     const headers = {
+        //         'jwt-code': localStorage.getItem('token')
+        //     }
+        //     var mutipleList = this.$refs.multipleTable.selection;
+        //     var statuslist = [];
+        //     for (let i = 0; i < mutipleList.length; i++) {
+        //         const obj = new Object();
+        //         obj.status = mutipleList[i].status;
+        //         obj.wxopenid = mutipleList[i].wxopenid;
+        //         obj.studentid = mutipleList[i].studentid;
+        //         statuslist[i] = obj;
+        //     }
+        //     if (headers) {
+        //         await axios({
+        //             url: 'http://123.207.73.185:8080/postUserMessage',
+        //             params: {
+        //                 list: statuslist,
+        //                 headers
+        //             },
+        //         }).then(res => {
+        //             console(res)
+        //         }).catch((e) => {
+        //             // this.$message.error('请先登录！')
+        //             // this.$router.push('/login')
+        //             console.log(e);
+        //         })
+        //     }
+        // }
+        savestatusEdit() {
+            const editStr = JSON.stringify(this.editForm)
+            const editUserData = this.UserList.find(obj => { return obj.wxopenid === this.targetWxopenIdid })
+            const UserlistStr = JSON.stringify(editUserData)
+            var mutipleList = this.$refs.multipleTable.selection;
+            var statuslist = [];
+            for (let i = 0; i < mutipleList.length; i++) {
+                const obj = new Object();
+                obj.status = mutipleList[i].status;
+                obj.wxopenid = mutipleList[i].wxopenid;
+                obj.studentid = mutipleList[i].studentid;
+                statuslist[i] = obj;
+            }
+            for (let i = 0;i < statuslist.length; i++){
+                
+            }
+            //发生改动
+            if (editStr !== UserlistStr) {
+                //修改数据库数据
+                const headers = {
+                    'jwt-code': localStorage.getItem('token')
+                }
+                //有token
+                if (headers) {
+                    this.$refs.editFormRef.validate(valid => {
+                        if (valid === false) {
+                            this.$message.error('修改信息不合法');
+                        }
+                        else {
+                            axios({
+                                url: 'http://123.207.73.185:8080/admin/updateUserMessage',
+                                method: 'POST',
+                                data: this.editForm,
+                                headers,
+                            }).then(res => {
+                                this.getUserList()
+                                if (res.data.code === 1) {
+                                    this.$message.success('修改成功！')
+                                    this.editDialogVisible = false;
+                                }
+                                else {
+                                    this.$message.success('修改失败')
+                                    this.editDialogVisible = false;
+                                }
+                            }).catch((e) => {
+                                //返回401
+                                if (!e.response.data.code) {
+                                    this.$message.error('请先登录！')
+                                    this.$router.push('/login')
+                                }
+                                this.$message.error("修改失败！")
+                            })
+                        }
+                    });
+                }
+                //无token
+                else {
+                    this.$message.error('请先登录！')
+                    this.$router.push('/login')
+                }
+            }
+            //没有改动
+            else {
+                this.$message.error('表单未进行任何修改！修改失败')
+                this.editDialogVisible = false
+            }
         }
     },
     watch: {
@@ -885,9 +997,10 @@ export default {
 .time {
     flex: 3;
     text-align: center;
-    
+
 }
-.header{
+
+.header {
     font-size: 16px;
     font-weight: bold;
     padding: 10px 0;

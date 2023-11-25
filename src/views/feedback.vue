@@ -14,7 +14,7 @@
         <el-table-column label="操作">
           <template slot-scope="scope">
             <el-button icon="el-icon-edit" type="primary" size="small" @click="showEditDialog(scope)">查看/编辑</el-button>
-            <el-button icon="el-icon-s-tools" type="primary" size="small" @click="solveProblem">解决异常</el-button>
+            <el-button icon="el-icon-s-tools" type="primary" size="small" @click="solveProblem(scope)">解决异常</el-button>
             <el-button icon="el-icon-s-promotion" type="primary" size="small" @click="infoPush">发送消息</el-button>
           </template>
         </el-table-column>
@@ -105,8 +105,10 @@
             </el-col>
           </el-form-item>
         </el-form>
-        <el-button type="primary" @click="editDialogVisible = false">关闭</el-button>
-        <el-button type="primary" @click="saveEdit(editFormRef)">保存</el-button>
+        <el-row type="flex" justify="center">
+          <el-button type="primary" @click="editDialogVisible = false">关闭</el-button>
+          <el-button type="primary" @click="saveEdit(editFormRef)">保存</el-button>
+        </el-row>
       </el-dialog>
       <!-- 分页器 -->
       <div class="block">
@@ -126,6 +128,9 @@ export default {
   name: 'FeedBack',
   data() {
     return {
+      // 解决异常的用户学号
+      // pushId,
+      // 性别下拉框
       sexoptions: [{
         value: '男',
         label: '男'
@@ -243,6 +248,18 @@ export default {
         ],
         studentid: [
           { required: true, message: '请输入学号', trigger: 'blur' },
+        ],
+        status: [
+          { required: true, message: '请输入状态', trigger: 'blur' },
+        ],
+        direction: [
+          { required: true, message: '请输入方向', trigger: 'blur' },
+        ],
+        wxid: [
+          { required: true, message: '请输入微信号', trigger: 'blur' },
+        ],
+        sex: [
+          { required: true, message: '请输入性别', trigger: 'blur' },
         ],
         class: [
           { required: true, message: '请输入班级', trigger: 'blur' },
@@ -414,7 +431,6 @@ export default {
     },
     // 获取大头照
     getUserPic() {
-      console.log(this.editForm.studentid);
       axios({
         url: 'http://123.207.73.185:8080/showUserFileMessage',
         params: {
@@ -434,25 +450,29 @@ export default {
       })
     },
     // 解决异常后重新渲染表单函数
-    async solveProblem() {
+    async solveProblem(scope) {
+      const id = scope.row.studentid;
       const headers = {
         'jwt-code': localStorage.getItem('token')
       }
       if(headers){
         await axios({
-          url: 'http://42.194.194.197/admin/overComeProblem',
+          url: 'http://123.207.73.185:8080/admin/overComeProblem',
           method: 'GET',
-          headers,
+          params: {
+          studentid : id
+        },
+          headers
         }).then( response =>{
+          this.getUserList();
           console.log(response);
         }).catch( error =>{
           console.log(error);
-          // this.$message.error('请先登录！')
-          // this.$router.push('/login')
         })
       }
       else{
-
+        this.$message.error('请先登录！')
+        this.$router.push('/login')
       }
     }
   },

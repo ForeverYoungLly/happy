@@ -236,7 +236,8 @@ export default {
            this.$message.success('发送成功！')
            this.acceptStatus = '',
            this.rejectStatus = ''
-          }else this.$message.error('发送失败！')
+          }
+          else this.$message.error('发送失败！')
       }
       // 清空表单内容
       Object.assign(this.$data.infoform, this.$options.data().infoform)
