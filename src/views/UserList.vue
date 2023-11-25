@@ -229,6 +229,13 @@
                                 <el-input v-model="historyform.manageRemark" type="textarea"></el-input>
                             </el-form-item>
                         </el-form>
+
+                        <el-row type="flex" justify="center">
+                            <el-button type="primary" @click="editDialogVisible = false">关闭</el-button>
+                            <el-button type="primary" @click="saveEdit">保存</el-button>
+                        </el-row>
+                    </el-tab-pane>
+                    <el-tab-pane label="用户信息推送记录">
                         <div class="historyInfo">
                             <div class="history_title" style="text-align: center;">历史信息</div>
                             <div class="info">
@@ -237,17 +244,13 @@
                                     <div class="message">内容</div>
                                     <div class="time">时间</div>
                                 </div>
-                                <div class="infoItem" v-for="(item,index) in historyInfo" :key="index" >
+                                <div class="infoItem" v-for="(item,index) in historyInfo" :key="index" :style="{backgroundColor: colorList[0]}">
                                     <div class="type">{{ item.type }}</div>
                                     <div class="message">{{ item.message}}</div>
                                     <div class="time">{{ item.time }}</div>
                                 </div>
                             </div>
                         </div>
-                        <el-row type="flex" justify="center">
-                            <el-button type="primary" @click="editDialogVisible = false">关闭</el-button>
-                            <el-button type="primary" @click="saveEdit">保存</el-button>
-                        </el-row>
                     </el-tab-pane>
                 </el-tabs>
             </el-dialog>
@@ -447,7 +450,18 @@ export default {
                 }
             ],
             // 加载
-            loading:false
+            loading:false,
+            // 颜色数组
+            colorList:[
+                '#FFFFCC',
+                '#99CCCC',
+                '#CCFFFF',
+                '#6699CC',
+                '#FFCC99',
+                '#CCFFCC',
+                '#CCCCCC',
+                '#CC99CC'
+            ]
         }
     },
     methods: {
@@ -597,6 +611,7 @@ export default {
         // 复选表格获取对象并进行推送
         handleSelectionChange() {
             var mutipleList = this.$refs.multipleTable.selection;
+            console.log(mutipleList);
             var infopushlist = [];
             var openidlist = [];
             var namelist = [];
@@ -604,6 +619,7 @@ export default {
                 var obj = new Object();
                 obj.username = mutipleList[i].username;
                 obj.wxopenid = mutipleList[i].wxopenid;
+                obj.status = mutipleList[i].status;
                 infopushlist[i] = obj;
                 openidlist[i] = mutipleList[i].wxopenid;
                 namelist[i] = mutipleList[i].username;
@@ -663,6 +679,7 @@ export default {
                 {
                     const data = res.data.data
                     let newUserHistoryInfo = data.map((item)=>{
+                        // 时间
                         const timeBack = item.CreatedAt
                         const T = timeBack.indexOf('T')
                         const year = timeBack.slice(0,T)
@@ -671,18 +688,38 @@ export default {
                         time = time.replace('-','/')
                         time = time.replace('-','/')
                         time = time.replace('-','/')
+                        let type = ''
+                        // 类型
+                        if(item.Code === 0)
+                        {
+                            type = '用户接受信息'
+                        }
+                        else if(item.Code === 1)
+                        {
+                            type = '用户反馈异常信息'
+
+                        }
+                        else if(item.Code === 2)
+                        {
+                            type = '发送信息'
+
+                        }
+                        else
+                        {
+                            type = '用户不通过信息'
+                        }
                         const obj = {
                             code:item.Code,
-                            type:item.Message,
+                            type,
                             message:item.Message,
                             time:time
                         }
                         return obj
                     })
-                    console.log(newUserHistoryInfo)
-                    newUserHistoryInfo =  newUserHistoryInfo.filter((item)=>{
-                        return item.code === 1 || item.code === 2
-                    })
+                    // console.log(newUserHistoryInfo)
+                    // newUserHistoryInfo =  newUserHistoryInfo.filter((item)=>{
+                    //     return item.code === 1 || item.code === 2
+                    // })
                     // 数据为空
                     if(newUserHistoryInfo.length === 0)
                     {
@@ -812,6 +849,7 @@ export default {
     font-size: 18px;
     font-weight: bold;
     border-bottom: 1px solid #efefef;
+    padding: 10px 0;
 }
 
 .info {
@@ -825,10 +863,12 @@ export default {
     border-bottom: 1px solid #efefef;
     align-items: center;
     padding: 25px 0px;
+    color: black;
+
 }
 
 .infoItem:hover {
-    color: black;
+    color: red;
 }
 
 .type {
