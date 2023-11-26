@@ -79,7 +79,7 @@
           <span>模板列表：</span>
           <el-col :span="12" :offset="8">
             <el-input v-model="searchId" placeholder="请输入id">
-              <el-button slot="append" icon="el-icon-search" @click="searchID"></el-button>
+              <el-button slot="append" icon="el-icon-refresh" @click="resetForm"></el-button>
             </el-input>
           </el-col>
         </div>
@@ -307,6 +307,10 @@ export default {
        else
     this.infoform.infoPushTitle = '面试结果通知'
     },
+    // 重置列表
+    resetForm(){
+      this.templateData = this.tempList;
+    },
     // 删除模板
     async moveAway(val){
       const id = val.row.ID;
@@ -347,7 +351,7 @@ export default {
       if (this.infoform.infoPushTitle === '面试结果通知') {
       this.code = 1;
     }
-      //有token
+    if(this.infoform.content !== ''){
       if (headers) {
           await axios({
               url: 'http://123.207.73.185:8080/admin/saveMessageTemplate',
@@ -359,6 +363,7 @@ export default {
               headers
           }).then(res => {
             this.getTemplatedata();
+            this.$message.success("保存成功！");
             console.log(res);
           }).catch((e) => {
               //返回401
@@ -369,6 +374,12 @@ export default {
           this.$message.error('请先登录！')
           this.$router.push('/login')
       }
+    }
+    else{
+      this.$message.error("保存失败！");
+    }
+      //有token
+      
     },
     //发送推送信息
     async sendInfoPush() {
@@ -511,16 +522,13 @@ export default {
     }
     this.getdata();
     this.getTemplatedata();
-
+    
   },
 
   watch: {
         // 搜索框内容
         searchId() {
             this.searchID();
-            if (this.searchId === '') {
-              this.templateData = this.tempList;
-            }
         }
     },
 

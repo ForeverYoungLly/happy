@@ -17,7 +17,7 @@
             <!-- 用户列表 -->
             <el-table :data="UserList.slice((currentPage - 1) * pageSize, currentPage * pageSize)"
                 style="width: 100% ; margin: 5px; box-shadow: 1px 2px 4px #ccc;transition: all 0.3 ease-in!important;"
-                stripe @sort-change="handle" ref="multipleTable" v-loading = 'listLoading'>
+                stripe @sort-change="handle" ref="multipleTable">
                 <el-table-column type="selection" width="55">
                 </el-table-column>
                 <el-table-column prop="username" label="姓名">
@@ -287,8 +287,6 @@ import axios from 'axios';
 export default {
     data() {
         return {
-            // 用户列表加载动画
-            listLoading: true, 
             sexoptions: [{
                 value: '男',
                 label: '男'
@@ -524,7 +522,6 @@ export default {
                     const userList = res.data.data
                     this.UserList = userList;
                     this.templist = userList;
-                    this.listLoading = false
                 }).catch((e) => {
                     //返回401
                     if (!e.response.data.code) {
@@ -558,7 +555,6 @@ export default {
         // 打开编辑表单
         showEditDialog(scope) {
             // 开启加载
-            // this.loading = true
             //获取打开对象的wxopenid
             const id = scope.row.wxopenid
             // 在用户列表中找到具有对应wxopenid的用户的数据
