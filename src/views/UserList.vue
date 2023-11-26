@@ -243,16 +243,26 @@
                         <div class="historyInfo">
                             <div class="history_title" style="text-align: center;">历史信息</div>
                             <div class="info">
-                                <div class="header">
-                                    <div class="type">状态</div>
+                                <div class="history_header">
+                                    <div class="type">类型</div>
                                     <div class="message">内容</div>
-                                    <div class="time">时间</div>
+                                    <div class="time">日期</div>
+                                    <div class="handle">操作</div>
                                 </div>
-                                <div class="infoItem" v-for="(item,index) in historyInfo" :key="index" :style="{backgroundColor: colorList[0]}">
-                                    <div class="type">{{ item.type }}</div>
-                                    <div class="message">{{ item.message }}</div>
-                                    <div class="time">{{ item.time }}</div>
+                                <div class="infoItem" v-for="(item,index) in historyInfo" :key="index" >
+                                        <div class="type">{{ item[0].type }}</div>
+                                        <div class="message">{{ item[0].message }}</div>
+                                        <div class="time">{{ item[0].time }}</div>
+                                        <div class="btn_handle"><el-button v-if="historyInfo.length >1" @click="openHistoryDialog(new Array(item[1]))" :disabled="item.length < 2">查看</el-button></div>
                                 </div>
+                                <!-- 查看弹窗 -->
+                                <el-dialog title="回复信息" :visible.sync="backContentVisable" :modal="false">
+                                    <el-table :data="backInfomation">
+                                        <el-table-column property="time" label="日期" width="150" align="center"></el-table-column>
+                                        <el-table-column property="type" label="类型" width="200" align="center"></el-table-column>
+                                        <el-table-column property="message" label="内容" align="center"></el-table-column>
+                                    </el-table>
+                                </el-dialog>
                             </div>
                         </div>
                     </el-tab-pane>
@@ -363,9 +373,9 @@ export default {
             // 照片自适应容器的方式
             fit: "fit",
             // 大图预览图片的url地址
-            srcList: ['http://123.207.73.185:8090/userFile/picture/2022463030728/2022463030728照片.jpg'],
+            srcList: [],
             // 用户照片url地址
-            src: 'http://123.207.73.185:8090/userFile/picture/2022463030728/2022463030728照片.jpg',
+            src: '',
             // 附件列表
             fileList: [
             ],
@@ -462,28 +472,23 @@ export default {
             },
             // 历史操作信息
             historyInfo: [
-                // {
-                //     type:"异常反馈",
-                //     message:"我有异常反馈我有异常反馈我有异常反馈我有异常反馈我有异常反馈我有异常反馈我有异常反馈我有异常反馈我有异常反馈我有异常反馈我有异常反馈我有异常反馈我有异常反馈我有异常反馈我有异常反馈我有异常反馈我有异常反馈",
-                //     time:"2023/11/23/22:00"
-                // },
-                {
+                [
+                    {
                     message: '暂无数据'
-                }
+
+                    }
+                ]
             ],
             // 加载
             loading: false,
-            // 颜色数组
-            colorList:[
-                '#FFFFCC',
-                '#99CCCC',
-                '#CCFFFF',
-                '#6699CC',
-                '#FFCC99',
-                '#CCFFCC',
-                '#CCCCCC',
-                '#CC99CC'
-            ]
+            // 用户历史信息弹窗
+            backContentVisable: false,
+            // 回复信息的弹窗
+            backInfomation:[{
+                time:'111',
+                message:'你好',
+                type:'接受'
+            }]
         }
     },
     methods: {
@@ -549,7 +554,7 @@ export default {
         // 打开编辑表单
         showEditDialog(scope) {
             // 开启加载
-            this.loading = true
+            // this.loading = true
             //获取打开对象的wxopenid
             const id = scope.row.wxopenid
             // 在用户列表中找到具有对应wxopenid的用户的数据
@@ -691,6 +696,7 @@ export default {
             location.href = this.fileList[index].url
         },
         // 获取用户历史信息
+        
         getHistory(id) {
             axios({
                 url: "http://123.207.73.185:8080/admin/showUserHistory",
@@ -702,78 +708,179 @@ export default {
                 }
             }).then(res => {
                 if (res.data.code) {
-                    const data = res.data.data
-                    let newUserHistoryInfo = data.map((item)=>{
-                        // 时间
-                        const timeBack = item.CreatedAt
-                        const T = timeBack.indexOf('T')
-                        const year = timeBack.slice(0, T)
-                        const hour = timeBack.slice(T + 1, T + 6)
-                        let time = year + '-' + hour
-                        time = time.replace('-','/')
-                        time = time.replace('-','/')
-                        time = time.replace('-','/')
-                        let type = ''
-                        // 类型
-                        if(item.Code === 0)
-                        {
-                            type = '用户接受信息'
-                        }
-                        else if(item.Code === 1)
-                        {
-                            type = '用户反馈异常信息'
-
-                        }
-                        else if(item.Code === 2)
-                        {
-                            type = '发送信息'
-
-                        }
-                        else
-                        {
-                            type = '用户不通过信息'
-                        }
-                        const obj = {
-                            code:item.Code,
-                            type,
-                            message:item.Message,
-                            time:time
-                        }
-                        return obj
-                    })
-                    // console.log(newUserHistoryInfo)
-                    // newUserHistoryInfo =  newUserHistoryInfo.filter((item)=>{
-                    //     return item.code === 1 || item.code === 2
-                    // })
-                    // 数据为空
-                    if (newUserHistoryInfo.length === 0) {
-                        this.historyInfo =
-                            [
-                                {
-                                    message: '暂无数据'
-                                }
-                            ]
-                        this.loading = false
-
+                    const final = []
+                    const array = res.data.data
+                    for(let i =0;i<array.length;i++){
+                        console.log('第'+i +'项');
+                        final.push(this.handle_history(array[i]))
                     }
-                    // 不为空
-                    else {
-                        this.historyInfo = newUserHistoryInfo
-                        this.loading = false
-                    }
+                    this.historyInfo = final
                 }
                 // 请求失败
                 else {
                     this.historyInfo =
                         [
-                            {
-                                message: '暂无数据'
-                            }
+                            [
+                                {
+                                    message:'暂无记录'
+                                }
+                            ]
                         ]
                     this.loading = false
                 }
             })
         },
+        // 处理历史信息响应数据
+        handle_history(array){
+            const ans = []
+            if( array.length === 1){
+                if(array[0].Code === 4 ){
+                    console.log('管理员主动修改');
+                    let time = array[0].CreatedAt
+                    let year = time.slice(0,time.indexOf('T'))
+                    let hour = time.slice(time.indexOf('T')+1,time.indexOf('T')+6)
+                    time =  year + '-' + hour
+                    time = time.replace('-','/')
+                    time = time.replace('-','/')
+                    time = time.replace('-','/')
+                    const obj = {
+                        type:'管理员主动修改',
+                        message:array[0].Message,
+                        time:time
+                    }
+                    ans.push(obj)
+                    return ans
+
+                }
+                else if (array[0].Code === 2)
+                {
+                    console.log('用户暂未回复');
+                    let time = array[0].CreatedAt
+                    let year = time.slice(0,time.indexOf('T'))
+                    let hour = time.slice(time.indexOf('T')+1,time.indexOf('T')+6)
+                    time =  year + '-' + hour
+                    time = time.replace('-','/')
+                    time = time.replace('-','/')
+                    time = time.replace('-','/')
+                    const obj = {
+                        type:'给用户发送信息',
+                        message:array[0].Message,
+                        time:time
+                    }
+                    ans.push(obj)
+                    const back_obj = {
+                        type:'暂未回复',
+                        message:'暂未回复',
+                        time:'暂未回复'
+                    }
+                    ans.push(back_obj)
+                    return ans
+                }
+
+            }
+            // 两条数据
+            else{
+                // 用户拒绝
+                if(array[1].Code === 3){
+                    console.log('用户拒绝');
+                    let time = array[0].CreatedAt
+                    let year = time.slice(0,time.indexOf('T'))
+                    let hour = time.slice(time.indexOf('T')+1,time.indexOf('T')+6)
+                    time =  year + '-' + hour
+                    time = time.replace('-','/')
+                    time = time.replace('-','/')
+                    time = time.replace('-','/')
+                    const obj = {
+                        type:'给用户发送信息',
+                        message:array[0].Message,
+                        time:time
+                    }
+                    ans.push(obj)
+                    let back_time = array[1].CreatedAt
+                    let back_year = time.slice(0,back_time.indexOf('T'))
+                    let back_hour = time.slice(back_time.indexOf('T')+1,back_time.indexOf('T')+6)
+                    time =  back_year + '-' + back_hour
+                    time = time.replace('-','/')
+                    time = time.replace('-','/')
+                    time = time.replace('-','/')
+                    const back_obj = {
+                        type:'用户拒绝',
+                        message:array[1].Message,
+                        time:time
+                    }
+                    ans.push(back_obj)
+                    return ans
+                }
+                // 用户接受
+                else if( array[1].Code === 0){
+                    console.log('用户接受');
+                    let time = array[0].CreatedAt
+                    let year = time.slice(0,time.indexOf('T'))
+                    let hour = time.slice(time.indexOf('T')+1,time.indexOf('T')+6)
+                    time =  year + '-' + hour
+                    time = time.replace('-','/')
+                    time = time.replace('-','/')
+                    time = time.replace('-','/')
+                    const obj = {
+                        type:'给用户发送信息',
+                        message:array[0].Message,
+                        time:time
+                    }
+                    ans.push(obj)
+                    let back_time = array[1].CreatedAt
+                    let back_year = time.slice(0,back_time.indexOf('T'))
+                    let back_hour = time.slice(back_time.indexOf('T')+1,back_time.indexOf('T')+6)
+                    time =  back_year + '-' + back_hour
+                    time = time.replace('-','/')
+                    time = time.replace('-','/')
+                    time = time.replace('-','/')
+                    const back_obj = {
+                        type:'用户接受',
+                        message:array[1].Message,
+                        time:time
+                    }
+                    ans.push(back_obj)
+                    return ans
+                }
+                else {
+                    console.log('用户反馈异常');
+                    let time = array[0].CreatedAt
+                    let year = time.slice(0,time.indexOf('T'))
+                    let hour = time.slice(time.indexOf('T')+1,time.indexOf('T')+6)
+                    time =  year + '-' + hour
+                    time = time.replace('-','/')
+                    time = time.replace('-','/')
+                    time = time.replace('-','/')
+                    const obj = {
+                        type:'给用户发送信息',
+                        message:array[0].Message,
+                        time:time
+                    }
+                    ans.push(obj)
+                    let back_time = array[1].CreatedAt
+                    let back_year = time.slice(0,back_time.indexOf('T'))
+                    let back_hour = time.slice(back_time.indexOf('T')+1,back_time.indexOf('T')+6)
+                    time =  back_year + '-' + back_hour
+                    time = time.replace('-','/')
+                    time = time.replace('-','/')
+                    time = time.replace('-','/')
+                    const back_obj = {
+                        type:'用户反馈异常',
+                        message:array[1].Message,
+                        time:time
+                    }
+                    ans.push(back_obj)
+                    return ans
+                }
+            }
+            const arr = array
+            return arr
+        },
+       // 打开历史记录回复信息按钮
+       openHistoryDialog(item){
+        this.backContentVisable = true,
+        this.backInfomation = item
+       },
         // 批量修改状态
         // async changeStatus() {
         //     const headers = {
@@ -838,7 +945,7 @@ export default {
                 })
             }
         }
-},
+        },
         // 打开状态气泡框
         openDialog() {
             let mutiplelist = this.$refs.multipleTable.selection;
@@ -870,7 +977,7 @@ export default {
 }
 </script>
 
-<style scoped>
+<style scoped lang="less">
 .upload-demo {
     border: 1px dotted black;
     padding-bottom: 20px;
@@ -883,7 +990,7 @@ export default {
 }
 
 .el-form-item {
-    max-width: 50%;
+    max-width: 60%;
 }
 
 .search_header {
@@ -960,32 +1067,63 @@ export default {
     padding: 25px 0px;
     color: black;
 
+    .type {
+        flex: 2;
+        text-align: center;
+    }
+
+    .message {
+        flex: 6;
+        max-width: 40vw;
+        text-align: center;
+    }
+
+    .time {
+        flex: 2;
+        text-align: center;
+
+    }
+
+    .btn_handle {
+        flex: 2;
+        text-align: center;
+
+    }
+
 }
 
 .infoItem:hover {
     color: red;
 }
 
-.type {
-    flex: 2;
-    text-align: center;
-}
-
-.message {
-    flex: 8;
-    max-width: 40vw;
-    text-align: center;
-}
-
-.time {
-    flex: 3;
-    text-align: center;
-
-}
-
-.header {
+.history_header {
+    display: flex;
     font-size: 16px;
     font-weight: bold;
     padding: 10px 0;
+    
+    .type {
+        flex: 2;
+        text-align: center;
+    }
+
+    .message {
+        flex: 6;
+        max-width: 40vw;
+        text-align: center;
+    }
+
+    .time {
+        flex: 2;
+        text-align: center;
+
+    }
+
+    .handle {
+        flex: 2;
+        text-align: center;
+
+    }
+
 }
 </style>
