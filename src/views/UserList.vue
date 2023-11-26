@@ -17,7 +17,7 @@
             <!-- 用户列表 -->
             <el-table :data="UserList.slice((currentPage - 1) * pageSize, currentPage * pageSize)"
                 style="width: 100% ; margin: 5px; box-shadow: 1px 2px 4px #ccc;transition: all 0.3 ease-in!important;"
-                stripe @sort-change="handle" ref="multipleTable">
+                stripe @sort-change="handle" ref="multipleTable" v-loading = 'listLoading'>
                 <el-table-column type="selection" width="55">
                 </el-table-column>
                 <el-table-column prop="username" label="姓名">
@@ -43,10 +43,10 @@
                     </template>
                 </el-table-column>
                 <el-table-column prop="status" label="状态" column-key="status"
-                    :filters="[{ text: '草稿', value: '草稿' }, { text: '待筛选', value: '待筛选' }, { text: '筛选不通过', value: '筛选不通过' },
-                    { text: '待初试', value: '待初试' }, { text: '待安排初试', value: '待安排初试' }, { text: '初试不通过', value: '初试不通过' }, { text: '初试通过', value: '初试通过' },
+                    :filters="[{ text: '草稿', value: '草稿' }, { text: '待筛选', value: '待筛选' }, { text: '筛选未通过', value: '筛选未通过' },
+                    { text: '待初试', value: '待初试' }, { text: '待安排初试', value: '待安排初试' }, { text: '初试未通过', value: '初试未通过' }, { text: '初试通过', value: '初试通过' },
                     { text: '待复试', value: '待复试' }, { text: '待安排复试', value: '待安排复试' }, { text: '复试通过', value: '复试通过' },
-                    { text: '待终试', value: '待终试' }, { text: '终试不通过', value: '终试不通过' }, { text: '终试通过', value: '终试通过' }, { text: '待处理', value: '待处理' }, { text: '挂起', value: '挂起' }]"
+                    { text: '待终试', value: '待终试' }, { text: '终试未通过', value: '终试未通过' }, { text: '终试通过', value: '终试通过' }, { text: '待处理', value: '待处理' }, { text: '挂起', value: '挂起' }]"
                     :filter-method="filterTag2" filter-placement="bottom-end">
                     <template slot-scope="scope">
                         <el-tag :type="scope.row.status === '待处理' ? 'primary' : 'success'" disable-transitions>{{
@@ -287,6 +287,8 @@ import axios from 'axios';
 export default {
     data() {
         return {
+            // 用户列表加载动画
+            listLoading: true, 
             sexoptions: [{
                 value: '男',
                 label: '男'
@@ -304,8 +306,8 @@ export default {
                 value: '待筛选',
                 label: '待筛选'
             }, {
-                value: '筛选不通过',
-                label: '筛选不通过'
+                value: '筛选未通过',
+                label: '筛选未通过'
             }, {
                 value: '待安排初试',
                 label: '待安排初试'
@@ -313,8 +315,8 @@ export default {
                 value: '待初试',
                 label: '待初试'
             }, {
-                value: '初试不通过',
-                label: '初试不通过'
+                value: '初试未通过',
+                label: '初试未通过'
             }, {
                 value: '初试通过',
                 label: '初试通过'
@@ -328,8 +330,8 @@ export default {
                 value: '复试通过',
                 label: '复试通过'
             }, {
-                value: '复试不通过',
-                label: '复试不通过'
+                value: '复试未通过',
+                label: '复试未通过'
             }, {
                 value: '待终试',
                 label: '待终试'
@@ -341,8 +343,8 @@ export default {
                 label: '终试通过'
             }, {
             }, {
-                value: '终试不通过',
-                label: '终试不通过'
+                value: '终试未通过',
+                label: '终试未通过'
             }, {
                 value: '待处理',
                 label: '待处理'
@@ -521,6 +523,7 @@ export default {
                     const userList = res.data.data
                     this.UserList = userList;
                     this.templist = userList;
+                    this.listLoading = false
                 }).catch((e) => {
                     //返回401
                     if (!e.response.data.code) {

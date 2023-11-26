@@ -78,7 +78,7 @@ import axios from 'axios';
 export default {
   data() {
     return {
-      // 通过不通过和内容
+      // 通过未通过和内容
       titleContent: [
         "日程安排提醒",
         "面试结果通知"
@@ -132,8 +132,8 @@ export default {
           value: '筛选通过'
         },
         {
-          status: '筛选不通过',
-          value: '筛选不通过'
+          status: '筛选未通过',
+          value: '筛选未通过'
         },
         {
           status: '待安排初试',
@@ -144,8 +144,8 @@ export default {
           value: '待初试'
         },
         {
-          status: '初试不通过',
-          value: '初试不通过'
+          status: '初试未通过',
+          value: '初试未通过'
         },
         {
           status: '初试通过',
@@ -161,8 +161,8 @@ export default {
         },
         
         {
-          status: '复试不通过',
-          value: '复试不通过'
+          status: '复试未通过',
+          value: '复试未通过'
         },
         {
           status: '复试通过',
@@ -181,8 +181,8 @@ export default {
           value: '终试通过'
         },
         {
-          status: '终试不通过',
-          value: '终试不通过'
+          status: '终试未通过',
+          value: '终试未通过'
         },
         {
           status: '待处理',
@@ -211,13 +211,14 @@ export default {
         for(let i =0;i<this.targetData.length;i++)
         {
           const feedback= 'http://123.207.73.185:100/#/feedback'
-
           let id = Date.now()
           id *=1000+i
           console.log(id);
           const query = feedback + `?id=${id}&wxopenid=${this.targetData[i].wxopenid}&accept=${this.acceptStatus}&reject=${this.rejectStatus}`
+          const encodedUrl = encodeURI(query)
+          console.log(encodedUrl);
           await axios({
-           url: 'http://42.194.194.197/templateMessage',
+           url: 'http://42.194.194.197/admin/sendMessageToUser',
            method: 'POST',
            params: {
              wxOpenId: this.targetData[i].wxopenid,
@@ -225,8 +226,10 @@ export default {
              msg: this.infoform.content,
              nowStatus:this.targetData[i].status,
              //点击推送信息后跳转的页面
-             HTTP: query
-           }
+             HTTP: encodedUrl,
+             code:0
+           },
+           headers:{ 'jwt-code': localStorage.getItem('token') }
          }).then(() => {
             cnt++;
          }).catch(() => {

@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div class="container" v-loading="mainLoading">
     <!-- 头部大标题 -->
     <header>
       <h3 class="title">首页---数据可视化面板</h3>
@@ -58,6 +58,7 @@ export default {
     return {
       // 存储用户列表信息，为后面数据可视调用数据做准备
       UserList: [],
+      mainLoading:true
     }
   },
   mounted() {
@@ -427,7 +428,7 @@ export default {
             }
           ],
         });
-
+        this.mainLoading = false
       }, err => {
         this.UserList = null;
         console.log('错误信息：', err.message)
