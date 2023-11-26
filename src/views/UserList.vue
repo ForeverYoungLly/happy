@@ -17,7 +17,7 @@
             <!-- 用户列表 -->
             <el-table :data="UserList.slice((currentPage - 1) * pageSize, currentPage * pageSize)"
                 style="width: 100% ; margin: 5px; box-shadow: 1px 2px 4px #ccc;transition: all 0.3 ease-in!important;"
-                stripe @sort-change="handle" ref="multipleTable" v-loading = 'listLoading'>
+                stripe @sort-change="handle" ref="multipleTable" v-loading="listLoading">
                 <el-table-column type="selection" width="55">
                 </el-table-column>
                 <el-table-column prop="username" label="姓名">
@@ -71,7 +71,7 @@
             <!-- 用户信息编辑的气泡框 -->
             <!-- :close-on-click-modal="false" 取消点击空白处关闭 -->
             <el-dialog :visible.sync="editDialogVisible" width="60%" :close-on-click-modal="false">
-                <el-tabs type="border-card" v-loading="Loading">
+                <el-tabs type="border-card" >
                     <el-tab-pane label="用户信息">
                         <!-- 内容主体区 -->
                         <el-form :model="editForm" :rules="editFormRules" ref="editFormRef">
@@ -288,7 +288,7 @@ export default {
     data() {
         return {
             // 用户列表加载动画
-            listLoading: true, 
+            listLoading : true,
             sexoptions: [{
                 value: '男',
                 label: '男'
@@ -480,10 +480,6 @@ export default {
                     }
                 ]
             ],
-            // 表单加载
-            Loading: true,
-            // 加载
-            loading: false,
             // 用户历史信息弹窗
             backContentVisable: false,
             // 回复信息的弹窗
@@ -524,7 +520,7 @@ export default {
                     const userList = res.data.data
                     this.UserList = userList;
                     this.templist = userList;
-                    this.listLoading = false
+                    this.listLoading = false;
                 }).catch((e) => {
                     //返回401
                     if (!e.response.data.code) {
@@ -730,7 +726,7 @@ export default {
                                 }
                             ]
                         ]
-                    this.loading = false
+                    // this.loading = false
                 }
             })
         },

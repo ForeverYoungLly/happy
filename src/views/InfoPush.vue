@@ -112,7 +112,7 @@
       title="提示"
       :visible.sync="templatedialogVisible"
       width="30%">
-      <el-form ref="templateform" :model="form" label-width="80px">
+      <el-form ref="templateform"  label-width="80px">
         <el-form-item label="ID">
           <el-input v-model="templateform.id"></el-input>
         </el-form-item>
@@ -382,16 +382,16 @@ export default {
           let id = Date.now()
           id *= 1000 + i
           let query = 'https://element.eleme.cn/#/zh-CN/component/form'
-          if(this.radio === 1){
+          if(this.radio === "1"){
             query = feedback + `?id=${id}&wxopenid=${this.targetData[i].wxopenid}&accept=${this.acceptStatus}&reject=${this.rejectStatus}`
           const encodedUrl = encodeURI(query)
-          console.log(encodedUrl);
+            query = encodedUrl
           }
-          else if(this.radio === 2){
+          else if(this.radio === "2"){
             query = this.link;
           }
           await axios({
-            url: 'http://42.194.194.197/templateMessage',
+            url: 'http://42.194.194.197/admin/sendMessageToUser',
             method: 'POST',
             params: {
               wxOpenId: this.targetData[i].wxopenid,
@@ -399,7 +399,11 @@ export default {
               msg: this.infoform.content,
               nowStatus: this.targetData[i].status,
               //点击推送信息后跳转的页面
-              HTTP: query
+              HTTP: query,
+              code:this.code
+            },
+            headers:{
+                'jwt-code': localStorage.getItem('token')
             }
           }).then(() => {
             cnt++;
