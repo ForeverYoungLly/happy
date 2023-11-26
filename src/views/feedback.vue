@@ -171,6 +171,8 @@ export default {
   created () {
     // 获取涵哥过来的数据
     const query = this.$route.query
+    console.log(1)
+    console.log(query)
     this.query = query
     Toast.loading({
       message: '加载中...',
