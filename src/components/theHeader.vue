@@ -2,7 +2,7 @@
     <div class="container">
         <div class="TabHeader">
             <div class="routeName">AchoBeta 招新系统管理端</div>
-            <div class="adminName_exit"><i class="el-icon-user-solid"></i>admin | <a  @click="exit" id="exit">退出登录</a></div>
+            <div class="adminName_exit"><i class="el-icon-user-solid" style="padding-right: 5px;"></i>admin | <a  @click="exit" id="exit">退出登录</a></div>
         </div>
         <!-- 面包屑导航栏 -->
         <el-breadcrumb separator="/" id="el-breadcrumb" >

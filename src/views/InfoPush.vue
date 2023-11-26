@@ -133,7 +133,7 @@ import axios from 'axios';
 export default {
   data() {
     return {
-      // 通过不通过和内容
+      // 通过未通过和内容
       titleContent: [
         "日程安排提醒",
         "面试结果通知"
@@ -207,8 +207,8 @@ export default {
           value: '筛选通过'
         },
         {
-          status: '筛选不通过',
-          value: '筛选不通过'
+          status: '筛选未通过',
+          value: '筛选未通过'
         },
         {
           status: '待安排初试',
@@ -219,8 +219,8 @@ export default {
           value: '待初试'
         },
         {
-          status: '初试不通过',
-          value: '初试不通过'
+          status: '初试未通过',
+          value: '初试未通过'
         },
         {
           status: '初试通过',
@@ -235,8 +235,8 @@ export default {
           value: '待复试'
         },
         {
-          status: '复试不通过',
-          value: '复试不通过'
+          status: '复试未通过',
+          value: '复试未通过'
         },
         {
           status: '复试通过',
@@ -255,8 +255,8 @@ export default {
           value: '终试通过'
         },
         {
-          status: '终试不通过',
-          value: '终试不通过'
+          status: '终试未通过',
+          value: '终试未通过'
         },
         {
           status: '待处理',
@@ -384,6 +384,8 @@ export default {
           let query = 'https://element.eleme.cn/#/zh-CN/component/form'
           if(this.radio === 1){
             query = feedback + `?id=${id}&wxopenid=${this.targetData[i].wxopenid}&accept=${this.acceptStatus}&reject=${this.rejectStatus}`
+          const encodedUrl = encodeURI(query)
+          console.log(encodedUrl);
           }
           else if(this.radio === 2){
             query = this.link;

@@ -36,7 +36,11 @@ const routes = [
 
 
 ]
-
+// 解决导航栏中的vue-router在3.0版本以上重复点菜单报错问题
+const originalPush = VueRouter.prototype.push
+VueRouter.prototype.push = function push(location) {
+  return originalPush.call(this, location).catch(err => err)
+}
 //创建router实例
 const router = new VueRouter({
     routes 
