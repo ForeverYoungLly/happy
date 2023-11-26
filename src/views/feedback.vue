@@ -4,7 +4,7 @@
       <!-- 首页table -->
       <el-table :data="UserList.slice((currentPage - 1) * pageSize, currentPage * pageSize)"
         style="width: 100% ; margin: 5px; box-shadow: 1px 2px 4px #ccc;transition: all 0.3 ease-in!important;" stripe
-        @sort-change="handle" ref="problemTable">
+        @sort-change="handle" ref="problemTable" v-loading="listLoading">
         <el-table-column type="selection" width="55">
         </el-table-column>
         <el-table-column prop="username" label="姓名">
@@ -146,8 +146,8 @@ export default {
         value: '待筛选',
         label: '待筛选'
       }, {
-        value: '筛选不通过',
-        label: '筛选不通过'
+        value: '筛选未通过',
+        label: '筛选未通过'
       }, {
         value: '待安排初试',
         label: '待安排初试'
@@ -155,8 +155,8 @@ export default {
         value: '待初试',
         label: '待初试'
       }, {
-        value: '初试不通过',
-        label: '初试不通过'
+        value: '初试未通过',
+        label: '初试未通过'
       }, {
         value: '初试通过',
         label: '初试通过'
@@ -284,6 +284,7 @@ export default {
           { pattern: /^(201[0-9]|202[0-9]|2030)$/, message: '范围在2010到2030', trigger: 'blur' }
         ]
       },
+      listLoading:true
     }
   },
   methods: {
@@ -300,6 +301,7 @@ export default {
         }).then(res => {
           const userList = res.data.data;
           this.UserList = userList;
+          this.listLoading = false
         }).catch((e) => {
           //返回401
           if (!e.response.data.code) {
