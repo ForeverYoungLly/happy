@@ -71,7 +71,7 @@
             <!-- 用户信息编辑的气泡框 -->
             <!-- :close-on-click-modal="false" 取消点击空白处关闭 -->
             <el-dialog :visible.sync="editDialogVisible" width="60%" :close-on-click-modal="false">
-                <el-tabs type="border-card" v-loading="loading">
+                <el-tabs type="border-card" v-loading="Loading">
                     <el-tab-pane label="用户信息">
                         <!-- 内容主体区 -->
                         <el-form :model="editForm" :rules="editFormRules" ref="editFormRef">
@@ -342,7 +342,6 @@ export default {
                 value: '终试通过',
                 label: '终试通过'
             }, {
-            }, {
                 value: '终试未通过',
                 label: '终试未通过'
             }, {
@@ -481,6 +480,8 @@ export default {
                     }
                 ]
             ],
+            // 表单加载
+            Loading: true,
             // 加载
             loading: false,
             // 用户历史信息弹窗
@@ -943,7 +944,6 @@ export default {
                             this.statusDialogVisible = false;
                         }
                 }).catch((error) => {
-                    
                     console.log(error);
                 })
             }
