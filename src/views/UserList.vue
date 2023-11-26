@@ -460,11 +460,6 @@ export default {
             },
             // 历史操作信息
             historyInfo: [
-                // {
-                //     type:"异常反馈",
-                //     message:"我有异常反馈我有异常反馈我有异常反馈我有异常反馈我有异常反馈我有异常反馈我有异常反馈我有异常反馈我有异常反馈我有异常反馈我有异常反馈我有异常反馈我有异常反馈我有异常反馈我有异常反馈我有异常反馈我有异常反馈",
-                //     time:"2023/11/23/22:00"
-                // },
                 {
                     message: '暂无数据'
                 }
@@ -831,7 +826,6 @@ export default {
                             this.statusDialogVisible = false;
                         }
                 }).catch((error) => {
-                    
                     console.log(error);
                 })
             }
