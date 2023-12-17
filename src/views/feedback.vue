@@ -35,15 +35,6 @@
                 <el-input v-model="editForm.studentid" show-word-limit></el-input>
               </el-form-item>
             </el-col>
-            <div class="demo-image__placeholder" style="position: absolute; right: 10%;">
-              <div class="block">
-                <el-image :src="src" style="width: 10vw; height: 22vh; " :fit="fit" :preview-src-list="srcList">
-                  <div slot="placeholder" class="image-slot">
-                    <i class="el-icon-loading"></i>加载中....
-                  </div>
-                </el-image>
-              </div>
-            </div>
           </el-row>
           <!-- 性别、年级 -->
           <el-row :gutter="12">
@@ -206,12 +197,6 @@ export default {
         value: '产品经理',
         label: '产品经理'
       },],
-      // 照片自适应容器的方式
-      fit: "fit",
-      // 大图预览图片的url地址
-      srcList: ['http://123.207.73.185:8090/userFile/picture/2022463030728/2022463030728照片.jpg'],
-      // 用户照片url地址
-      src: 'http://123.207.73.185:8090/userFile/picture/2022463030728/2022463030728照片.jpg',
       //存放用户列表的数组
       UserList: [],
       //当前页数
@@ -317,13 +302,6 @@ export default {
         this.$router.push('/login')
       }
     },
-    //控制排序情况
-    handle(val) {
-      if (!val.column) {
-        this.sortOrder = val.order == 'ascending' ? 2 : 1
-        this.sortField = val.prop == '11' ? 2 : 1
-      }
-    },
     handleCurrentChange(val) {
       this.currentPage = val
     },
@@ -343,8 +321,6 @@ export default {
       this.editForm = JSON.parse(str)
       //设置当前操作用户的wxopenid
       this.targetWxopenId = id
-      // 获取大头照
-      this.getUserPic()
       this.editDialogVisible = true;
     },
     // 保存编辑
@@ -430,26 +406,6 @@ export default {
       else {
         this.$message.error('请选择发送用户');
       }
-    },
-    // 获取大头照
-    getUserPic() {
-      axios({
-        url: 'http://123.207.73.185:8080/showUserFileMessage',
-        params: {
-          studentid: this.editForm.studentid
-        }
-      }).then(res => {
-        const fileList = res.data.data
-        // 预览
-        this.src = fileList[0].url
-        // 大头照回显
-        this.srcList.push(fileList[0].url)
-        // 附件回显
-        fileList.shift()
-        // 避免出现删除过渡效果
-        const files = fileList
-        this.fileList = files
-      })
     },
     // 解决异常后重新渲染表单函数
     async solveProblem(scope) {

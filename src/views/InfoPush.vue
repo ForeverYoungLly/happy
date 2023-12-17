@@ -77,7 +77,9 @@
         <div style="display: flex;">
           <span>模板列表：</span>
           <el-col :span="8" :offset="6">
-            <el-input v-model="searchId" placeholder="请输入id"></el-input>
+            <el-input v-model="searchId" placeholder="请输入id">
+              <el-button slot="append" icon="el-icon-search" @click="searchTemplateid()"></el-button>
+            </el-input>
           </el-col>
               <el-popover
                 placement="top-start"
@@ -279,9 +281,9 @@ export default {
       this.templateform.message = scope.row.message;
     },
     // 搜索id
-    searchID() {
+    searchTemplateid() {
+      console.log(1);
       let filterKeywords = this.searchId.trim();
-      this.tempList = this.templateData;
       console.log(this.tempList);
       let templist = this.templateData;
       let filerReasource = templist.filter(item => {
@@ -503,6 +505,7 @@ export default {
           method: 'GET',
           headers
         }).then(res => {
+          this.tempList = res.data.data;
           this.templateData = res.data.data;
         }).catch((e) => {
           //返回401
@@ -529,13 +532,6 @@ export default {
     this.getdata();
     this.getTemplatedata();
 
-  },
-
-  watch: {
-    // 搜索框内容
-    searchId() {
-      this.searchID();
-    }
   },
 
 }
